@@ -1,0 +1,985 @@
+@page "/admin/sifarnici"
+@rendermode InteractiveServer
+@inject IHttpClientFactory HttpFactory
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<PageTitle>Upravljanje šifarnicima — Digitalizacija procjene nekretnina</PageTitle>
+
+<!-- ═══════════════════ BREADCRUMB ═══════════════════ -->
+<AppBreadcrumb Items="@(new List<AppBreadcrumb.BreadcrumbItem> { new("Početna", "/"), new("Administracija", "/dashboard/admin"), new("Šifarnici", "") })" />
+
+<!-- ═══════════════════ PAGE HEADER ═══════════════════ -->
+<AppPageHeader Title="Upravljanje šifarnicima"
+               Subtitle="Administracija referentnih šifarnika koji se koriste u formama i poslovnim procesima." />
+
+<!-- ═══════════════════ TOOLBAR ═══════════════════ -->
+<AppFilterBar Style="margin-bottom:16px;">
+
+    <AppSearchInput Value="@_search"
+                    Placeholder="Pretraži šifarnike..."
+                    ContainerStyle="flex:1; min-width:200px; max-width:300px;"
+                    OnDebounced="OnSearchDebounced" />
+
+    <!-- Status filter -->
+    <MudSelect T="bool?" Value="_filterActive" ValueChanged="OnFilterChanged"
+               Variant="Variant.Outlined" Margin="Margin.Dense"
+               Placeholder="Status: Svi" Style="min-width:140px;">
+        <MudSelectItem Value="@((bool?)null)">Status: Svi</MudSelectItem>
+        <MudSelectItem Value="@((bool?)true)">Aktivni</MudSelectItem>
+        <MudSelectItem Value="@((bool?)false)">Neaktivni</MudSelectItem>
+    </MudSelect>
+
+    <!-- IsSystem filter -->
+    <MudSelect T="bool?" Value="_filterSystem" ValueChanged="OnSystemFilterChanged"
+               Variant="Variant.Outlined" Margin="Margin.Dense"
+               Placeholder="Tip: Svi" Style="min-width:150px;">
+        <MudSelectItem Value="@((bool?)null)">Tip: Svi</MudSelectItem>
+        <MudSelectItem Value="@((bool?)true)">Sistemski</MudSelectItem>
+        <MudSelectItem Value="@((bool?)false)">Prilagođeni</MudSelectItem>
+    </MudSelect>
+
+    <div style="flex:1;"></div>
+
+    <!-- Import/Export -->
+    <MudButton Variant="Variant.Outlined"
+               StartIcon="@Icons.Material.Outlined.SwapVert"
+               OnClick="@(() => _showImportExport = true)"
+               Style="height:40px; text-transform:none; font-weight:600;">
+        Import / Export
+    </MudButton>
+
+    <!-- Novi šifarnik -->
+    <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="OpenCreateDialog"
+               Style="height:40px;">
+        Novi šifarnik
+    </MudButton>
+</AppFilterBar>
+
+<!-- ═══════════════════ AUDIT INFO BANNER ═══════════════════ -->
+<MudAlert Severity="Severity.Info" Dense="true" Class="mb-4" Style="font-size:13px;">
+    Sve izmjene šifarnika automatski se evidentiraju u audit log sistem.
+    Sistemski šifarnici ne mogu biti obrisani — mogu biti deaktivirani.
+</MudAlert>
+
+<!-- ═══════════════════ TABLE ═══════════════════ -->
+<div class="app-table-wrap" style="margin-bottom:20px;">
+
+    @if (_loading)
+    {
+        <AppLoadingState />
+    }
+    else if (!_codebooks.Any())
+    {
+        <AppEmptyState Icon="@Icons.Material.Outlined.LibraryBooks" Title="Nema šifarnika">
+            <div style="font-size:13px; color:#aaa; margin-top:6px;">
+                Nema šifarnika koji odgovaraju odabranim filterima.
+            </div>
+        </AppEmptyState>
+    }
+    else
+    {
+        <table class="app-table">
+            <thead>
+                <tr class="app-thead-row">
+                    <th class="app-th sortable" @onclick="@(() => ToggleSort("name"))">
+                        <span style="display:inline-flex; align-items:center; gap:4px;">
+                            Naziv šifarnika
+                            <MudIcon Icon="@GetSortIcon("name")" Style="font-size:13px; color:#ccc;" />
+                        </span>
+                    </th>
+                    <th class="app-th">Kategorija</th>
+                    <th class="app-th">Opis</th>
+                    <th class="app-th sortable" @onclick="@(() => ToggleSort("status"))">
+                        <span style="display:inline-flex; align-items:center; gap:4px;">
+                            Status
+                            <MudIcon Icon="@GetSortIcon("status")" Style="font-size:13px; color:#ccc;" />
+                        </span>
+                    </th>
+                    <th class="app-th center">Vrijednosti</th>
+                    <th class="app-th sortable" @onclick="@(() => ToggleSort("updatedat"))">
+                        <span style="display:inline-flex; align-items:center; gap:4px;">
+                            Zadnja izmjena
+                            <MudIcon Icon="@GetSortIcon("updatedat")" Style="font-size:13px; color:#ccc;" />
+                        </span>
+                    </th>
+                    <th class="app-th right">Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cb in _codebooks)
+                {
+                    <tr class="app-tr">
+                        <td class="app-td">
+                            <div class="app-td bold" style="padding:0;">
+                                @cb.Name
+                                @if (cb.IsSystem)
+                                {
+                                    <span class="badge badge-info" style="margin-left:6px; font-size:10px;">Sistemski</span>
+                                }
+                            </div>
+                            <div class="mono" style="margin-top:2px; font-size:11px;">@cb.Code</div>
+                        </td>
+                        <td class="app-td">
+                            @if (!string.IsNullOrWhiteSpace(cb.Category))
+                            {
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div style="width:28px; height:28px; border-radius:6px;
+                                                background:@GetCategoryBg(cb.Category);
+                                                display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <MudIcon Icon="@GetCategoryIcon(cb.Category)"
+                                                 Style="@($"font-size:15px; color:{GetCategoryColor(cb.Category)};")" />
+                                    </div>
+                                    <span class="app-td muted" style="padding:0;">@cb.Category</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="app-td secondary" style="padding:0;">—</span>
+                            }
+                        </td>
+                        <td class="app-td ellipsis muted" title="@cb.Description">
+                            @(cb.Description ?? "—")
+                        </td>
+                        <td class="app-td">
+                            <span class="badge @(cb.IsActive ? "badge-active" : "badge-inactive")">
+                                @(cb.IsActive ? "Aktivan" : "Neaktivan")
+                            </span>
+                        </td>
+                        <td class="app-td center">
+                            <div class="app-td bold" style="padding:0;">@cb.ValueCount</div>
+                            <div class="app-td secondary" style="padding:0;">@cb.ActiveValueCount @BsPlural.AktivanF(cb.ActiveValueCount)</div>
+                        </td>
+                        <td class="app-td muted">
+                            @(cb.UpdatedAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? cb.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm"))
+                            @if (!string.IsNullOrWhiteSpace(cb.UpdatedByUserId))
+                            {
+                                <div class="app-td secondary" style="padding:0;">@cb.UpdatedByUserId</div>
+                            }
+                        </td>
+                        <td class="app-td right">
+                            <div style="display:flex; align-items:center; justify-content:flex-end; gap:2px;">
+                                <button title="Prikaži vrijednosti" @onclick="@(() => OpenValues(cb))"
+                                        class="tbl-action" style="color:var(--rbi-off-black);">
+                                    <MudIcon Icon="@Icons.Material.Outlined.List" Style="font-size:16px;" />
+                                </button>
+                                <button title="Uredi" @onclick="@(() => OpenEditDialog(cb))"
+                                        class="tbl-action">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Edit" Style="font-size:16px;" />
+                                </button>
+                                @if (!cb.IsSystem)
+                                {
+                                    @if (cb.IsActive)
+                                    {
+                                        <button title="Deaktiviraj" @onclick="@(() => ConfirmDeactivate(cb))"
+                                                class="tbl-action" style="color:var(--rbi-coral-deep);">
+                                            <MudIcon Icon="@Icons.Material.Outlined.ToggleOff" Style="font-size:16px;" />
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button title="Aktiviraj" @onclick="@(() => ActivateAsync(cb))"
+                                                class="tbl-action" style="color:var(--rbi-off-black);">
+                                            <MudIcon Icon="@Icons.Material.Outlined.ToggleOn" Style="font-size:16px;" />
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div style="padding:0 16px;">
+            <AppPagination Page="_page" TotalPages="_totalPages" TotalCount="_total" OnPageChange="ChangePage" />
+        </div>
+    }
+</div>
+
+<!-- ═══════════════════ BOTTOM INFO CARDS ═══════════════════ -->
+<div class="cb-info-grid">
+    <div class="cb-info-card">
+        <div class="cb-info-icon" style="background:var(--rbi-yellow-1);">
+            <MudIcon Icon="@Icons.Material.Outlined.Shield" Style="font-size:20px; color:var(--rbi-off-black);" />
+        </div>
+        <div class="cb-info-body">
+            <div class="cb-info-title">Integritet podataka</div>
+            <div class="cb-info-text">
+                Sistemski šifarnici ne mogu biti obrisani. Deaktivacija ostaje jedina opcija — historija ostaje validna.
+            </div>
+        </div>
+    </div>
+    <div class="cb-info-card">
+        <div class="cb-info-icon" style="background:var(--rbi-success-light);">
+            <MudIcon Icon="@Icons.Material.Outlined.Sync" Style="font-size:20px; color:var(--rbi-off-black);" />
+        </div>
+        <div class="cb-info-body">
+            <div class="cb-info-title">Automatska ažuriranja</div>
+            <div class="cb-info-text">
+                Izmjene šifarnika se reflektuju u svim formama i procesima bez promjene koda.
+            </div>
+        </div>
+    </div>
+    <div class="cb-info-card">
+        <div class="cb-info-icon" style="background:#E8E4F8;">
+            <MudIcon Icon="@Icons.Material.Outlined.Verified" Style="font-size:20px; color:var(--rbi-off-black);" />
+        </div>
+        <div class="cb-info-body">
+            <div class="cb-info-title">Audit i usklađenost</div>
+            <div class="cb-info-text">
+                Sve izmjene evidentiraju se u centralnom audit log sistemu.
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Deactivate confirm — sada koristi ConfirmDialog via DialogService (bez inline modal-a) *@
+
+<!-- ═══ CREATE / EDIT CODEBOOK DIALOG ═══ -->
+@if (_cbDialogOpen)
+{
+    <div style="position:fixed; inset:0; background:rgba(43,45,51,0.4); z-index:1000;
+                display:flex; align-items:center; justify-content:center; padding:24px;"
+         @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == "Escape") _cbDialogOpen = false; else if (e.Key == "Enter" && !_cbDialogSaving) await SaveCodebookAsync(); })"
+         tabindex="-1">
+        <div style="background:#fff; border-radius:12px; padding:32px; max-width:500px; width:100%;
+                    box-shadow:0 8px 40px rgba(43,45,51,0.18);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+                <div style="font-size:17px; font-weight:700; color:var(--rbi-off-black);">
+                    @(_cbDialogIsEdit ? $"Uredi šifarnik — {_cbEditTarget?.Name}" : "Novi šifarnik")
+                </div>
+                <button @onclick="@(() => _cbDialogOpen = false)"
+                        style="width:30px; height:30px; border:none; background:none; cursor:pointer;
+                               border-radius:6px; font-size:18px; color:#777;">✕</button>
+            </div>
+
+            @if (!_cbDialogIsEdit)
+            {
+                <AppFormField Label="Kod šifarnika" Required="true"
+                              HelperText="Jedinstven identifikator. Ne može se mijenjati. Koristiti mala slova i _ između riječi.">
+                    <MudTextField @bind-Value="_cbCode"
+                                  Placeholder="npr. tipovi_dokumenata"
+                                  Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Style="width:100%;" />
+                </AppFormField>
+            }
+
+            <AppFormField Label="Naziv šifarnika" Required="true">
+                <MudTextField @bind-Value="_cbName"
+                              Placeholder="npr. Tipovi dokumenata"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Style="width:100%;" />
+            </AppFormField>
+
+            <AppFormField Label="Opis">
+                <MudTextField @bind-Value="_cbDescription"
+                              Placeholder="Kratki opis namjene šifarnika"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Lines="2" Style="width:100%;" />
+            </AppFormField>
+
+            <AppFormField Label="Kategorija">
+                <MudTextField @bind-Value="_cbCategory"
+                              Placeholder="npr. Dokumenti, Lokacija, Narudžba"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Style="width:100%;" />
+            </AppFormField>
+
+            @if (!string.IsNullOrWhiteSpace(_cbDialogError))
+            {
+                <AppErrorBanner Message="@_cbDialogError" />
+            }
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button @onclick="@(() => _cbDialogOpen = false)"
+                        style="padding:10px 20px; border:1px solid #E5DDD2; border-radius:8px;
+                               background:#fff; font-size:14px; color:#555; cursor:pointer; font-weight:600;">
+                    Odustani
+                </button>
+                <button @onclick="SaveCodebookAsync"
+                        disabled="@(_cbDialogSaving)"
+                        style="padding:10px 20px; border:none; border-radius:8px; background:#FEE600;
+                               font-size:14px; color:var(--rbi-off-black); cursor:pointer; font-weight:700;">
+                    @(_cbDialogSaving ? "Snimanje..." : (_cbDialogIsEdit ? "Spremi izmjene" : "Kreiraj šifarnik"))
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ═══ VALUE CREATE/EDIT DIALOG ═══ -->
+@if (_valueDialogOpen)
+{
+    <div style="position:fixed; inset:0; background:rgba(43,45,51,0.4); z-index:1000;
+                display:flex; align-items:center; justify-content:center; padding:24px;"
+         @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == "Escape") _valueDialogOpen = false; else if (e.Key == "Enter" && IsValueFormValid && !_valueDialogSaving) await SaveValueAsync(); })"
+         tabindex="-1">
+        <div style="background:#fff; border-radius:12px; padding:32px; max-width:480px; width:100%;
+                    box-shadow:0 8px 40px rgba(43,45,51,0.18);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+                <div style="font-size:17px; font-weight:700; color:var(--rbi-off-black);">
+                    @(_valueDialogIsEdit ? "Uredi vrijednost" : "Nova vrijednost")
+                </div>
+                <button @onclick="@(() => _valueDialogOpen = false)"
+                        style="width:30px; height:30px; border:none; background:none; cursor:pointer;
+                               border-radius:6px; font-size:18px; color:#777;">✕</button>
+            </div>
+
+            <AppFormField Label="Kod vrijednosti" Required="true"
+                          HelperText="Jedinstven unutar šifarnika. Ne može se mijenjati.">
+                <MudTextField @bind-Value="_vCode"
+                              Placeholder="npr. ADMINISTRATOR"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Disabled="@_valueDialogIsEdit" Style="width:100%;" />
+            </AppFormField>
+
+            <AppFormField Label="Naziv / Labela" Required="true">
+                <MudTextField @bind-Value="_vLabel"
+                              Placeholder="npr. Administrator"
+                              Variant="Variant.Outlined" Margin="Margin.Dense" Style="width:100%;" />
+            </AppFormField>
+
+            <AppFormField Label="Opis">
+                <MudTextField @bind-Value="_vDescription"
+                              Placeholder="Kratki opis namjene vrijednosti"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Lines="2" Style="width:100%;" />
+            </AppFormField>
+
+            <AppFormField Label="Redoslijed prikaza"
+                          HelperText="Manji broj = prikazuje se ranije. Koristiti razmake (10, 20, 30...) za fleksibilnost.">
+                <MudNumericField @bind-Value="_vSortOrder"
+                                 Variant="Variant.Outlined" Margin="Margin.Dense"
+                                 Min="0" Style="width:100%;" />
+            </AppFormField>
+
+            @if (!string.IsNullOrWhiteSpace(_valueDialogError))
+            {
+                <AppErrorBanner Message="@_valueDialogError" />
+            }
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button @onclick="@(() => _valueDialogOpen = false)"
+                        style="padding:10px 20px; border:1px solid #E5DDD2; border-radius:8px;
+                               background:#fff; font-size:14px; color:#555; cursor:pointer; font-weight:600;">
+                    Odustani
+                </button>
+                <button @onclick="SaveValueAsync"
+                        disabled="@(!IsValueFormValid || _valueDialogSaving)"
+                        style="padding:10px 20px; border:none; border-radius:8px;
+                               background:@(IsValueFormValid && !_valueDialogSaving ? "#FEE600" : "#F8F6F2");
+                               color:@(IsValueFormValid && !_valueDialogSaving ? "#2B2D33" : "#aaa");
+                               font-size:14px; cursor:@(IsValueFormValid && !_valueDialogSaving ? "pointer" : "not-allowed");
+                               font-weight:700;">
+                    @(_valueDialogSaving ? "Snimanje..." : (_valueDialogIsEdit ? "Spremi izmjene" : "Dodaj vrijednost"))
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ═══════════════════ VALUES DRAWER ═══════════════════ -->
+@if (_showValuesPanel && _selectedCb is not null)
+{
+    <div style="position:fixed; inset:0; background:rgba(43,45,51,0.25); z-index:500;"
+         @onclick="CloseValuesPanel"></div>
+
+    <div style="position:fixed; top:0; right:0; bottom:0; width:520px; max-width:95vw;
+                background:#fff; z-index:600; display:flex; flex-direction:column;
+                box-shadow:-4px 0 32px rgba(43,45,51,0.14); overflow:hidden;">
+
+        <div style="display:flex; align-items:center; justify-content:space-between;
+                    padding:20px 24px; border-bottom:1px solid #F1EDE6; flex-shrink:0;">
+            <div>
+                <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black); margin-bottom:2px;">
+                    @_selectedCb.Name
+                </div>
+                <div style="font-size:12.5px; color:#777;">
+                    @_selectedCb.Description &nbsp;·&nbsp;
+                    <span style="font-family:monospace;">@_selectedCb.Code</span>
+                </div>
+            </div>
+            <button @onclick="CloseValuesPanel"
+                    style="width:32px; height:32px; border:none; background:none; cursor:pointer;
+                           border-radius:6px; font-size:20px; color:#777;">✕</button>
+        </div>
+
+        <div style="padding:14px 24px; border-bottom:1px solid var(--rbi-warm-grey-50); display:flex; gap:10px; flex-shrink:0;">
+            <div style="position:relative; flex:1;">
+                <input type="text" @bind="_valuesSearch" @bind:event="oninput"
+                       placeholder="Pretraži vrijednosti..."
+                       style="width:100%; height:40px; padding:0 12px 0 36px;
+                              border:1px solid #E5DDD2; border-radius:8px; font-size:13.5px;
+                              font-family:'Inter',sans-serif; outline:none;" />
+                <MudIcon Icon="@Icons.Material.Outlined.Search"
+                         Style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:16px; color:#aaa;" />
+            </div>
+            <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="OpenAddValueDialog"
+                       Style="height:40px; white-space:nowrap;">
+                Dodaj
+            </MudButton>
+        </div>
+
+        <div style="flex:1; overflow-y:auto;">
+            @if (_valuesLoading)
+            {
+                <div style="display:flex; flex-direction:column; align-items:center; padding:40px; gap:12px; color:#aaa;">
+                    <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Small" />
+                    <span style="font-size:13px;">Učitavanje vrijednosti...</span>
+                </div>
+            }
+            else if (!FilteredValues.Any())
+            {
+                <div style="display:flex; flex-direction:column; align-items:center; padding:48px 24px; color:#ddd; text-align:center;">
+                    <MudIcon Icon="@Icons.Material.Outlined.Inbox" Style="font-size:48px; margin-bottom:12px;" />
+                    <div style="font-size:14px; color:#aaa;">
+                        @(string.IsNullOrWhiteSpace(_valuesSearch) ? "Nema vrijednosti za ovaj šifarnik." : "Nema rezultata pretrage.")
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach (var v in FilteredValues.OrderBy(x => x.SortOrder).ThenBy(x => x.Label))
+                {
+                    <div style="display:flex; align-items:center; gap:12px; padding:13px 24px;
+                                border-bottom:1px solid var(--rbi-warm-grey-50); transition:background 0.1s;"
+                         onmouseover="this.style.background='#FDFCF9'"
+                         onmouseout="this.style.background='transparent'">
+
+                        <div style="width:8px; height:8px; border-radius:50%; flex-shrink:0;
+                                    background:@(v.IsActive ? "#67D0AB" : "#ddd");"></div>
+
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:14px; font-weight:600; color:var(--rbi-off-black);">@v.Label</div>
+                            <div style="font-size:12px; color:#aaa; margin-top:1px;">
+                                <span style="font-family:monospace;">@v.Code</span>
+                                @if (!string.IsNullOrWhiteSpace(v.Description))
+                                { <span style="margin-left:8px;">· @v.Description</span> }
+                                @if (v.IsSystem)
+                                { <span class="badge badge-info" style="margin-left:8px; font-size:10px;">Sistemska</span> }
+                            </div>
+                        </div>
+
+                        <span class="badge @(v.IsActive ? "badge-active" : "badge-inactive")" style="flex-shrink:0;">
+                            @(v.IsActive ? "Aktivna" : "Neaktivna")
+                        </span>
+
+                        <div style="display:flex; gap:2px; flex-shrink:0;">
+                            @if (!v.IsSystem)
+                            {
+                                @if (v.IsActive)
+                                {
+                                    <button title="Deaktiviraj" @onclick="@(() => DeactivateValue(v))"
+                                            class="tbl-action" style="color:var(--rbi-coral-deep);">
+                                        <MudIcon Icon="@Icons.Material.Outlined.PowerSettingsNew" Style="font-size:16px;" />
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button title="Aktiviraj" @onclick="@(() => ActivateValue(v))"
+                                            class="tbl-action" style="color:var(--rbi-off-black);">
+                                        <MudIcon Icon="@Icons.Material.Outlined.PowerSettingsNew" Style="font-size:16px;" />
+                                    </button>
+                                }
+                            }
+                            <button title="Uredi" class="tbl-action"
+                                    @onclick="@(() => OpenEditValueDialog(v))">
+                                <MudIcon Icon="@Icons.Material.Outlined.Edit" Style="font-size:16px;" />
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div style="padding:14px 24px; border-top:1px solid #F1EDE6; flex-shrink:0;
+                    display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:12.5px; color:#aaa;">
+                @FilteredValues.Count() vrijednosti · @FilteredValues.Count(v => v.IsActive) aktivnih
+            </span>
+            <span style="font-size:11.5px; color:#ccc; font-style:italic;">
+                Sve izmjene se evidentiraju u audit logu.
+            </span>
+        </div>
+    </div>
+}
+
+@if (_showImportExport)
+{
+    <ImportExportDialog OnClose="@(() => _showImportExport = false)" />
+}
+
+@code {
+
+    // ── Codebook list state ───────────────────────────────────────────────────
+    private bool _loading = true;
+    private bool _showImportExport;
+    private string _search = "";
+    private bool? _filterActive;
+    private bool? _filterSystem;
+    private string _sortCol = "name";
+    private bool _sortAsc = true;
+    private int _page = 1, _pageSize = 20, _total, _totalPages = 1;
+    private List<CbListItem> _codebooks = [];
+
+    // ── Codebook create/edit dialog ───────────────────────────────────────────
+    private bool _cbDialogOpen, _cbDialogIsEdit, _cbDialogSaving;
+    private string? _cbDialogError;
+    private CbListItem? _cbEditTarget;
+    private string _cbCode = "", _cbName = "", _cbDescription = "", _cbCategory = "";
+
+    // ── Values panel ──────────────────────────────────────────────────────────
+    private CbListItem? _selectedCb;
+    private bool _valuesLoading, _showValuesPanel;
+    private string _valuesSearch = "";
+    private List<CbValueItem> _values = [];
+
+    // ── Value create/edit dialog ──────────────────────────────────────────────
+    private bool _valueDialogOpen, _valueDialogIsEdit, _valueDialogSaving;
+    private string? _valueDialogError;
+    private CbValueItem? _valueEditTarget;
+    private string _vCode = "", _vLabel = "", _vDescription = "";
+    private int _vSortOrder = 10;
+
+    private bool IsValueFormValid =>
+        !string.IsNullOrWhiteSpace(_vCode) && !string.IsNullOrWhiteSpace(_vLabel);
+
+    // ── Local record types ────────────────────────────────────────────────────
+    private sealed record CbListItem(
+        int Id, string Code, string Name, string? Description, string? Category,
+        bool IsActive, bool IsSystem, int ValueCount, int ActiveValueCount,
+        DateTime CreatedAt, DateTime? UpdatedAt, string? UpdatedByUserId);
+
+    private sealed record CbValueItem(
+        int Id, string Code, string Label, string? Description,
+        int SortOrder, bool IsActive, bool IsSystem);
+
+    private IEnumerable<CbValueItem> FilteredValues => string.IsNullOrWhiteSpace(_valuesSearch)
+        ? _values
+        : _values.Where(v => v.Code.Contains(_valuesSearch, StringComparison.OrdinalIgnoreCase)
+                           || v.Label.Contains(_valuesSearch, StringComparison.OrdinalIgnoreCase));
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    // ── Search debounce (via AppSearchInput) ─────────────────────────────────
+    private async Task OnSearchDebounced(string value)
+    {
+        _search = value;
+        _page   = 1;
+        await LoadAsync(silent: true);
+    }
+
+    // ── Load codebooks from API ───────────────────────────────────────────────
+    private async Task LoadAsync(bool silent = false)
+    {
+        if (!silent) _loading = true;
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            var url  = $"/api/admin/codebooks?page={_page}&pageSize={_pageSize}&sortBy={_sortCol}&sortAsc={_sortAsc}";
+
+            if (!string.IsNullOrWhiteSpace(_search)) url += $"&search={Uri.EscapeDataString(_search)}";
+            if (_filterActive.HasValue)  url += $"&isActive={_filterActive.Value.ToString().ToLower()}";
+            if (_filterSystem.HasValue)  url += $"&isSystem={_filterSystem.Value.ToString().ToLower()}";
+
+            var resp = await http.GetAsync(url);
+            if (resp.IsSuccessStatusCode)
+            {
+                var result = await resp.Content.ReadFromJsonAsync<PagedResultDto<CbListItem>>(
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (result is not null)
+                {
+                    _codebooks   = result.Items?.ToList() ?? [];
+                    _total       = result.TotalCount;
+                    _totalPages  = result.TotalPages > 0 ? result.TotalPages : 1;
+                    if (_page > _totalPages) _page = _totalPages;
+                }
+            }
+            else if (resp.StatusCode is System.Net.HttpStatusCode.Unauthorized
+                                     or System.Net.HttpStatusCode.Forbidden)
+            {
+                Snackbar.Add("Nemate ovlaštenje za upravljanje šifarnicima.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Greška pri učitavanju šifarnika: {ex.Message}", Severity.Error);
+        }
+        if (!silent) _loading = false;
+    }
+
+    // ── Filter handlers ───────────────────────────────────────────────────────
+    private async Task OnFilterChanged(bool? v)  { _filterActive = v; _page = 1; await LoadAsync(silent: true); }
+    private async Task OnSystemFilterChanged(bool? v) { _filterSystem = v; _page = 1; await LoadAsync(); }
+
+    // ── Sort ──────────────────────────────────────────────────────────────────
+    private async Task ToggleSort(string col)
+    {
+        if (_sortCol == col) _sortAsc = !_sortAsc;
+        else { _sortCol = col; _sortAsc = true; }
+        _page = 1;
+        await LoadAsync();
+    }
+
+    private string GetSortIcon(string col) => _sortCol == col
+        ? (_sortAsc ? Icons.Material.Filled.ArrowUpward : Icons.Material.Filled.ArrowDownward)
+        : Icons.Material.Filled.UnfoldMore;
+
+    // ── Codebook CRUD ─────────────────────────────────────────────────────────
+    private void OpenCreateDialog()
+    {
+        _cbDialogIsEdit  = false;
+        _cbCode          = "";
+        _cbName          = "";
+        _cbDescription   = "";
+        _cbCategory      = "";
+        _cbDialogError   = null;
+        _cbEditTarget    = null;
+        _cbDialogOpen    = true;
+    }
+
+    private void OpenEditDialog(CbListItem cb)
+    {
+        _cbDialogIsEdit  = true;
+        _cbEditTarget    = cb;
+        _cbCode          = cb.Code;
+        _cbName          = cb.Name;
+        _cbDescription   = cb.Description ?? "";
+        _cbCategory      = cb.Category ?? "";
+        _cbDialogError   = null;
+        _cbDialogOpen    = true;
+    }
+
+    private async Task SaveCodebookAsync()
+    {
+        if (!_cbDialogIsEdit && string.IsNullOrWhiteSpace(_cbCode))
+        { _cbDialogError = "Kod šifarnika je obavezan."; return; }
+        if (string.IsNullOrWhiteSpace(_cbName))
+        { _cbDialogError = "Naziv šifarnika je obavezan."; return; }
+
+        _cbDialogSaving = true;
+        _cbDialogError  = null;
+
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            System.Net.Http.HttpResponseMessage resp;
+
+            if (!_cbDialogIsEdit)
+            {
+                var body = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    code        = _cbCode.Trim(),
+                    name        = _cbName.Trim(),
+                    description = string.IsNullOrWhiteSpace(_cbDescription) ? null : _cbDescription.Trim(),
+                    category    = string.IsNullOrWhiteSpace(_cbCategory) ? null : _cbCategory.Trim()
+                });
+                resp = await http.PostAsync("/api/admin/codebooks",
+                    new StringContent(body, System.Text.Encoding.UTF8, "application/json"));
+            }
+            else
+            {
+                var body = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    name        = _cbName.Trim(),
+                    description = string.IsNullOrWhiteSpace(_cbDescription) ? null : _cbDescription.Trim(),
+                    category    = string.IsNullOrWhiteSpace(_cbCategory) ? null : _cbCategory.Trim()
+                });
+                resp = await http.PutAsync($"/api/admin/codebooks/{_cbEditTarget!.Code}",
+                    new StringContent(body, System.Text.Encoding.UTF8, "application/json"));
+            }
+
+            if (resp.IsSuccessStatusCode)
+            {
+                Snackbar.Add(_cbDialogIsEdit ? "Šifarnik ažuriran." : "Šifarnik kreiran.", Severity.Success);
+                _cbDialogOpen = false;
+                await LoadAsync();
+            }
+            else
+            {
+                var content = await resp.Content.ReadAsStringAsync();
+                _cbDialogError = ParseErrorDetail(content) ?? "Greška pri snimanju.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _cbDialogError = ex.Message;
+        }
+        _cbDialogSaving = false;
+    }
+
+    private void ConfirmDeactivate(CbListItem cb) => _ = ConfirmDeactivateDialog(cb);
+
+    private async Task ConfirmDeactivateDialog(CbListItem cb)
+    {
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>(
+            "Deaktivacija šifarnika",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Da li ste sigurni da želite deaktivirati šifarnik \"{cb.Name}\"? " +
+                                  "Postojeće reference ostaju historijski validne. Akcija će biti evidentirana u audit logu.",
+                ["ConfirmText"] = "Deaktiviraj",
+                ["IsDanger"]    = true
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            try
+            {
+                var http = HttpFactory.CreateClient("BackendApi");
+                var resp = await http.PostAsync(
+                    $"/api/admin/codebooks/{cb.Code}/deactivate",
+                    new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Šifarnik \"{cb.Name}\" deaktiviran.", Severity.Warning);
+                    await LoadAsync();
+                }
+                else
+                {
+                    var content = await resp.Content.ReadAsStringAsync();
+                    Snackbar.Add(ParseErrorDetail(content) ?? "Greška pri deaktivaciji.", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task ChangePage(int newPage) { _page = newPage; await LoadAsync(); }
+
+    private async Task ActivateAsync(CbListItem cb)
+    {
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            var resp = await http.PostAsync(
+                $"/api/admin/codebooks/{cb.Code}/activate",
+                new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+
+            if (resp.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Šifarnik \"{cb.Name}\" aktiviran.", Severity.Success);
+                await LoadAsync();
+            }
+            else
+            {
+                var content = await resp.Content.ReadAsStringAsync();
+                Snackbar.Add(ParseErrorDetail(content) ?? "Greška pri aktivaciji.", Severity.Error);
+            }
+        }
+        catch (Exception ex) { Snackbar.Add(ex.Message, Severity.Error); }
+    }
+
+    // ── Values Panel ──────────────────────────────────────────────────────────
+    private async Task OpenValues(CbListItem cb)
+    {
+        _selectedCb      = cb;
+        _valuesLoading   = true;
+        _values          = [];
+        _valuesSearch    = "";
+        _showValuesPanel = true;
+
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            var resp = await http.GetAsync($"/api/codebooks/{cb.Code}/values");
+            if (resp.IsSuccessStatusCode)
+            {
+                var list = await resp.Content.ReadFromJsonAsync<List<CbValueItem>>(
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                _values = list ?? [];
+            }
+        }
+        catch { /* API not available */ }
+        finally { _valuesLoading = false; }
+    }
+
+    private void CloseValuesPanel() { _showValuesPanel = false; _selectedCb = null; }
+
+    private async Task DeactivateValue(CbValueItem v)
+    {
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            var resp = await http.PostAsync(
+                $"/api/codebooks/{_selectedCb!.Code}/values/{v.Id}/deactivate",
+                new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+            if (resp.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Vrijednost \"{v.Label}\" deaktivirana.", Severity.Warning);
+                await OpenValues(_selectedCb!);
+            }
+            else
+            {
+                var content = await resp.Content.ReadAsStringAsync();
+                Snackbar.Add(ParseErrorDetail(content) ?? "Greška pri deaktivaciji.", Severity.Error);
+            }
+        }
+        catch (Exception ex) { Snackbar.Add(ex.Message, Severity.Error); }
+    }
+
+    private async Task ActivateValue(CbValueItem v)
+    {
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            var resp = await http.PostAsync(
+                $"/api/codebooks/{_selectedCb!.Code}/values/{v.Id}/activate",
+                new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+            if (resp.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Vrijednost \"{v.Label}\" aktivirana.", Severity.Success);
+                await OpenValues(_selectedCb!);
+            }
+            else
+            {
+                var content = await resp.Content.ReadAsStringAsync();
+                Snackbar.Add(ParseErrorDetail(content) ?? "Greška pri aktivaciji.", Severity.Error);
+            }
+        }
+        catch (Exception ex) { Snackbar.Add(ex.Message, Severity.Error); }
+    }
+
+    private void OpenAddValueDialog()
+    {
+        _valueDialogIsEdit  = false;
+        _valueEditTarget    = null;
+        _vCode              = "";
+        _vLabel             = "";
+        _vDescription       = "";
+        _vSortOrder         = 10;
+        _valueDialogError   = null;
+        _valueDialogOpen    = true;
+    }
+
+    private void OpenEditValueDialog(CbValueItem v)
+    {
+        _valueDialogIsEdit  = true;
+        _valueEditTarget    = v;
+        _vCode              = v.Code;
+        _vLabel             = v.Label;
+        _vDescription       = v.Description ?? "";
+        _vSortOrder         = v.SortOrder;
+        _valueDialogError   = null;
+        _valueDialogOpen    = true;
+    }
+
+    private async Task SaveValueAsync()
+    {
+        _valueDialogSaving = true;
+        _valueDialogError  = null;
+
+        try
+        {
+            var http = HttpFactory.CreateClient("BackendApi");
+            System.Net.Http.HttpResponseMessage resp;
+
+            if (!_valueDialogIsEdit)
+            {
+                var body = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    code        = _vCode.Trim().ToUpperInvariant(),
+                    label       = _vLabel.Trim(),
+                    description = string.IsNullOrWhiteSpace(_vDescription) ? null : _vDescription.Trim(),
+                    sortOrder   = _vSortOrder
+                });
+                resp = await http.PostAsync(
+                    $"/api/codebooks/{_selectedCb!.Code}/values",
+                    new StringContent(body, System.Text.Encoding.UTF8, "application/json"));
+            }
+            else
+            {
+                var body = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    label       = _vLabel.Trim(),
+                    description = string.IsNullOrWhiteSpace(_vDescription) ? null : _vDescription.Trim(),
+                    sortOrder   = _vSortOrder
+                });
+                resp = await http.PutAsync(
+                    $"/api/codebooks/{_selectedCb!.Code}/values/{_valueEditTarget!.Id}",
+                    new StringContent(body, System.Text.Encoding.UTF8, "application/json"));
+            }
+
+            if (resp.IsSuccessStatusCode)
+            {
+                Snackbar.Add(_valueDialogIsEdit ? "Vrijednost ažurirana." : "Vrijednost dodana.", Severity.Success);
+                _valueDialogOpen = false;
+                await OpenValues(_selectedCb!);
+            }
+            else
+            {
+                var content = await resp.Content.ReadAsStringAsync();
+                _valueDialogError = ParseErrorDetail(content) ?? "Greška pri snimanju.";
+            }
+        }
+        catch (Exception ex) { _valueDialogError = ex.Message; }
+
+        _valueDialogSaving = false;
+    }
+
+    // ── Category icons ────────────────────────────────────────────────────────
+    private static string GetCategoryIcon(string? cat) => cat switch
+    {
+        "Kolateral"       => Icons.Material.Outlined.Home,
+        "Kreditni proizvod" => Icons.Material.Outlined.CreditCard,
+        "Narudžba"        => Icons.Material.Outlined.Assignment,
+        "Dokumenti"       => Icons.Material.Outlined.Description,
+        "Lokacija"        => Icons.Material.Outlined.LocationOn,
+        "Pravni status"   => Icons.Material.Outlined.Gavel,
+        _                 => Icons.Material.Outlined.Category
+    };
+
+    private static string GetCategoryBg(string? cat) => cat switch
+    {
+        "Kolateral"       => "#FFF9D6",
+        "Kreditni proizvod" => "#E8F8F2",
+        "Narudžba"        => "#E8E4F8",
+        "Dokumenti"       => "#FFF0EC",
+        "Lokacija"        => "#E8F8F2",
+        _                 => "#F8F6F2"
+    };
+
+    private static string GetCategoryColor(string? cat) => cat switch
+    {
+        "Kolateral"       => "#8A6500",
+        "Kreditni proizvod" => "#225B45",
+        "Narudžba"        => "var(--rbi-off-black)",
+        "Dokumenti"       => "#C65C4A",
+        "Lokacija"        => "#225B45",
+        _                 => "#777"
+    };
+
+    // ── Error parsing ─────────────────────────────────────────────────────────
+    private static string? ParseErrorDetail(string content)
+    {
+        try
+        {
+            var doc = System.Text.Json.JsonDocument.Parse(content);
+            if (doc.RootElement.TryGetProperty("detail", out var detail))
+                return detail.GetString();
+        }
+        catch { }
+        return null;
+    }
+
+    // ── Paged result helper ───────────────────────────────────────────────────
+    private sealed class PagedResultDto<T>
+    {
+        public List<T>? Items { get; init; }
+        public int TotalCount { get; init; }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
+        public int TotalPages { get; init; }
+    }
+}

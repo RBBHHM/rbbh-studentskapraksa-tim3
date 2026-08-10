@@ -1,0 +1,71 @@
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <div style="font-weight:700; font-size:16px;">@Title</div>
+    </TitleContent>
+    <DialogContent>
+        <div style="display:flex; flex-direction:column; gap:14px; min-width:400px;">
+            <AppFormField Label="Razlog" Required="true">
+                <MudSelect T="string" @bind-Value="_selectedReason" Variant="Variant.Outlined" Margin="Margin.Dense"
+                           Placeholder="Odaberite razlog" Style="width:100%;">
+                    @foreach (var r in Reasons)
+                    {
+                        <MudSelectItem T="string" Value="@r">@r</MudSelectItem>
+                    }
+                </MudSelect>
+            </AppFormField>
+
+            @if (ShowCommentField)
+            {
+                <AppFormField Label="@CommentLabel" Required="@IsCommentRequired">
+                    <MudTextField T="string" @bind-Value="_comment" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Lines="3" Placeholder="Unesite komentar..." Style="width:100%;" />
+                </AppFormField>
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Style="text-transform:none;">Odustani</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Style="font-weight:700; text-transform:none;">
+            Potvrdi
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public string Title { get; set; } = "Odaberite razlog";
+    [Parameter] public string[] Reasons { get; set; } = [];
+    [Parameter] public string CommentLabel { get; set; } = "Komentar";
+    [Parameter] public bool RequireComment { get; set; }
+    [Parameter] public bool RequireCommentForLast { get; set; }
+
+    private string _selectedReason = "";
+    private string _comment = "";
+
+    private bool ShowCommentField => RequireComment || (RequireCommentForLast && IsLastReasonSelected);
+    private bool IsLastReasonSelected => Reasons.Length > 0 && _selectedReason == Reasons[^1];
+    private bool IsCommentRequired => RequireComment || (RequireCommentForLast && IsLastReasonSelected);
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        if (string.IsNullOrWhiteSpace(_selectedReason))
+        {
+            Snackbar.Add("Odaberite razlog.", Severity.Warning);
+            return;
+        }
+
+        if (IsCommentRequired && string.IsNullOrWhiteSpace(_comment))
+        {
+            Snackbar.Add("Komentar je obavezan.", Severity.Warning);
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new ReasonDialogResult(_selectedReason, _comment)));
+    }
+}

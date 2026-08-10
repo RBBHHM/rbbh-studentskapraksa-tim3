@@ -1,0 +1,63 @@
+@inject Us93ApiService Api93
+
+<MudDialog>
+    <DialogContent>
+        <MudText Style="font-size:14px;color:var(--rbi-off-black);line-height:1.6;margin-bottom:14px;">
+            Odaberite razlog vraćanja narudžbe Prodaji na dopunu podataka i, ako je potrebno,
+            dodajte dodatno objašnjenje.
+        </MudText>
+
+        <MudSelect T="int?" @bind-Value="_reasonCodeId"
+                   Label="Razlog dopune" Placeholder="Odaberite razlog"
+                   Variant="Variant.Outlined" Margin="Margin.Dense"
+                   Disabled="_loadingReasons"
+                   Style="width:100%;margin-bottom:14px;">
+            @foreach (var reason in _reasons)
+            {
+                <MudSelectItem T="int?" Value="@((int?)reason.Id)">@reason.Label</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField @bind-Value="_comment"
+                      Label="Komentar (opciono)"
+                      Variant="Variant.Outlined" Margin="Margin.Dense"
+                      Lines="3"
+                      Style="width:100%;" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text" Style="color:#6B7280;">Odustani</MudButton>
+        <MudButton OnClick="Confirm" Variant="Variant.Filled"
+                   Disabled="@(_reasonCodeId is null)"
+                   Style="background:#FEE600;color:var(--rbi-off-black);font-weight:700;">
+            Vrati na dopunu
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private List<CodebookValueItem> _reasons = new();
+    private int? _reasonCodeId;
+    private string? _comment;
+    private bool _loadingReasons = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api93.GetCorrectionReasonsAsync();
+        if (r.IsSuccess)
+            _reasons = r.Data!;
+
+        _loadingReasons = false;
+    }
+
+    private void Confirm()
+    {
+        if (_reasonCodeId is null)
+            return;
+
+        MudDialog.Close(DialogResult.Ok(new RequestCorrectionDialogResult(_reasonCodeId.Value, _comment)));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,478 @@
+@page "/izvjestaji"
+@page "/sprint2/izvjestaji"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IHttpClientFactory HttpFactory
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
+@inject MeService MeSvc
+@inject AppraiserApiService AppraiserSvc
+@inject OrderService OrderSvc
+
+<PageTitle>Izvještaji — Digitalizacija procjene nekretnina</PageTitle>
+
+<AppPageHeader Title="Izvještaji"
+               Subtitle="Poslovni i procesni izvještaji za pregled opterećenosti vještaka i efikasnosti procesa." />
+
+@if (!_hasAccess)
+{
+    <AppAccessDenied />
+    return;
+}
+
+<div style="display:flex; flex-direction:column; gap:24px; max-width:900px;">
+
+    @* ═══ Sekcija 1: Koncentracija vještaka ═══ *@
+    <div class="card" style="padding:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+            <MudIcon Icon="@Icons.Material.Outlined.PieChart" Style="font-size:22px; color:var(--rbi-purple-deep);" />
+            <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black);">Izvještaj koncentracije vještaka</div>
+        </div>
+        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;">
+            Pregled opterećenosti vještaka po gradu, tipu kolaterala i ukupno. Generiše se na klik u Excel formatu.
+        </div>
+
+        <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:end; margin-bottom:16px;">
+            <AppFormField Label="Opcija izvještaja" Required="true">
+                <MudSelect T="int" @bind-Value="_concentrationOption" Variant="Variant.Outlined" Margin="Margin.Dense"
+                           Style="min-width:320px;">
+                    <MudSelectItem T="int" Value="1">1. Grad / Broj narudžbi (završeno)</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">2. Procjenitelj / Broj narudžbi (završeno)</MudSelectItem>
+                    <MudSelectItem T="int" Value="3">3. Tip kolaterala / Broj narudžbi (završeno)</MudSelectItem>
+                    <MudSelectItem T="int" Value="4">4. Grad + Procjenitelj / Ukupan broj narudžbi</MudSelectItem>
+                    <MudSelectItem T="int" Value="5">5. Grad + Procjenitelj / Zadnjih mjesec dana</MudSelectItem>
+                </MudSelect>
+            </AppFormField>
+
+            <AppFormField Label="Datum (opciono)">
+                <MudDatePicker @bind-Date="_concentrationDate" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               Placeholder="Danas" DateFormat="dd.MM.yyyy" Style="min-width:160px;" />
+            </AppFormField>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+            <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                       Disabled="_generatingConcentration" OnClick="GenerateConcentration"
+                       Style="font-weight:700; text-transform:none;">
+                @if (_generatingConcentration)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="margin-right:8px;" />
+                    <span>Generisanje...</span>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Outlined.Download" Style="font-size:15px; margin-right:5px;" />
+                    <span>Generiši Excel</span>
+                }
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                       Disabled="_loadingPreview1" OnClick="LoadConcentrationPreview"
+                       Style="text-transform:none;font-weight:600;">
+                <MudIcon Icon="@Icons.Material.Outlined.Visibility" Style="font-size:14px;margin-right:4px;" />
+                Pregled
+            </MudButton>
+        </div>
+
+        @if (_preview1Data.Count > 0)
+        {
+            <div style="margin-top:16px;overflow-x:auto;border:1px solid var(--rbi-warm-grey);border-radius:8px;">
+                <table style="width:100%;font-size:12px;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--rbi-yellow-1);border-bottom:2px solid var(--rbi-yellow-2);">
+                            @foreach (var h in _preview1Headers)
+                            {
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;white-space:nowrap;">@h</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in _preview1Data.Take(10))
+                        {
+                            <tr style="border-bottom:1px solid var(--rbi-warm-grey-50);">
+                                @foreach (var cell in row)
+                                {
+                                    <td style="padding:6px 12px;white-space:nowrap;">@cell</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (_preview1Data.Count > 10)
+                {
+                    <div style="padding:8px 12px;font-size:11px;color:var(--text-muted);text-align:center;background:#F8F6F2;">
+                        Prikazano prvih 10 od @_preview1Data.Count redova. Preuzmite Excel za kompletan izvještaj.
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @* ═══ Sekcija 2: Pregled narudžbi sa vremenskim kalkulacijama ═══ *@
+    <div class="card" style="padding:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+            <MudIcon Icon="@Icons.Material.Outlined.Timeline" Style="font-size:22px; color:var(--rbi-purple-deep);" />
+            <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black);">Pregled narudžbi sa vremenskim kalkulacijama</div>
+        </div>
+        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;">
+            Sve narudžbe sa 7 vremenskih kolona: Prodaja→CA, CA→Vještak, Vještak→CO, CO→Finalna, Finalna→Original, Grand total, Grand total Prodaja.
+        </div>
+
+        <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:end; margin-bottom:16px;">
+            <AppFormField Label="Krajnji datum (opciono)">
+                <MudDatePicker @bind-Date="_timelineEndDate" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               Placeholder="Danas" DateFormat="dd.MM.yyyy" Style="min-width:160px;" />
+            </AppFormField>
+        </div>
+
+        <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                   Disabled="_generatingTimeline" OnClick="GenerateTimeline"
+                   Style="font-weight:700; text-transform:none;">
+            @if (_generatingTimeline)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="margin-right:8px;" />
+                <span>Generisanje...</span>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.Download" Style="font-size:15px; margin-right:5px;" />
+                <span>Generiši Excel</span>
+            }
+        </MudButton>
+    </div>
+
+    @* ═══ Sekcija 3: Reminder vještaku (DPNPN-141) ═══ *@
+    @if (_canRemind)
+    {
+        <div class="card" style="padding:24px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                <MudIcon Icon="@Icons.Material.Outlined.NotificationsActive" Style="font-size:22px; color:var(--rbi-purple-deep);" />
+                <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black);">Reminder vještaku</div>
+            </div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;">
+                Vještaci koji nisu dostavili procjenu u roku (kod vještaka > 5 radnih dana, status „u obradi").
+                Klik na „Pošalji" šalje automatski email: „U kojem je statusu izrada procjene za klijenta XY?"
+            </div>
+
+            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:end; margin-bottom:16px;">
+                <AppFormField Label="Vještak" Required="true">
+                    <MudSelect T="int?" @bind-Value="_selectedAppraiserId" Variant="Variant.Outlined" Margin="Margin.Dense"
+                               Placeholder="Odaberite vještaka" Style="min-width:280px;">
+                        @foreach (var a in _appraisers)
+                        {
+                            <MudSelectItem T="int?" Value="@a.Id">@a.Name@(string.IsNullOrWhiteSpace(a.City) ? "" : $" — {a.City}")</MudSelectItem>
+                        }
+                    </MudSelect>
+                </AppFormField>
+                <AppFormField Label="Period od (opciono)">
+                    <MudDatePicker @bind-Date="_reminderFrom" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                   DateFormat="dd.MM.yyyy" Style="min-width:150px;" />
+                </AppFormField>
+                <AppFormField Label="Period do (opciono)">
+                    <MudDatePicker @bind-Date="_reminderTo" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                   DateFormat="dd.MM.yyyy" Style="min-width:150px;" />
+                </AppFormField>
+                <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                           Disabled="_loadingReminders" OnClick="LoadReminders"
+                           Style="font-weight:700; text-transform:none;">
+                    @if (_loadingReminders)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Style="margin-right:8px;" />
+                        <span>Učitavanje...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Outlined.Search" Style="font-size:15px; margin-right:5px;" />
+                        <span>Prikaži zakašnjele</span>
+                    }
+                </MudButton>
+            </div>
+
+            @if (_remindersLoaded && _reminderRows.Count > 0)
+            {
+                <div style="overflow-x:auto;border:1px solid var(--rbi-warm-grey);border-radius:8px;">
+                    <table style="width:100%;font-size:12.5px;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:var(--rbi-yellow-1);border-bottom:2px solid var(--rbi-yellow-2);">
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;">Narudžba</th>
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;">Klijent</th>
+                                <th style="padding:8px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;">Kod vještaka od</th>
+                                <th style="padding:8px 12px;text-align:right;font-weight:700;font-size:11px;text-transform:uppercase;">Radnih dana</th>
+                                <th style="padding:8px 12px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in _reminderRows)
+                            {
+                                <tr style="border-bottom:1px solid var(--rbi-warm-grey-50);">
+                                    <td style="padding:8px 12px;font-weight:600;white-space:nowrap;">@r.OrderNumber</td>
+                                    <td style="padding:8px 12px;">@r.ClientName</td>
+                                    <td style="padding:8px 12px;white-space:nowrap;">@(r.OrderSentToAppraiserAt?.ToLocalTime().ToString("dd.MM.yyyy") ?? "—")</td>
+                                    <td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--rbi-coral-deep);">@WorkingDaysOverdue(r)</td>
+                                    <td style="padding:8px 12px;text-align:right;">
+                                        <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Warning"
+                                                   Disabled="_sendingReminder" OnClick="@(() => SendReminder(r.OrderId))"
+                                                   Style="font-weight:700;text-transform:none;white-space:nowrap;">
+                                            <MudIcon Icon="@Icons.Material.Outlined.NotificationAdd" Style="font-size:14px;margin-right:4px;" />
+                                            Pošalji
+                                        </MudButton>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else if (_remindersLoaded)
+            {
+                <div style="padding:14px;background:#F0FBF6;border:1px solid #A3E2CC;border-radius:8px;font-size:13px;color:#225B45;">
+                    <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Style="font-size:18px;vertical-align:middle;margin-right:6px;" />
+                    Nema zakašnjelih procjena za odabranog vještaka i period.
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private bool _hasAccess;
+    private int _concentrationOption = 1;
+    private DateTime? _concentrationDate;
+    private bool _generatingConcentration;
+
+    private DateTime? _timelineEndDate;
+    private bool _generatingTimeline;
+
+    private bool _loadingPreview1;
+    private List<string> _preview1Headers = [];
+    private List<List<string>> _preview1Data = [];
+
+    // ── Sekcija 3: Reminder vještaku (DPNPN-141) ──────────────────────────────
+    private bool _canRemind;
+    private List<AppraiserDto> _appraisers = [];
+    private int? _selectedAppraiserId;
+    private DateTime? _reminderFrom;
+    private DateTime? _reminderTo;
+    private bool _loadingReminders;
+    private bool _sendingReminder;
+    private bool _remindersLoaded;
+    private List<ReminderReportRow> _reminderRows = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var me = await MeSvc.GetMeAsync();
+        _hasAccess = me.IsSuccess && me.Data is not null
+            && me.Data.Permissions.Contains(AppPermissions.ReportsGenerate, StringComparer.OrdinalIgnoreCase);
+
+        // Slanje remindera vještaku — isključivo role s OrdersRemindAppraiser (CA).
+        _canRemind = me.IsSuccess && me.Data is not null
+            && me.Data.Permissions.Contains(AppPermissions.OrdersRemindAppraiser, StringComparer.OrdinalIgnoreCase);
+
+        if (_canRemind)
+        {
+            var a = await AppraiserSvc.GetListAsync(active: true, pageSize: 200);
+            if (a.IsSuccess && a.Data is not null)
+                _appraisers = a.Data.Items.OrderBy(x => x.Name).ToList();
+        }
+    }
+
+    private async Task GenerateConcentration()
+    {
+        _generatingConcentration = true;
+        StateHasChanged();
+
+        try
+        {
+            var dateParam = _concentrationDate.HasValue
+                ? $"&asOfDate={_concentrationDate.Value:yyyy-MM-dd}"
+                : "";
+            var url = $"/api/reports/concentration?option={_concentrationOption}{dateParam}";
+            await DownloadFileAsync(url);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Greška: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _generatingConcentration = false;
+        }
+    }
+
+    private async Task LoadConcentrationPreview()
+    {
+        _loadingPreview1 = true;
+        _preview1Data = [];
+        StateHasChanged();
+        try
+        {
+            _preview1Headers = _concentrationOption switch
+            {
+                1 => ["Grad", "Broj završenih narudžbi"],
+                2 => ["Procjenitelj", "Broj završenih narudžbi"],
+                3 => ["Tip kolaterala", "Broj završenih narudžbi"],
+                4 => ["Grad", "Procjenitelj", "Ukupan broj narudžbi"],
+                5 => ["Grad", "Procjenitelj", "Narudžbi (zadnji mjesec)"],
+                _ => ["Podatak", "Vrijednost"]
+            };
+
+            var dateParam = _concentrationDate.HasValue
+                ? $"&asOfDate={_concentrationDate.Value:yyyy-MM-dd}" : "";
+            var url = $"/api/reports/concentration?option={_concentrationOption}{dateParam}";
+            var client = HttpFactory.CreateClient("BackendApi");
+            var response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                var sizeMb = bytes.Length / (1024.0 * 1024.0);
+                _preview1Data = [[$"Izvještaj generisan ({sizeMb:F1} MB)", "Kliknite 'Generiši Excel' za preuzimanje"]];
+                Snackbar.Add($"Pregled: izvještaj opcija {_concentrationOption} — {sizeMb:F1} MB spreman za preuzimanje.", Severity.Success);
+            }
+            else
+                Snackbar.Add("Greška pri učitavanju pregleda.", Severity.Warning);
+        }
+        catch (Exception ex) { Snackbar.Add($"Greška: {ex.Message}", Severity.Error); }
+        finally { _loadingPreview1 = false; }
+    }
+
+    private async Task GenerateTimeline()
+    {
+        _generatingTimeline = true;
+        StateHasChanged();
+
+        try
+        {
+            var dateParam = _timelineEndDate.HasValue
+                ? $"?endDate={_timelineEndDate.Value:yyyy-MM-dd}"
+                : "";
+            var url = $"/api/reports/timeline{dateParam}";
+            await DownloadFileAsync(url);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Greška: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _generatingTimeline = false;
+        }
+    }
+
+    // ── Reminder vještaku (DPNPN-141) ─────────────────────────────────────────
+    private async Task LoadReminders()
+    {
+        if (_selectedAppraiserId is null)
+        {
+            Snackbar.Add("Odaberite vještaka.", Severity.Warning);
+            return;
+        }
+
+        _loadingReminders = true;
+        _remindersLoaded = false;
+        _reminderRows = [];
+        StateHasChanged();
+        try
+        {
+            var appraiser = _appraisers.FirstOrDefault(a => a.Id == _selectedAppraiserId);
+            var client = HttpFactory.CreateClient("BackendApi");
+            var response = await client.GetAsync("/api/reports/orders?format=json");
+            if (!response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Greška pri učitavanju narudžbi.", Severity.Error);
+                return;
+            }
+
+            var rows = await response.Content.ReadFromJsonAsync<List<ReminderReportRow>>() ?? [];
+            var today = DateTime.UtcNow.Date;
+
+            _reminderRows = rows
+                .Where(r => appraiser is not null
+                    && string.Equals(r.AppraiserName, appraiser.Name, StringComparison.OrdinalIgnoreCase)
+                    // status "u obradi": poslano vještaku, ali još nije dostavljeno CO
+                    && r.OrderSentToAppraiserAt.HasValue
+                    && !r.AppraisalDeliveredToCoAt.HasValue
+                    // > 5 radnih dana kod vještaka
+                    && WorkingDaysOverdue(r) > 5
+                    // opcioni period (od-do) po datumu narudžbe vještaku
+                    && (!_reminderFrom.HasValue || r.OrderSentToAppraiserAt.Value.Date >= _reminderFrom.Value.Date)
+                    && (!_reminderTo.HasValue   || r.OrderSentToAppraiserAt.Value.Date <= _reminderTo.Value.Date))
+                .OrderByDescending(WorkingDaysOverdue)
+                .ToList();
+
+            _remindersLoaded = true;
+            if (_reminderRows.Count == 0)
+                Snackbar.Add("Nema zakašnjelih procjena za odabranog vještaka i period.", Severity.Info);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Greška: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loadingReminders = false;
+        }
+    }
+
+    private async Task SendReminder(int orderId)
+    {
+        _sendingReminder = true;
+        StateHasChanged();
+        var r = await OrderSvc.SendReminderAsync(orderId);
+        _sendingReminder = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Reminder poslan vještaku.", Severity.Success);
+            _reminderRows.RemoveAll(x => x.OrderId == orderId);
+        }
+        else
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju remindera.", Severity.Error);
+        }
+    }
+
+    private static int WorkingDaysOverdue(ReminderReportRow r) =>
+        r.OrderSentToAppraiserAt.HasValue
+            ? BusinessDaysBetween(r.OrderSentToAppraiserAt.Value.Date, DateTime.UtcNow.Date)
+            : 0;
+
+    /// <summary>Broj radnih dana (bez vikenda) između dva datuma, isključujući početni dan.</summary>
+    private static int BusinessDaysBetween(DateTime from, DateTime to)
+    {
+        if (to <= from) return 0;
+        var count = 0;
+        for (var d = from.AddDays(1); d <= to; d = d.AddDays(1))
+            if (d.DayOfWeek is not (DayOfWeek.Saturday or DayOfWeek.Sunday))
+                count++;
+        return count;
+    }
+
+    private sealed record ReminderReportRow(
+        int       OrderId,
+        string    OrderNumber,
+        string    ClientName,
+        string    OrderStatus,
+        string?   AppraiserName,
+        DateTime? OrderSentToAppraiserAt,
+        DateTime? AppraisalDeliveredToCoAt);
+
+    private async Task DownloadFileAsync(string url)
+    {
+        var client = HttpFactory.CreateClient("BackendApi");
+        var response = await client.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Greška pri generisanju izvještaja.", Severity.Error);
+            return;
+        }
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var fileName = response.Content.Headers.ContentDisposition?.FileNameStar
+                    ?? response.Content.Headers.ContentDisposition?.FileName
+                    ?? "izvjestaj.xlsx";
+        fileName = fileName.Trim('"');
+
+        await JS.InvokeVoidAsync("downloadFileFromBytes", fileName, Convert.ToBase64String(bytes));
+        Snackbar.Add($"Izvještaj '{fileName}' generisan.", Severity.Success);
+    }
+}

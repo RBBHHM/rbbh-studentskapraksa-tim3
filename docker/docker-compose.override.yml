@@ -1,0 +1,81 @@
+# docker-compose.override.yml — lokalni razvoj
+# Pokretanje iz docker/ direktorija:
+#   docker compose -f docker-compose.yml -f docker-compose.override.yml up --build
+# Ili iz root direktorija:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml --env-file docker/.env up --build
+
+services:
+  # ─── Keycloak ────────────────────────────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    hostname: keycloak
+    command: start-dev --import-realm
+    restart: on-failure
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-studentskapraksa}
+      KC_DB_USERNAME: ${POSTGRES_USER:-student}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "8080:8080"
+    # Bez depends_on — restart: on-failure će ponavljati dok db ne bude spreman
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+      - ./keycloak/themes/raiffeisen:/opt/keycloak/themes/raiffeisen:ro
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '(echo >/dev/tcp/localhost/8080) 2>/dev/null || exit 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 120s
+
+  # ─── nginx reverse proxy ─────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - web
+
+  # ─── API override za lokalni razvoj ──────────────────────────
+  api:
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Keycloak__Authority: "http://keycloak:8080/realms/praksa"
+      Keycloak__Audience: "praksa-api"
+      Keycloak__RequireHttpsMetadata: "false"
+      Keycloak__ValidIssuers__0: "http://keycloak:8080/realms/praksa"
+      Keycloak__ValidIssuers__1: "http://localhost:8080/realms/praksa"
+      KeycloakAdmin__BaseUrl: "http://keycloak:8080"
+      KeycloakAdmin__Realm: "praksa"
+      KeycloakAdmin__ClientId: "praksa-api"
+      KeycloakAdmin__ClientSecret: "praksa-api-secret-dev"
+      KeycloakAdmin__AdminUsername: "admin"
+      KeycloakAdmin__AdminPassword: "admin"
+
+  # ─── Web override za lokalni razvoj ──────────────────────────
+  web:
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      OpenIDConnectSettings__Authority: "http://localhost:8080/realms/praksa"
+      OpenIDConnectSettings__RequireHttpsMetadata: "false"
+      KeycloakInternalUrl: "http://keycloak:8080/realms/praksa"
+    volumes:
+      - local_dataprotection_keys:/keys
+
+volumes:
+  local_dataprotection_keys:

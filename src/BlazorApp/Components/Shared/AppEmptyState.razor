@@ -1,0 +1,20 @@
+@*
+    AppEmptyState — jedinstveni prikaz "nema podataka" stanja (ikona + naslov +
+    opcioni dodatni sadržaj — opis, CTA dugme...). Zamjenjuje dupliranu
+    ".empty-state" markup sa MyOrders.razor, Protokol.razor, MyTasks.razor, itd.
+*@
+<div class="empty-state" role="status" aria-live="polite">
+    <MudIcon Icon="@Icon" Style="@($"font-size:{IconSize}; color:{IconColor}; margin-bottom:12px;")" />
+    <div style="font-size:17px; font-weight:700; color:var(--rbi-off-black); margin-bottom:6px;">
+        @Title
+    </div>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string Icon { get; set; } = Icons.Material.Outlined.Inbox;
+    [Parameter] public string IconColor { get; set; } = "#D4C9BE";
+    [Parameter] public string IconSize { get; set; } = "56px";
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

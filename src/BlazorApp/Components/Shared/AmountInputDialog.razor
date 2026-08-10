@@ -1,0 +1,45 @@
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Style="margin-bottom:16px;color:var(--text-muted);">
+            Unesite iznos doplata koji će biti vidljiv u naslovu taska i u notifikaciji kolateral administratoru.
+        </MudText>
+        <MudNumericField T="decimal?"
+                         Value="_amount"
+                         ValueChanged="@(v => _amount = v)"
+                         Label="Iznos doplata (KM)"
+                         Format="N2"
+                         Min="0.01M"
+                         Adornment="Adornment.End"
+                         AdornmentText="KM"
+                         Immediate="true"
+                         Required="true"
+                         RequiredError="Iznos je obavezan." />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text" Style="color:#6B7280;">Odustani</MudButton>
+        <MudButton Color="Color.Warning"
+                   Variant="Variant.Filled"
+                   OnClick="Submit"
+                   Disabled="@(_amount is null or <= 0)"
+                   Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;">
+            @ConfirmText
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public string Title { get; set; } = "Unos iznosa";
+    [Parameter] public string ConfirmText { get; set; } = "Potvrdi";
+
+    private decimal? _amount;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_amount));
+    private void Cancel()  => MudDialog.Cancel();
+}

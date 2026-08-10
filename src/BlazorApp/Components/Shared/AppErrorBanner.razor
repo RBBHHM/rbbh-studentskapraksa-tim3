@@ -1,0 +1,18 @@
+@*
+    AppErrorBanner — jedinstveni prikaz greške pri učitavanju liste/stranice,
+    sa opcionim "Pokušaj ponovo" dugmetom. Zamjenjuje dupliranu ".error-banner" markup.
+*@
+<div class="error-banner" role="alert">
+    <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline" Style="font-size:18px; flex-shrink:0;" />
+    @Message
+    @if (OnRetry.HasDelegate)
+    {
+        <MudButton Size="Size.Small" OnClick="OnRetry" Style="margin-left:auto;">@RetryLabel</MudButton>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public string RetryLabel { get; set; } = "Pokušaj ponovo";
+    [Parameter] public EventCallback OnRetry { get; set; }
+}

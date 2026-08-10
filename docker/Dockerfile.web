@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+COPY src/BlazorApp/nuget.config BlazorApp/
+COPY src/BlazorApp/BlazorApp.csproj BlazorApp/
+RUN dotnet restore BlazorApp/BlazorApp.csproj
+COPY src/BlazorApp/ BlazorApp/
+RUN dotnet publish BlazorApp/BlazorApp.csproj -c Release -o /app
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "BlazorApp.dll"]

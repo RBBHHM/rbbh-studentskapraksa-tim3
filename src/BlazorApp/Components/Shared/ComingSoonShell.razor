@@ -1,0 +1,47 @@
+@inject NavigationManager Nav
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center;
+            min-height:60vh; text-align:center; padding:40px;">
+
+    <div style="background:#FFF9D6; color:var(--rbi-off-black); font-size:12px; font-weight:700;
+                padding:4px 16px; border-radius:99px; margin-bottom:24px;
+                display:inline-block; border:1px solid #FFD403;">
+        Planirano — u razvoju
+    </div>
+
+    <div style="width:72px; height:72px; background:#F8F6F2; border-radius:12px;
+                display:flex; align-items:center; justify-content:center;
+                margin-bottom:20px; border:1px solid #F1EDE6;">
+        <MudIcon Icon="@Icon" Style="font-size:36px; color:var(--text-faint);" />
+    </div>
+
+    <div style="font-size:20px; font-weight:700; color:var(--rbi-off-black); margin-bottom:8px;">
+        @Title
+    </div>
+
+    <div style="font-size:14px; color:#9CA3AF; max-width:360px; line-height:1.7; margin-bottom:12px;">
+        @Description
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(PlannedSprint))
+    {
+        <div style="font-size:12px; color:#B0B7C3; margin-bottom:20px;">
+            Planirani sprint: <strong>@PlannedSprint</strong>
+        </div>
+    }
+
+    <MudButton OnClick='@(() => Nav.NavigateTo("/"))'
+               Variant="Variant.Outlined"
+               Style="border-color:#E5DDD2; color:var(--text-secondary); border-radius:8px;
+                      font-weight:600; text-transform:none; height:40px; padding:0 20px;">
+        Početna stranica
+    </MudButton>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title        { get; set; } = "";
+    [Parameter, EditorRequired] public string Description  { get; set; } = "";
+    [Parameter, EditorRequired] public string Icon         { get; set; } = Icons.Material.Outlined.Inventory;
+    /// <summary>Opcija: prikazuje planirani sprint/kvartal ispod opisa (npr. "Sprint 5" ili "Q3 2026").</summary>
+    [Parameter]                 public string? PlannedSprint { get; set; }
+}

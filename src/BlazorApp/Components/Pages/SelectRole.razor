@@ -1,0 +1,464 @@
+@page "/select-role"
+@layout BlazorApp.Components.Layout.PublicLayout
+@rendermode InteractiveServer
+@inject MeService MeService
+@inject RoleContextApiService RoleContextApi
+@inject ActiveRoleState RoleState
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<PageTitle>Odaberite ulogu — Digitalizacija procjene nekretnina</PageTitle>
+
+<style>
+    .select-role-wrapper {
+        min-height: 100vh;
+        background: #F8F6F2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 24px;
+    }
+    .select-role-header {
+        text-align: center;
+        margin-bottom: 40px;
+        max-width: 560px;
+    }
+    .select-role-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+    .role-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        max-width: 900px;
+        width: 100%;
+    }
+    .role-card {
+        background: #fff;
+        border: 1px solid #F1EDE6;
+        border-radius: 16px;
+        padding: 28px 24px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        box-shadow: 0 1px 4px rgba(43,45,51,0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .role-card:hover {
+        border-color: #2B2D33;
+        box-shadow: 0 4px 20px rgba(43,45,51,0.12);
+        transform: translateY(-2px);
+    }
+    .role-card.selected {
+        border-color: #2B2D33;
+        box-shadow: 0 4px 24px rgba(43,45,51,0.14);
+    }
+    .role-icon-wrap {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .role-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .role-features li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #555;
+    }
+    .role-btn {
+        width: 100%;
+        padding: 11px 16px;
+        border: none;
+        border-radius: 9px;
+        background: #FEE600;
+        color: #2B2D33;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-top: auto;
+    }
+    .role-btn:hover { background: #D4BF00; }
+    .role-btn:disabled { background: #F8F6F2; color: #aaa; cursor: not-allowed; }
+</style>
+
+<div class="select-role-wrapper">
+
+    <!-- Brand header -->
+    <div class="select-role-brand">
+        <img src="images/rbbh-logo.png" alt="Raiffeisen" style="height:40px; width:auto; display:block; flex-shrink:0;" />
+        <div>
+            <div style="font-size:15px; font-weight:700; color:var(--rbi-off-black);">Raiffeisen Bank d.d.</div>
+            <div style="font-size:12px; color:var(--text-muted);">Digitalizacija procjene nekretnina</div>
+        </div>
+    </div>
+
+    <!-- Title -->
+    <div class="select-role-header">
+        <div style="width:64px; height:64px; background:#FFF9D6; border-radius:12px;
+                    display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+            <MudIcon Icon="@Icons.Material.Outlined.SwitchAccount" Style="font-size:32px; color:var(--rbi-off-black);" />
+        </div>
+        <h1 style="font-size:24px; font-weight:700; color:var(--rbi-off-black); margin:0 0 10px;">
+            Odaberite ulogu
+        </h1>
+        <p style="font-size:14.5px; color:var(--text-secondary); line-height:1.7; margin:0;">
+            Vaš nalog ima više dodijeljenih uloga.<br />
+            Odaberite ulogu u kojoj želite nastaviti rad u ovoj sesiji.
+        </p>
+    </div>
+
+    <!-- Loading state -->
+    @if (_loading)
+    {
+        <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+            <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Medium" />
+            <div style="font-size:14px; color:var(--text-muted);">Učitavanje uloga...</div>
+        </div>
+    }
+    else if (_roles.Count == 0)
+    {
+        <div style="text-align:center; color:var(--text-muted);">
+            <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline" Style="font-size:48px; margin-bottom:12px;" />
+            <div style="font-size:15px; font-weight:600;">Nema dostupnih uloga</div>
+            <div style="font-size:13px; margin-top:6px;">Obratite se administratoru sistema.</div>
+        </div>
+    }
+    else
+    {
+        <!-- Role cards -->
+        <div class="role-grid">
+            @foreach (var def in _roles)
+            {
+                var roleDef = def; // capture for closure
+                <div class="role-card @(_selected == roleDef.Code ? "selected" : "")"
+                     @onclick="@(() => _selected = roleDef.Code)">
+
+                    <div style="display:flex; align-items:flex-start; gap:14px;">
+                        <div class="role-icon-wrap" style="background:@roleDef.IconBg;">
+                            <MudIcon Icon="@roleDef.Icon" Style="@($"font-size:26px; color:{roleDef.IconColor};")" />
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black); margin-bottom:4px;">
+                                @roleDef.DisplayName
+                            </div>
+                            <div style="font-size:13px; color:#777; line-height:1.5;">
+                                @roleDef.Description
+                            </div>
+                        </div>
+                        @if (_selected == roleDef.Code)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                                     Style="font-size:22px; color:var(--rbi-off-black); flex-shrink:0;" />
+                        }
+                    </div>
+
+                    <ul class="role-features">
+                        @foreach (var feat in roleDef.Features)
+                        {
+                            <li>
+                                <MudIcon Icon="@Icons.Material.Outlined.CheckCircleOutline"
+                                         Style="font-size:15px; color:#67D0AB; flex-shrink:0;" />
+                                @feat
+                            </li>
+                        }
+                    </ul>
+
+                    <button class="role-btn"
+                            disabled="@(_selecting)"
+                            @onclick:stopPropagation="true"
+                            @onclick="@(() => SelectRoleAsync(roleDef.Code))">
+                        @if (_selecting && _selected == roleDef.Code)
+                        {
+                            <span>Učitavanje...</span>
+                        }
+                        else
+                        {
+                            <span>Nastavi kao @roleDef.DisplayName</span>
+                        }
+                    </button>
+                </div>
+            }
+        </div>
+
+        <!-- Footer note -->
+        <div style="margin-top:32px; text-align:center; font-size:12.5px; color:var(--text-muted); max-width:440px;">
+            <MudIcon Icon="@Icons.Material.Outlined.Info"
+                     Style="font-size:14px; vertical-align:middle; margin-right:4px;" />
+            Za promjenu uloge odjavite se i prijavite ponovo sa željenom ulogom.
+        </div>
+    }
+
+</div>
+
+@code {
+    private bool _loading  = true;
+    private bool _selecting;
+    private string? _selected;
+    private List<RoleDefinition> _roles = [];
+
+    private sealed record RoleDefinition(
+        string Code, string DisplayName, string Description,
+        string Icon, string IconBg, string IconColor,
+        IReadOnlyList<string> Features);
+
+    // Statička mapa opisa rola — proširiva za buduće role
+    private static readonly IReadOnlyDictionary<string, RoleDefinition> _roleMap =
+        new Dictionary<string, RoleDefinition>(StringComparer.OrdinalIgnoreCase)
+        {
+            [AppRoles.Administrator] = new(
+                Code:        AppRoles.Administrator,
+                DisplayName: "Administrator",
+                Description: "Upravljanje sistemom, korisnicima, rolama, šifarnicima i audit logom.",
+                Icon:        Icons.Material.Outlined.AdminPanelSettings,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Upravljanje korisnicima i rolama",
+                    "Administracija šifarnika",
+                    "Pregled audit loga",
+                    "Konfiguracija sistema"
+                ]),
+
+            [AppRoles.Verifikator] = new(
+                Code:        AppRoles.Verifikator,
+                DisplayName: "Verifikator",
+                Description: "Pregled, provjera i verifikacija unesenih podataka.",
+                Icon:        Icons.Material.Outlined.FactCheck,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Pregled narudžbi na verifikaciji",
+                    "Prihvatanje i odbijanje unosa",
+                    "Uvid u historiju verifikacija"
+                ]),
+
+            [AppRoles.Unosnik] = new(
+                Code:        AppRoles.Unosnik,
+                DisplayName: "Unosnik podataka",
+                Description: "Kreiranje i unos podataka o nekretninama i narudžbama.",
+                Icon:        Icons.Material.Outlined.EditNote,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Kreiranje novih narudžbi",
+                    "Unos podataka o nekretninama",
+                    "Slanje narudžbi na verifikaciju"
+                ]),
+
+            [AppRoles.AM] = new(
+                Code:        AppRoles.AM,
+                DisplayName: "Account Manager (AM)",
+                Description: "Segment Prodaja — kreiranje narudžbi procjene i praćenje njihovog statusa.",
+                Icon:        Icons.Material.Outlined.Storefront,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Kreiranje i praćenje narudžbi procjene",
+                    "Upload i pregled dokumenata",
+                    "Zahtjev za izradu nalaza vještačenja"
+                ]),
+
+            [AppRoles.SM] = new(
+                Code:        AppRoles.SM,
+                DisplayName: "Sales Manager (SM)",
+                Description: "Segment Prodaja — kreiranje narudžbi procjene i praćenje njihovog statusa.",
+                Icon:        Icons.Material.Outlined.Storefront,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Kreiranje i praćenje narudžbi procjene",
+                    "Upload i pregled dokumenata",
+                    "Zahtjev za izradu nalaza vještačenja"
+                ]),
+
+            [AppRoles.UB] = new(
+                Code:        AppRoles.UB,
+                DisplayName: "Universal Banker (UB)",
+                Description: "Segment Prodaja — kreiranje narudžbi procjene i praćenje njihovog statusa.",
+                Icon:        Icons.Material.Outlined.Storefront,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Kreiranje i praćenje narudžbi procjene",
+                    "Upload i pregled dokumenata",
+                    "Zahtjev za izradu nalaza vještačenja"
+                ]),
+
+            [AppRoles.KolateralAdministrator] = new(
+                Code:        AppRoles.KolateralAdministrator,
+                DisplayName: "Kolateral administrator",
+                Description: "Administracija kolaterala — pregled narudžbi, dokumenata i nalaza procjene.",
+                Icon:        Icons.Material.Outlined.AccountBalance,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Pregled narudžbi i dokumenata",
+                    "Preuzimanje izvještaja procjene",
+                    "Pregled nalaza vještačenja"
+                ]),
+
+            [AppRoles.KolateralOficir] = new(
+                Code:        AppRoles.KolateralOficir,
+                DisplayName: "Kolateral oficir",
+                Description: "Konačno odobravanje narudžbi procjene i unos mišljenja kolateral oficira.",
+                Icon:        Icons.Material.Outlined.VerifiedUser,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Konačno odobravanje narudžbi",
+                    "Unos mišljenja kolateral oficira",
+                    "Preuzimanje izvještaja procjene"
+                ]),
+
+            [AppRoles.Vjestak] = new(
+                Code:        AppRoles.Vjestak,
+                DisplayName: "Vještak",
+                Description: "Vanjski procjenitelj — prima obavijesti o narudžbama procjene.",
+                Icon:        Icons.Material.Outlined.Engineering,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Pregled obavijesti o narudžbama"
+                ]),
+
+            [AppRoles.PravnaSluzba] = new(
+                Code:        AppRoles.PravnaSluzba,
+                DisplayName: "Pravna služba",
+                Description: "Pravna provjera narudžbi procjene i unos pravnog mišljenja.",
+                Icon:        Icons.Material.Outlined.Gavel,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Pregled narudžbi i dokumenata",
+                    "Unos pravnog mišljenja",
+                    "Preuzimanje dokumentacije"
+                ]),
+
+            [AppRoles.Protokol] = new(
+                Code:        AppRoles.Protokol,
+                DisplayName: "Protokol",
+                Description: "Protokol — prima obavijesti o novim narudžbama procjene.",
+                Icon:        Icons.Material.Outlined.MarkunreadMailbox,
+                IconBg:      "#F8F6F2",
+                IconColor:   "#2B2D33",
+                Features:
+                [
+                    "Pregled obavijesti o narudžbama"
+                ]),
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await MeService.GetMeAsync();
+        if (!result.IsSuccess || result.Data is null)
+        {
+            Nav.NavigateTo("/login", replace: true);
+            return;
+        }
+
+        var me = result.Data;
+
+        // Inicijalizuj role state sa podacima iz API-ja
+        RoleState.Initialize(me.Roles);
+
+        // Filtriramo samo role koje aplikacija poznaje i prikazujemo korisniku
+        _roles = me.Roles
+            .Where(r => _roleMap.ContainsKey(r))
+            .Select(r => _roleMap[r])
+            .OrderByDescending(r => GetRolePriority(r.Code))
+            .ToList();
+
+        if (_roles.Count == 0)
+        {
+            Nav.NavigateTo("/access-denied", replace: true);
+            return;
+        }
+
+        // Ako je ostala samo jedna poznata rola, auto-select
+        if (_roles.Count == 1)
+        {
+            await SelectRoleAsync(_roles[0].Code);
+            return;
+        }
+
+        _loading = false;
+    }
+
+    // Redoslijed kartica na ekranu — usklađen sa RolePriorityResolver u Application sloju
+    private static int GetRolePriority(string roleCode) => roleCode switch
+    {
+        "Administrator"           => 100,
+        "Verifikator"              => 50,
+        "KolateralOficir"          => 45,
+        "KolateralAdministrator"   => 40,
+        "PravnaSluzba"             => 35,
+        "AM"                       => 20,
+        "SM"                       => 20,
+        "UB"                       => 20,
+        "Unosnik"                  => 10,
+        "Vjestak"                  => 8,
+        "Protokol"                 => 5,
+        _                          => 0
+    };
+
+    private async Task SelectRoleAsync(string roleCode)
+    {
+        _selected  = roleCode;
+        _selecting = true;
+        StateHasChanged();
+
+        var result = await RoleContextApi.SetActiveRoleAsync(roleCode);
+
+        if (result.IsSuccess && result.Data is not null)
+        {
+            RoleState.SetActiveRole(roleCode);
+
+            // BUG FIX: kod navigacije između stranica koje svaka deklariše svoj
+            // @rendermode InteractiveServer (poseban "interactive root" po stranici),
+            // Blazor Server može dodijeliti NOVI DI scope odredišnoj stranici — scoped
+            // ActiveRoleState instanca se tad gubi (RoleState.ActiveRole opet null na
+            // odredištu), pa dashboard stranica odmah vrati korisnika na /select-role
+            // ("ništa se ne desi" / izgleda kao da je odabir uloge ignorisan).
+            // Zato odabranu rolu nosimo i kroz query string — odredišna stranica je
+            // čita (SupplyParameterFromQuery) i postavlja RoleState prije provjere.
+            var separator = result.Data.DashboardRoute.Contains('?') ? "&" : "?";
+            var target = $"{result.Data.DashboardRoute}{separator}activeRole={Uri.EscapeDataString(roleCode)}";
+            Nav.NavigateTo(target, replace: true);
+        }
+        else
+        {
+            Snackbar.Add(result.ErrorMessage ?? "Greška pri odabiru uloge.", Severity.Error);
+            _selecting = false;
+        }
+    }
+}

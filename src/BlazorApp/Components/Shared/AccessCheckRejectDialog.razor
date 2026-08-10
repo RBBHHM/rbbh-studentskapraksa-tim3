@@ -1,0 +1,77 @@
+@inject Us93ApiService Api93
+
+<MudDialog>
+    <DialogContent>
+        <MudText Style="font-size:14px;color:var(--rbi-off-black);line-height:1.6;margin-bottom:14px;">
+            Odaberite razlog vraćanja kolateral administratoru na ponovni pregled i, ako je potrebno,
+            dodajte dodatno objašnjenje.
+        </MudText>
+
+        <MudSelect T="string?" @bind-Value="_selectedLabel"
+                   Label="Razlog dopune" Placeholder="Odaberite razlog"
+                   Variant="Variant.Outlined" Margin="Margin.Dense"
+                   Disabled="_loadingReasons"
+                   Style="width:100%;margin-bottom:14px;">
+            @foreach (var reason in _reasons)
+            {
+                <MudSelectItem T="string?" Value="@reason.Label">@reason.Label</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudTextField @bind-Value="_comment"
+                      Label="Dodatni komentar (opciono)"
+                      Variant="Variant.Outlined" Margin="Margin.Dense"
+                      Lines="3"
+                      Style="width:100%;" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text" Style="color:#6B7280;">Odustani</MudButton>
+        <MudButton OnClick="Confirm" Variant="Variant.Filled"
+                   Disabled="@(_selectedLabel is null)"
+                   Style="background:#C65C4A;color:#fff;font-weight:700;">
+            Traži dopunu
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    // Razlozi koje specifikacija eksplicitno navodi za CO
+    private static readonly string[] CoReasonCodes =
+    [
+        "ZK_PREVISE_STAR",
+        "KKP_PREVISE_STAR",
+        "NECITLJIV_DOKUMENT",
+        "NEPOTPUNA_DOKUMENTACIJA",
+    ];
+
+    private List<CodebookValueItem> _reasons      = [];
+    private string?                 _selectedLabel;
+    private string?                 _comment;
+    private bool                    _loadingReasons = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api93.GetCorrectionReasonsAsync();
+        if (r.IsSuccess)
+            _reasons = (r.Data ?? [])
+                .Where(x => CoReasonCodes.Contains(x.Code, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
+        _loadingReasons = false;
+    }
+
+    private void Confirm()
+    {
+        if (_selectedLabel is null) return;
+
+        var formatted = string.IsNullOrWhiteSpace(_comment)
+            ? _selectedLabel
+            : $"{_selectedLabel}\n\n{_comment.Trim()}";
+
+        MudDialog.Close(DialogResult.Ok(formatted));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

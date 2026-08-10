@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-student}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-studentskapraksa}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-student}", "-d", "${POSTGRES_DB:-studentskapraksa}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__Default: "Host=db;Database=${POSTGRES_DB:-studentskapraksa};Username=${POSTGRES_USER:-student};Password=${POSTGRES_PASSWORD:-changeme}"
+      WebUrl: "http://localhost:5001"
+      ASPNETCORE_ENVIRONMENT: Production
+      FileStorage__RootPath: /app/storage
+      # SMTP za email notifikacije — popuniti u .env fajlu (gitignored)
+      Smtp__Host:        ${SMTP_HOST:-}
+      Smtp__Port:        ${SMTP_PORT:-587}
+      Smtp__Username:    ${SMTP_USERNAME:-}
+      Smtp__Password:    ${SMTP_PASSWORD:-}
+      Smtp__FromAddress: ${SMTP_FROM_ADDRESS:-}
+      OrderNotifications__CaInboxEmail: ${CA_INBOX_EMAIL:-}
+    ports:
+      - "5000:8080"
+    volumes:
+      # Trajno čuvanje uploadovanih fajlova (PDF procjene, fakture, dokumentacija).
+      # OBAVEZNO: bez ovoga svi fajlovi se gube pri svakom docker compose down / restartu!
+      - api_storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    restart: unless-stopped
+    environment:
+      BackendApiUri: "http://api:8080"
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+    ports:
+      - "5001:8080"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  api_storage:   # Uploadovani dokumenti — perzistentni između restartova

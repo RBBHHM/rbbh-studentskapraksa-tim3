@@ -1,0 +1,22 @@
+@*
+    AppQuickActionCard — jedinstvena kartica "brze akcije" (".qa-card") sa
+    ikonom, naslovom, opisom i strelicom "Otvori". Zamjenjuje dupliranu markup sa
+    Home.razor i DashboardAdmin.razor (svaka po 3+ kartice, identična struktura).
+*@
+<div class="qa-card" @onclick="@(() => OnClick.InvokeAsync())">
+    <div class="qa-icon-wrap" style="background:@IconBg;">
+        <MudIcon Icon="@Icon" Style="@($"color:{IconColor}; font-size:24px;")" />
+    </div>
+    <div class="qa-title">@Title</div>
+    <div class="qa-desc">@Description</div>
+    <div class="qa-arrow">Otvori <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="font-size:15px;" /></div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Description { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = Icons.Material.Outlined.Star;
+    [Parameter] public string IconBg { get; set; } = "#FFF9D6";
+    [Parameter] public string IconColor { get; set; } = "#8A6500";
+    [Parameter] public EventCallback OnClick { get; set; }
+}

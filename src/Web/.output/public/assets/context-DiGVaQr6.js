@@ -1,0 +1,1 @@
+import{F as e,N as t}from"./keycloak-3f02GxH8.js";var n=(0,e(t()).createContext)(),r=class{constructor(){this.usedNamespaces={}}addUsedNamespaces(e){e.forEach(e=>{this.usedNamespaces[e]||(this.usedNamespaces[e]=!0)})}getUsedNamespaces(){return Object.keys(this.usedNamespaces)}};export{r as n,n as t};

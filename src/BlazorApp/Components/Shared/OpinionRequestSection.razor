@@ -1,0 +1,146 @@
+@inject OpinionApiService OpinionApi
+@inject MeService MeSvc
+
+@*
+    OpinionRequestSection — US-94 (kućica Prodaja)
+    Samostalna komponenta za zahtjev i pregled statusa mišljenja CO i Pravne službe.
+    Prima OrderId; ne ovisi o drugim stranicama/komponentama.
+*@
+
+@if (_canView)
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="2" Style="border-radius:12px;">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6" Style="font-weight:700;">
+                Mišljenje CO i Pravne službe
+            </MudText>
+
+            @if (_loading)
+            {
+                <div style="display:flex; justify-content:center; padding:12px;">
+                    <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Small" />
+                </div>
+            }
+            else
+            {
+                <MudAlert Severity="@StatusSeverity" Dense="true">@StatusText</MudAlert>
+
+                @foreach (var opinion in _opinions.Where(o => o.Status == OpinionStatus.Imported))
+                {
+                    <MudPaper Class="pa-3" Outlined="true">
+                        <MudText Typo="Typo.subtitle2" Style="font-weight:700;">
+                            @(opinion.OpinionType == OpinionType.CO ? "Mišljenje CO" : "Mišljenje Pravne službe")
+                        </MudText>
+                        @if (!string.IsNullOrWhiteSpace(opinion.Comment))
+                        {
+                            <MudText Typo="Typo.body2">@opinion.Comment</MudText>
+                        }
+                        @if (opinion.DownloadUrl is not null)
+                        {
+                            <MudLink Href="@opinion.DownloadUrl" Target="_blank">Preuzmi mišljenje</MudLink>
+                        }
+                    </MudPaper>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_error))
+                {
+                    <MudAlert Severity="Severity.Error" Dense="true">@_error</MudAlert>
+                }
+
+                @if (_opinions.Count == 0 && _canRequest)
+                {
+                    <MudButton Variant="Variant.Filled"
+                               Disabled="@_isRequesting"
+                               OnClick="RequestOpinionsAsync"
+                               Style="background-color:#FEE600; color:var(--rbi-off-black); font-weight:700;">
+                        @if (_isRequesting)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Slanje zahtjeva...</span>
+                        }
+                        else
+                        {
+                            <span>Molim mišljenje CO i Pravne službe</span>
+                        }
+                    </MudButton>
+                }
+            }
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    [Parameter, EditorRequired] public int OrderId { get; set; }
+
+    private MeDto? _me;
+    private List<OpinionDto> _opinions = [];
+    private bool _loading = true;
+    private bool _isRequesting;
+    private string? _error;
+
+    private bool _canView    => Has(AppPermissions.OpinionsView);
+    private bool _canRequest => Has(AppPermissions.OpinionsRequest);
+
+    private bool Has(string permission) =>
+        _me?.Permissions.Contains(permission, StringComparer.OrdinalIgnoreCase) == true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var meResult = await MeSvc.GetMeAsync();
+        if (meResult.IsSuccess) _me = meResult.Data;
+
+        if (_canView)
+            await ReloadAsync();
+
+        _loading = false;
+    }
+
+    private async Task ReloadAsync()
+    {
+        _error = null;
+        var result = await OpinionApi.GetOpinionsAsync(OrderId);
+        if (result.IsSuccess)
+            _opinions = result.Data ?? [];
+        else
+            _error = result.ErrorMessage ?? "Greška pri učitavanju mišljenja.";
+    }
+
+    private async Task RequestOpinionsAsync()
+    {
+        _isRequesting = true;
+        _error = null;
+
+        var result = await OpinionApi.RequestOpinionsAsync(OrderId);
+        if (result.IsSuccess)
+            await ReloadAsync();
+        else
+            _error = result.ErrorMessage ?? "Greška pri slanju zahtjeva.";
+
+        _isRequesting = false;
+    }
+
+    private Severity StatusSeverity => _opinions.Count == 0
+        ? Severity.Info
+        : _opinions.All(o => o.Status == OpinionStatus.Imported)
+            ? Severity.Success
+            : Severity.Warning;
+
+    private string StatusText
+    {
+        get
+        {
+            if (_opinions.Count == 0) return "Mišljenje još nije zatraženo.";
+
+            var coGotovo     = _opinions.Any(o => o.OpinionType == OpinionType.CO     && o.Status == OpinionStatus.Imported);
+            var pravnaGotovo = _opinions.Any(o => o.OpinionType == OpinionType.Pravna && o.Status == OpinionStatus.Imported);
+
+            return (coGotovo, pravnaGotovo) switch
+            {
+                (true, true)  => "CO i Pravna služba su dostavili mišljenja.",
+                (true, false) => "Čeka se mišljenje Pravne službe.",
+                (false, true) => "Čeka se mišljenje CO.",
+                _             => "Zahtjev poslan — čeka se mišljenje CO i Pravne službe."
+            };
+        }
+    }
+}

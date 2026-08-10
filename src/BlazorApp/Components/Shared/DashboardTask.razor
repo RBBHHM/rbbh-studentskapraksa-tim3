@@ -1,0 +1,94 @@
+@inject NavigationManager Nav
+
+<div class="page-header">
+    <div class="page-header-left">
+        <div class="page-title">Dobrodošli, @DisplayName</div>
+        <div class="page-subtitle">@Subtitle</div>
+    </div>
+</div>
+
+<div class="section-title" style="margin-bottom:14px;">Vaši zadaci</div>
+<MudGrid Spacing="3" Style="margin-bottom:28px;">
+    <MudItem xs="12" sm="6" md="4">
+        <AppKpiCard Label="Na čekanju" Value="OpenCount"
+                    Icon="@Icons.Material.Outlined.PendingActions"
+                    OnClick="@(() => Nav.NavigateTo("/moji-taskovi"))" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <AppKpiCard Label="U radu" Value="InProgressCount"
+                    Icon="@Icons.Material.Outlined.HourglassTop"
+                    OnClick="@(() => Nav.NavigateTo("/moji-taskovi"))" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <AppKpiCard Label="Ukupno" Value="TotalCount"
+                    Icon="@Icons.Material.Outlined.Assignment"
+                    OnClick="@(() => Nav.NavigateTo("/moji-taskovi"))" />
+    </MudItem>
+</MudGrid>
+
+<div class="section-title" style="margin-bottom:14px;">Brze akcije</div>
+<MudGrid Spacing="3" Style="margin-bottom:28px;">
+    <MudItem xs="12" sm="6" md="4">
+        <AppQuickActionCard Title="Moji zadaci" Description="@ActionDesc"
+                             Icon="@Icons.Material.Outlined.AssignmentTurnedIn" IconBg="#FFF9D6" IconColor="#8A6500"
+                             OnClick="@(() => Nav.NavigateTo("/moji-taskovi"))" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <AppQuickActionCard Title="Pregled narudžbi"
+                             Description="Pregledajte narudžbe vezane za vaše zadatke i pratite njihov status."
+                             Icon="@Icons.Material.Outlined.ListAlt" IconBg="#E8F8F2" IconColor="#225B45"
+                             OnClick="@(() => Nav.NavigateTo("/narudzbe"))" />
+    </MudItem>
+    @if (ShowReports)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <AppQuickActionCard Title="Izvještaji"
+                                 Description="Generišite izvještaje: koncentracija vještaka i vremenske analize narudžbi."
+                                 Icon="@Icons.Material.Outlined.BarChart" IconBg="#F8F6F2" IconColor="#2B2D33"
+                                 OnClick="@(() => Nav.NavigateTo("/izvjestaji"))" />
+        </MudItem>
+    }
+</MudGrid>
+
+<div class="card">
+    <div class="section-title" style="margin-bottom:14px;">Zadaci koji čekaju vašu akciju</div>
+    @if (Loading)
+    {
+        <div style="display:flex;justify-content:center;padding:24px;"><MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Small" /></div>
+    }
+    else if (Tasks.Count == 0)
+    {
+        <AppEmptyState Title="Trenutno nemate zadataka na čekanju." />
+    }
+    else
+    {
+        @foreach (var t in Tasks.OrderByDescending(t => t.Status == "Open").ThenByDescending(t => t.CreatedAt).Take(6))
+        {
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--rbi-warm-grey-50);cursor:pointer;"
+                 @onclick="@(() => Nav.NavigateTo($"/narudzbe/{t.OrderId}"))">
+                <MudIcon Icon="@Icons.Material.Outlined.AssignmentTurnedIn" Style="font-size:17px;color:var(--rbi-off-black);flex-shrink:0;" />
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13.5px;font-weight:600;color:var(--rbi-off-black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        @t.Title <span style="color:var(--text-muted);font-weight:500;">(@t.OrderNumber)</span>
+                    </div>
+                    <div class="metric-label" style="margin-top:1px;">@t.StatusLabel · @t.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                </div>
+                <span class="badge @(t.Status == "Open" ? "badge-warning" : "badge-info")" style="font-size:11px;">@t.StatusLabel</span>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string DisplayName { get; set; } = "";
+    [Parameter] public string Subtitle { get; set; } = "";
+    [Parameter] public string ActionDesc { get; set; } = "";
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public IReadOnlyList<WorkflowTaskDto> Tasks { get; set; } = [];
+    [Parameter] public int OpenCount { get; set; }
+    [Parameter] public int InProgressCount { get; set; }
+    [Parameter] public int TotalCount { get; set; }
+
+    /// <summary>Prikaz kartice "Izvještaji" (samo za CO koji ima permisiju reports.generate).</summary>
+    [Parameter] public bool ShowReports { get; set; }
+}

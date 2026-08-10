@@ -1,0 +1,206 @@
+@page "/reminder-vjestaku"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject OrderService OrderService
+@inject ISnackbar Snackbar
+@inject MeService MeSvc
+@using BlazorApp.Constants
+
+<PageTitle>Reminder vještaku — Procjena nekretnine</PageTitle>
+
+<AppPageHeader Title="Reminder vještaku"
+               Subtitle="@($"Narudžbe kod vještaka duže od {_minDays} radnih dana bez dostavljene procjene.")" />
+
+@if (!_hasAccess)
+{
+    <AppAccessDenied />
+    return;
+}
+
+<div style="max-width:960px; display:flex; flex-direction:column; gap:16px;">
+
+    @* ── Parametri filtera ──────────────────────────────────────────────── *@
+    <div class="card" style="padding:18px 22px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label style="font-size:13px; font-weight:600; color:var(--text-secondary); white-space:nowrap;">
+                    Min. radnih dana:
+                </label>
+                <MudNumericField T="int" @bind-Value="_minDays" Min="1" Max="60"
+                                 Variant="Variant.Outlined" Margin="Margin.Dense"
+                                 Style="width:100px;" />
+            </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="LoadOverdue" Disabled="_loading"
+                       Style="font-weight:700; text-transform:none;">
+                <MudIcon Icon="@Icons.Material.Outlined.FilterList" Style="font-size:15px; margin-right:5px;" />
+                Filtriraj
+            </MudButton>
+            @if (_report is not null)
+            {
+                <span style="font-size:12px; color:var(--text-muted); margin-left:auto;">
+                    Generisano: @_report.GeneratedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                    · Ukupno zakašnjelih: <strong>@_report.TotalOverdue</strong>
+                </span>
+            }
+        </div>
+    </div>
+
+    @* ── Tabela ──────────────────────────────────────────────────────────── *@
+    <div class="card" style="padding:0; overflow:hidden;">
+        @if (_loading)
+        {
+            <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+        }
+        else if (_report is null || _report.Orders.Count == 0)
+        {
+            <div style="padding:32px 24px;">
+                <AppEmptyState Icon="@Icons.Material.Outlined.CheckCircle" IconColor="#225B45"
+                               Title="Nema zakašnjelih procjena">
+                    <div style="font-size:13.5px; color:var(--text-muted);">
+                        Svi vještaci su unutar roka od @_minDays radnih dana.
+                    </div>
+                </AppEmptyState>
+            </div>
+        }
+        else
+        {
+            <div style="padding:14px 18px; border-bottom:1px solid var(--mud-palette-divider);">
+                <span style="font-size:13px; color:var(--text-secondary);">
+                    Narudžbe kod vještaka duže od <strong>@_minDays radnih dana</strong>.
+                    Kliknite "Pošalji" za automatski email vještaku:
+                    <em>"U kojem je statusu izrada procjene za klijenta XY?"</em>
+                </span>
+            </div>
+
+            <div class="app-table-wrap" style="overflow-x:auto;">
+                <MudTable Items="_report.Orders" Hover="true" Dense="true" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Narudžba</MudTh>
+                        <MudTh>Klijent / Grad</MudTh>
+                        <MudTh>Status</MudTh>
+                        <MudTh>Vještak</MudTh>
+                        <MudTh>Kod vještaka od</MudTh>
+                        <MudTh>Radnih dana</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>
+                            <span style="font-weight:600; font-family:monospace; font-size:12.5px;">
+                                @context.OrderNumber
+                            </span>
+                        </MudTd>
+                        <MudTd>
+                            <div style="font-size:13px;">@context.ClientName</div>
+                            @if (!string.IsNullOrEmpty(context.City))
+                            {
+                                <div style="font-size:11px; color:var(--text-muted);">@context.City</div>
+                            }
+                        </MudTd>
+                        <MudTd>
+                            <AppStatusBadge Status="@context.OrderStatus"
+                                            Label="@context.StatusLabel"
+                                            ExtraStyle="font-size:11px;" />
+                        </MudTd>
+                        <MudTd>
+                            @if (!string.IsNullOrEmpty(context.AppraiserName))
+                            {
+                                <div style="font-size:13px;">@context.AppraiserName</div>
+                                @if (!string.IsNullOrEmpty(context.AppraiserEmail))
+                                {
+                                    <div style="font-size:11px; color:var(--text-muted);">@context.AppraiserEmail</div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:var(--text-muted);">—</span>
+                            }
+                        </MudTd>
+                        <MudTd>
+                            @(context.OrderSentToAppraiserAt?.ToLocalTime().ToString("dd.MM.yyyy") ?? "—")
+                        </MudTd>
+                        <MudTd>
+                            <span style="font-weight:700; color:var(--rbi-coral-deep); font-size:14px;">
+                                @context.BusinessDaysOverdue
+                            </span>
+                        </MudTd>
+                        <MudTd>
+                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Warning"
+                                       Disabled="@(_sendingOrderId == context.OrderId)"
+                                       OnClick="@(() => SendReminder(context.OrderId, context.ClientName))"
+                                       Style="font-weight:700; text-transform:none; white-space:nowrap;">
+                                @if (_sendingOrderId == context.OrderId)
+                                {
+                                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-1" />
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@Icons.Material.Outlined.NotificationAdd"
+                                             Style="font-size:14px; margin-right:4px;" />
+                                }
+                                Pošalji
+                            </MudButton>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _hasAccess;
+    private bool _loading;
+    private int  _minDays = 5;
+    private int? _sendingOrderId;
+
+    private AppraiserReminderReportModel? _report;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var me = await MeSvc.GetMeAsync();
+        _hasAccess = me.IsSuccess && me.Data is not null
+            && me.Data.Permissions.Contains(
+                AppPermissions.OrdersRemindAppraiser,
+                StringComparer.OrdinalIgnoreCase);
+
+        if (_hasAccess) await LoadOverdue();
+    }
+
+    private async Task LoadOverdue()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        var r = await OrderService.GetOverdueAppraisalsAsync(
+            minBusinessDays: _minDays, page: 1, pageSize: 100);
+
+        _report  = r.IsSuccess ? r.Data : null;
+        _loading = false;
+
+        if (!r.IsSuccess)
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri učitavanju zakašnjelih narudžbi.", Severity.Error);
+    }
+
+    private async Task SendReminder(int orderId, string clientName)
+    {
+        _sendingOrderId = orderId;
+        StateHasChanged();
+
+        var r = await OrderService.SendAppraisalStatusReminderAsync(orderId);
+        _sendingOrderId = null;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add(
+                r.Data?.NotificationSent == true
+                    ? $"Reminder poslan vještaku za narudžbu klijenta {clientName}."
+                    : $"Reminder evidentiran (vještak nema email adresu).",
+                Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju remindera.", Severity.Error);
+        }
+    }
+}

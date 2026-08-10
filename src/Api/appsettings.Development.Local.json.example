@@ -1,0 +1,14 @@
+{
+  "_comment": "Kopiraj ovaj fajl u appsettings.Development.Local.json i popuni stvarnim vrijednostima. Local.json je gitignored.",
+  "ConnectionStrings": {
+    "Default": "Host=localhost;Port=5432;Database=studentskapraksa;Username=student;Password=tvoja_lozinka"
+  },
+  "KeycloakAdmin": {
+    "ClientSecret": "tvoj_keycloak_client_secret",
+    "AdminUsername": "admin",
+    "AdminPassword": "tvoja_admin_lozinka"
+  },
+  "OrderNotifications": {
+    "CaInboxEmail": "tvoj@email.ba"
+  }
+}

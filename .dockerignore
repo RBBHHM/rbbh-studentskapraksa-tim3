@@ -1,0 +1,30 @@
+# Exclude non-.NET directories from Docker build context
+.git
+.github
+.research
+research-cli
+node_modules
+Makefile
+README.md
+CLAUDE.md
+.env
+.env.example
+*.md
+
+# Exclude build output and NuGet assets (Windows paths break Linux Docker build)
+**/obj/
+**/bin/
+
+# Exclude test projects from production images
+src/Api.Tests/
+
+# Exclude local SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Lokalni appsettings override fajlovi — ne idu u Docker image.
+# Ove datoteke sadrže lokalne kredencijale (localhost DB, local Keycloak) koji
+# bi u Docker kontejneru pregazili ispravne env varijable (Host=db umjesto localhost).
+**/appsettings.Development.Local.json
+src/BlazorApp/appsettings.Development.json

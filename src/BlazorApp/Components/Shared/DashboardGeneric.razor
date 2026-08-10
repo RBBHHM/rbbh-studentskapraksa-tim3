@@ -1,0 +1,51 @@
+@inject ActiveRoleState RoleState
+
+<div class="page-header">
+    <div class="page-header-left">
+        <div class="page-title">Dobrodošli, @DisplayName</div>
+        <div class="page-subtitle">Uloga: <strong>@RoleName</strong></div>
+    </div>
+</div>
+
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="7">
+        <div class="card">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+                <div style="width:52px;height:52px;background:#FFF9D6;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <MudIcon Icon="@Icons.Material.Outlined.AccountCircle" Style="font-size:28px;color:var(--rbi-off-black);" />
+                </div>
+                <div>
+                    <div style="font-size:16px;font-weight:700;color:var(--rbi-off-black);">Vaš nalog je aktivan</div>
+                    <div style="font-size:13px;color:var(--text-secondary);margin-top:2px;">
+                        Trenutna uloga: <strong>@(RoleState.ActiveRole ?? RoleName)</strong>
+                    </div>
+                </div>
+            </div>
+            <div style="background:#FFF9D6;border:1px solid #FFD403;border-radius:8px;padding:16px 18px;">
+                <div style="font-size:13.5px;color:#6B5000;line-height:1.7;">
+                    <MudIcon Icon="@Icons.Material.Outlined.Info" Style="font-size:16px;vertical-align:middle;margin-right:6px;" />
+                    Za pristup dodatnim modulima ili izmjenu ovlaštenja obratite se administratoru sistema.
+                </div>
+            </div>
+        </div>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <div class="card" style="height:100%;">
+            <div class="section-title" style="margin-bottom:14px;">Status sistema</div>
+            @foreach (var svc in Services)
+            {
+                <div class="service-row">
+                    <div class="status-dot @(svc.Status == "Aktivan" ? "dot-ok" : "dot-unknown")"></div>
+                    <span style="flex:1;font-size:14px;color:var(--rbi-off-black);">@svc.Name</span>
+                    <span style="font-size:13px;color:@(svc.Status == "Aktivan" ? "#225B45" : "#aaa");font-weight:600;">@svc.Status</span>
+                </div>
+            }
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public string DisplayName { get; set; } = "";
+    [Parameter] public string RoleName { get; set; } = "—";
+    [Parameter] public IReadOnlyList<(string Name, string Status)> Services { get; set; } = [];
+}

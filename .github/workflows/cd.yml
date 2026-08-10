@@ -1,0 +1,206 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: "Branch/tag/commit SHA za deploy. Prazno = zadnji main (koristi se i za rollback: upiši prethodni SHA)."
+        required: false
+        default: ""
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+# Potrebni GitHub Secrets (Settings → Secrets and variables → Actions → Secrets):
+#   HETZNER_HOST        — IP adresa Hetzner VPS-a (167.233.59.205)
+#   HETZNER_USER        — SSH korisnik (non-root, sudo)
+#   HETZNER_SSH_KEY      — privatni SSH ključ deploy usera
+#   SLACK_WEBHOOK_URL    — (opciono) webhook za notifikaciju o statusu deploya
+#
+# Potrebne GitHub Variables (Settings → Secrets and variables → Actions → Variables):
+#   DEPLOY_PATH          — apsolutna putanja repoa na serveru (npr. /opt/tim3/studentskapraksaTema3)
+#   TEAM_PUBLIC_URL       — javni hostname tima za health-check (npr. tim3.167-233-59-205.nip.io)
+#
+# Vidi docs/devops/deployment.md za detalje i proceduru rollbacka.
+
+jobs:
+  # ─── Build & Push Docker images na GHCR ─────────────────────
+  # Api i Web Dockerfile oba imaju stage "build" iz istog base image-a (dotnet sdk),
+  # oba publish-uju u /app. Kad se grade u istom job-u (čak i sa eksplicitnim
+  # docker-container builderom), BuildKit zna pomiješati cache reference između njih
+  # ("failed to calculate checksum ... /app: not found" — potvrđeno na 3 uzastopna
+  # live run-a). Zato su u potpuno odvojenim job-ovima — odvojeni runner, nema
+  # dijeljenog BuildKit stanja.
+  build-and-push-api:
+    name: Build & Push API image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || github.sha }}
+
+      - name: Resolve deploy SHA
+        id: resolve
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.api
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/studentskapraksa-api:latest
+            ghcr.io/${{ github.repository_owner }}/studentskapraksa-api:${{ steps.resolve.outputs.sha }}
+
+  build-and-push-web:
+    name: Build & Push Web image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || github.sha }}
+
+      - name: Resolve deploy SHA
+        id: resolve
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.web
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/studentskapraksa-web:latest
+            ghcr.io/${{ github.repository_owner }}/studentskapraksa-web:${{ steps.resolve.outputs.sha }}
+
+  # ─── Deploy na Hetzner VPS (tim3 app sloj, shared-infra mreža) ──
+  # Kod se prenosi rsync-om preko SSH-a (radni runner ima autentifikovan checkout,
+  # server NE treba git pristup GitHubu — repo je privatan pa bi git fetch/checkout
+  # direktno na serveru zahtijevao poseban GitHub credential tamo, što izbjegavamo).
+  # Health check je DIO ovog job-a (docker exec curl unutar tim3_api kontejnera) da ne
+  # zavisi od javne domene/nginx-a koje drži vlasnik dijeljenog servera — deploy PADA
+  # ako API poslije diga ne vrati HTTP 200 na /api/health.
+  deploy:
+    name: Deploy na Hetzner (tim3)
+    needs: [build-and-push-api, build-and-push-web]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build-and-push-api.outputs.sha }}
+
+      - name: Rsync source na server
+        env:
+          SSH_KEY: ${{ secrets.HETZNER_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 600 /dev/null "$RUNNER_TEMP/deploy_key"
+          printf '%s\n' "$SSH_KEY" > "$RUNNER_TEMP/deploy_key"
+          rsync -az --delete \
+            --exclude='.git/' --exclude='bin/' --exclude='obj/' --exclude='node_modules/' \
+            --exclude='docker/.env.app' \
+            -e "ssh -i $RUNNER_TEMP/deploy_key -o StrictHostKeyChecking=accept-new" \
+            ./ "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}:${{ vars.DEPLOY_PATH }}/"
+          rm -f "$RUNNER_TEMP/deploy_key"
+
+      - name: Deploy via SSH — docker compose build + health check
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ vars.DEPLOY_PATH }}"
+            docker compose -p praksa-tim3 -f docker/docker-compose.app.yml --env-file docker/.env.app up -d --build
+            docker image prune -f
+            docker compose -p praksa-tim3 -f docker/docker-compose.app.yml --env-file docker/.env.app ps
+
+            echo "Čekam da tim3_api odgovori sa HTTP 200 na /api/health..."
+            # 45x5s = 225s. Cold start (prvi build) radi EF migracije + seed demo podataka +
+            # Keycloak role-sync za sve role — potvrđeno na live testu da 120s nije dovoljno,
+            # app se digao tek sekundu-dvije nakon što je stari timeout istekao.
+            for i in $(seq 1 45); do
+              code="$(docker exec tim3_api curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/api/health || true)"
+              if [ "$code" = "200" ]; then
+                echo "Health check OK — tim3_api /api/health -> 200"
+                exit 0
+              fi
+              echo "Pokušaj $i/45 (HTTP ${code:-n/a}) nije uspio, čekam 5s..."
+              sleep 5
+            done
+            echo "Health check nije prošao nakon 225s — tim3_api /api/health"
+            docker compose -f docker/docker-compose.app.yml --env-file docker/.env.app logs --tail=100 tim3_api
+            exit 1
+
+  # ─── Health check kroz javnu domenu (best-effort) ────────────
+  # Odvojeno od deploy job-a jer zavisi od nginx/DNS rutiranja koje drži vlasnik
+  # dijeljenog servera — ne smije oboriti deploy ako subdomena još nije spojena.
+  # Pokreće se samo ako je TEAM_PUBLIC_URL variable postavljena.
+  health-check:
+    name: Health check (javni URL)
+    needs: deploy
+    if: ${{ vars.TEAM_PUBLIC_URL != '' }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Curl /api/health (retry do 60s)
+        run: |
+          url="https://${{ vars.TEAM_PUBLIC_URL }}/api/health"
+          for i in $(seq 1 12); do
+            code="$(curl -fsS -o /tmp/health.json -w '%{http_code}' "$url" || true)"
+            if [ "$code" = "200" ]; then
+              echo "Health check OK — $url"
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "Pokušaj $i/12 (HTTP ${code:-n/a}) nije uspio, čekam 5s..."
+            sleep 5
+          done
+          echo "Health check nije prošao nakon 60s — $url (provjeri da li vlasnik servera rutira ovu domenu na tim3_web/tim3_api)"
+          exit 1
+
+  # ─── Notifikacija o statusu deploya (opciono) ────────────────
+  notify:
+    name: Notify
+    needs: [build-and-push-api, build-and-push-web, deploy, health-check]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack notifikacija
+        if: ${{ vars.SLACK_NOTIFICATIONS_ENABLED == 'true' }}
+        run: |
+          status="${{ needs.deploy.result }}"
+          public_check="${{ needs.health-check.result }}"
+          curl -fsS -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"Deploy tim3 (${{ needs.build-and-push-api.outputs.sha }}): ${status} (javni health-check: ${public_check})\"}" \
+            "${{ secrets.SLACK_WEBHOOK_URL }}"

@@ -1,0 +1,33 @@
+@*
+    AppStatusBadge — jedinstveni prikaz statusa narudžbe procjene.
+
+    Zamjenjuje dupliranu "<span class='badge' style='...'>" markup koja je
+    ranije bila ručno pisana na OrderDetail.razor, MyOrders.razor, Protokol.razor
+    i MyTasks.razor — svaka sa svojom (i ponegdje neusklađenom) bojom za isti status.
+
+    Boja/label se uvijek izvode iz OrderStatusDisplay (jedino mjesto istine).
+*@
+<span class="badge" role="status" style="background:@Background; color:@Color; border:1px solid @Border;@ExtraStyle">
+    @(Label ?? OrderStatusDisplay.Label(Status))
+</span>
+
+@code {
+    /// <summary>Status narudžbe (string vrijednost AppraisalOrderStatus enuma).</summary>
+    [Parameter] public string? Status { get; set; }
+
+    /// <summary>Opcioni override prikaznog teksta — default je <c>OrderStatusDisplay.Label(Status)</c>.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>
+    /// Opcioni override boje (npr. za "pojednostavljeni" status prikaz —
+    /// <c>OrderStatusDisplay.SimpleColor</c>) — default je <c>OrderStatusDisplay.Color(Status)</c>.
+    /// </summary>
+    [Parameter] public string? ColorOverride { get; set; }
+
+    /// <summary>Dodatni inline stil (npr. "margin-top:4px;font-size:11px;") — opciono.</summary>
+    [Parameter] public string? ExtraStyle { get; set; }
+
+    private string Color      => ColorOverride ?? OrderStatusDisplay.Color(Status);
+    private string Background => Color + "22";
+    private string Border     => Color + "44";
+}

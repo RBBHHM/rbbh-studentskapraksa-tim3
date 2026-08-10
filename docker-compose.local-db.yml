@@ -1,0 +1,40 @@
+name: rbi-tema3-local
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: rbi-tema3-postgres
+    environment:
+      POSTGRES_DB: rbi_tema3_local
+      POSTGRES_USER: rbi_tema3
+      POSTGRES_PASSWORD: rbi_tema3_local_dev
+    ports:
+      - "5543:5432"
+    volumes:
+      - tema3_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rbi_tema3 -d rbi_tema3_local"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: rbi-tema3-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: local_admin_dev
+    ports:
+      - "8183:8080"
+    volumes:
+      - tema3_keycloak_data:/opt/keycloak/data
+      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+      - ./docker/keycloak/themes:/opt/keycloak/themes:ro
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '(echo >/dev/tcp/localhost/8080) 2>/dev/null || exit 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+volumes:
+  tema3_postgres_data:
+  tema3_keycloak_data:

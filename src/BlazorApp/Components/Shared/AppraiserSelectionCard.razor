@@ -1,0 +1,350 @@
+@inject AppraiserApiService AppraiserApi
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@* ── Kućica Kolateral administrator — odabir vještaka (Faza C/D) ─────────── *@
+@if (CanSelectAppraiser || HasAppraiser)
+{
+    <div class="card" style="padding:0;overflow:hidden;">
+
+        @* Zaglavlje kućice *@
+        <div style="background:#1F4E3D;padding:13px 18px;display:flex;align-items:center;gap:10px;">
+            <MudIcon Icon="@Icons.Material.Outlined.Engineering"
+                     Style="font-size:17px;color:#C7E8D6;" />
+            <span style="font-size:12px;font-weight:700;text-transform:uppercase;
+                         letter-spacing:.7px;color:#C7E8D6;">
+                Odabir vještaka
+            </span>
+        </div>
+
+        <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+
+            @* ─ Vještak već odabran ───────────────────────────────────────── *@
+            @if (HasAppraiser)
+            {
+                <div style="display:flex;align-items:flex-start;gap:12px;
+                            padding:10px 14px;background:#EAF7F0;border-radius:8px;
+                            border:1px solid #9ED9BD;">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                             Style="font-size:20px;color:#1F4E3D;margin-top:1px;flex-shrink:0;" />
+                    <div>
+                        <div style="font-size:13.5px;font-weight:700;color:#1F4E3D;">
+                            Vještak odabran: @Order.AppraiserName
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Order.AppraiserCity))
+                        {
+                            <div style="font-size:12px;color:#3A6B57;margin-top:1px;">
+                                Grad: @Order.AppraiserCity
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @* ─ FL — automatski odabir ───────────────────────────────────── *@
+            @if (CanSelectAppraiser && IsFl && !_noAppraiserAvailable)
+            {
+                <div style="display:flex;align-items:center;justify-content:space-between;
+                            padding:10px 14px;border:1.5px dashed #9ED9BD;border-radius:8px;gap:12px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <MudIcon Icon="@Icons.Material.Outlined.RadioButtonUnchecked"
+                                 Style="font-size:20px;color:var(--text-muted);flex-shrink:0;" />
+                        <div>
+                            <div style="font-size:13.5px;font-weight:600;color:var(--rbi-off-black);">
+                                Automatski odabir vještaka (FL)
+                            </div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">
+                                Sistem bira vještaka prema gradu, opterećenju i dostupnosti
+                            </div>
+                        </div>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Size="Size.Small"
+                               Disabled="_acting"
+                               OnClick="AutoSelectAsync"
+                               Style="background:#1F4E3D;color:#C7E8D6;font-weight:700;
+                                      text-transform:none;white-space:nowrap;">
+                        Pokreni automatski izbor vještaka
+                    </MudButton>
+                </div>
+            }
+
+            @* ─ Nema dostupnog vještaka (FL fallback) ─────────────────────── *@
+            @if (_noAppraiserAvailable)
+            {
+                <div style="display:flex;align-items:flex-start;gap:12px;
+                            padding:10px 14px;background:#FFF4E5;border-radius:8px;
+                            border:1px solid #FFD08A;">
+                    <MudIcon Icon="@Icons.Material.Outlined.WarningAmber"
+                             Style="font-size:20px;color:#8A5A00;margin-top:1px;flex-shrink:0;" />
+                    <div style="font-size:13px;color:#8A5A00;">
+                        Nema dostupnog vještaka koji ispunjava uslove (grad, opterećenje, GO/blacklist).
+                        Odaberite vještaka ručno sa liste ispod.
+                    </div>
+                </div>
+            }
+
+            @* ─ PL ručni odabir / FL fallback — lista kandidata ──────────── *@
+            @if ((CanSelectAppraiser && !IsFl) || _noAppraiserAvailable)
+            {
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div style="font-size:13px;font-weight:600;color:var(--rbi-off-black);">
+                        Ručni odabir vještaka
+                    </div>
+
+                    @if (_loadingCandidates)
+                    {
+                        <div style="display:flex;justify-content:center;padding:10px;">
+                            <MudProgressCircular Indeterminate="true" Color="Color.Default" Size="Size.Small" />
+                        </div>
+                    }
+                    else if (_candidates.Count == 0)
+                    {
+                        <div style="font-size:12.5px;color:var(--text-muted);">
+                            Nema dostupnih vještaka koji ispunjavaju uslove. Provjerite šifarnik "Vještaci".
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var c in _candidates)
+                        {
+                            <div style="display:flex;align-items:center;justify-content:space-between;
+                                        padding:8px 12px;border:1px solid #E5E1DB;border-radius:8px;
+                                        gap:10px;flex-wrap:wrap;">
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:var(--rbi-off-black);">
+                                        @c.Name
+                                    </div>
+                                    <div style="font-size:11.5px;color:var(--text-muted);margin-top:1px;">
+                                        @(c.City ?? "—") · @c.LegalFormLabel · aktivnih procjena: @c.ActiveAssignmentCount
+                                        @if (c.IsOnLeave) { <span> · GO</span> }
+                                    </div>
+                                </div>
+                                <MudButton Variant="Variant.Outlined"
+                                           Size="Size.Small"
+                                           Disabled="_acting"
+                                           OnClick="@(() => ManualSelectAsync(c.Id))"
+                                           Style="text-transform:none;border-color:#1F4E3D;color:#1F4E3D;font-weight:600;white-space:nowrap;">
+                                    Odaberi
+                                </MudButton>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+
+            @if (!CanSelectAppraiser && !HasAppraiser)
+            {
+                <div style="text-align:center;padding:16px 8px;color:var(--text-muted);font-size:13px;">
+                    Odabir vještaka nije dostupan za trenutni status narudžbe.
+                </div>
+            }
+
+            @* ─ Slanje narudžbe vještaku (Faza D) ─────────────────────────── *@
+            @if (HasAppraiser && CanSendToAppraiser)
+            {
+                <div style="display:flex;align-items:center;justify-content:space-between;
+                            padding:10px 14px;border:1.5px dashed #9ED9BD;border-radius:8px;gap:12px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <MudIcon Icon="@Icons.Material.Outlined.Send"
+                                 Style="font-size:20px;color:var(--text-muted);flex-shrink:0;" />
+                        <div>
+                            <div style="font-size:13.5px;font-weight:600;color:var(--rbi-off-black);">
+                                Slanje narudžbe vještaku
+                            </div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">
+                                Vještak će biti obaviješten o narudžbi (e-mail) i dobiti pristup dokumentaciji.
+                            </div>
+                        </div>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Size="Size.Small"
+                               Disabled="_acting"
+                               OnClick="SendToAppraiserAsync"
+                               Style="background:#1F4E3D;color:#C7E8D6;font-weight:700;
+                                      text-transform:none;white-space:nowrap;">
+                        Pošalji narudžbu
+                    </MudButton>
+                </div>
+            }
+
+            @* ─ Paket dokumenata za vještaka (nakon slanja) ───────────────── *@
+            @if (Order.StatusCode >= 100 && HasAppraiser)
+            {
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                        <div style="font-size:13px;font-weight:600;color:var(--rbi-off-black);">
+                            Dokumenti za vještaka
+                        </div>
+                        <MudButton Variant="Variant.Text"
+                                   Size="Size.Small"
+                                   Disabled="_loadingPackage"
+                                   OnClick="LoadPackageAsync"
+                                   Style="text-transform:none;color:#1F4E3D;font-weight:600;">
+                            @(_package is null ? "Prikaži" : "Ažuriraj")
+                        </MudButton>
+                    </div>
+
+                    @if (_loadingPackage)
+                    {
+                        <div style="display:flex;justify-content:center;padding:10px;">
+                            <MudProgressCircular Indeterminate="true" Color="Color.Default" Size="Size.Small" />
+                        </div>
+                    }
+                    else if (_package is not null)
+                    {
+                        @if (_package.Documents.Count == 0)
+                        {
+                            <div style="font-size:12.5px;color:var(--text-muted);">
+                                Narudžba nema priloženih dokumenata.
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var doc in _package.Documents)
+                            {
+                                <MudLink Href="@doc.DownloadUrl" Target="_blank" Style="font-size:12.5px;">
+                                    @doc.DisplayName
+                                </MudLink>
+                            }
+                        }
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public AppraisalOrderDetailDto Order { get; set; } = default!;
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private bool _acting;
+    private bool _noAppraiserAvailable;
+    private bool _loadingCandidates;
+    private List<AppraiserDto> _candidates = [];
+
+    private bool _loadingPackage;
+    private AppraiserPackageDto? _package;
+
+    private bool CanSelectAppraiser => Order.Capabilities.CanSelectAppraiser;
+    private bool CanSendToAppraiser => Order.Capabilities.CanSendToAppraiser;
+    private bool HasAppraiser => Order.AppraiserId is not null;
+    private bool IsFl => Order.ClientType == "FL";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CanSelectAppraiser && !IsFl)
+        {
+            await LoadCandidatesAsync();
+        }
+    }
+
+    private async Task LoadCandidatesAsync()
+    {
+        _loadingCandidates = true;
+
+        var r = await AppraiserApi.GetCandidatesAsync(Order.Id);
+        _loadingCandidates = false;
+
+        if (r.IsSuccess)
+        {
+            _candidates = r.Data ?? [];
+        }
+        else
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri dohvatu liste vještaka.", Severity.Error);
+        }
+    }
+
+    private async Task AutoSelectAsync()
+    {
+        _acting = true;
+        _noAppraiserAvailable = false;
+
+        var r = await AppraiserApi.AutoSelectAsync(Order.Id);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add($"Automatski odabran vještak: {r.Data!.AppraiserName}.", Severity.Success);
+            await OnRefresh.InvokeAsync();
+        }
+        else
+        {
+            // Bilo koji neuspjeh automatskog izbora (nema kandidata, odabrani ne
+            // procjenjuje ovaj tip klijenta, itd.) — odmah ponudi ručni odabir umjesto
+            // da korisnik mora osvježavati stranicu da bi se lista pojavila.
+            _noAppraiserAvailable = true;
+            Snackbar.Add(
+                r.ErrorMessage ?? "Automatski odabir nije uspio — odaberite vještaka ručno.",
+                Severity.Warning);
+            await LoadCandidatesAsync();
+        }
+    }
+
+    private async Task ManualSelectAsync(int appraiserId)
+    {
+        _acting = true;
+        var r = await AppraiserApi.ManualSelectAsync(Order.Id, appraiserId);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add($"Odabran vještak: {r.Data!.AppraiserName}.", Severity.Success);
+            await OnRefresh.InvokeAsync();
+        }
+        else
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri odabiru vještaka.", Severity.Error);
+        }
+    }
+
+    private async Task SendToAppraiserAsync()
+    {
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>(
+            "Slanje narudžbe vještaku",
+            new DialogParameters
+            {
+                ["ContentText"] = $"Narudžba {Order.OrderNumber} će biti poslana vještaku " +
+                                  $"<strong>{Order.AppraiserName}</strong>. Vještak će biti obaviješten " +
+                                  "i dobiti pristup dokumentaciji narudžbe. Nastaviti?",
+                ["ConfirmText"] = "Pošalji narudžbu"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await AppraiserApi.SendToAppraiserAsync(Order.Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                var emailInfo = string.IsNullOrWhiteSpace(r.Data!.AppraiserEmail) ? "" : $" ({r.Data.AppraiserEmail})";
+                Snackbar.Add($"Narudžba poslana vještaku: {r.Data.AppraiserName}{emailInfo}.", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju narudžbe vještaku.", Severity.Error);
+            }
+        }
+    }
+
+    private async Task LoadPackageAsync()
+    {
+        _loadingPackage = true;
+        var r = await AppraiserApi.GetAppraiserPackageAsync(Order.Id);
+        _loadingPackage = false;
+
+        if (r.IsSuccess)
+        {
+            _package = r.Data;
+        }
+        else
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri dohvatu dokumenata za vještaka.", Severity.Error);
+        }
+    }
+}

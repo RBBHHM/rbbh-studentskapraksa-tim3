@@ -1,0 +1,111 @@
+@page "/dashboard/unosnik"
+@rendermode InteractiveServer
+@inject MeService MeService
+@inject RoleContextApiService RoleContextApi
+@inject ActiveRoleState RoleState
+@inject NavigationManager Nav
+
+<PageTitle>Unosnik — Digitalizacija procjene nekretnina</PageTitle>
+
+@if (_loading)
+{
+    <div class="loading-state">
+        <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Medium" />
+    </div>
+}
+else
+{
+    <div class="page-header">
+        <div class="page-header-left">
+            <div class="page-title">Dobrodošli, @(_me?.DisplayName ?? _me?.Username)</div>
+            <div class="page-subtitle">
+                Aktivna uloga: <strong>Unosnik podataka</strong> — kreiranje i unos podataka.
+            </div>
+        </div>
+    </div>
+
+    <MudGrid Spacing="3" Style="margin-bottom:28px;">
+        <MudItem xs="12" md="8">
+            <div class="card">
+                <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+                    <div style="width:52px; height:52px; background:#FFF9D6; border-radius:12px;
+                                display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <MudIcon Icon="@Icons.Material.Outlined.EditNote" Style="font-size:28px; color:var(--rbi-off-black);" />
+                    </div>
+                    <div>
+                        <div style="font-size:16px; font-weight:700; color:var(--rbi-off-black);">Moje narudžbe</div>
+                        <div style="font-size:13px; color:#777; margin-top:2px;">
+                            Kreirajte i upravljajte narudžbama procjene nekretnina
+                        </div>
+                    </div>
+                </div>
+
+                <MudAlert Severity="Severity.Info" Dense="true" Style="font-size:13px;">
+                    Modul za upravljanje narudžbama bit će dostupan u narednom sprintu.
+                </MudAlert>
+
+                <div style="margin-top:16px; display:flex; gap:10px;">
+                    <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               Disabled="true">
+                        Nova narudžba
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Outlined.List"
+                               Disabled="true"
+                               Style="border-color:#E5DDD2;">
+                        Moje narudžbe
+                    </MudButton>
+                </div>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <div class="card" style="height:100%;">
+                <div style="font-size:15px; font-weight:700; color:var(--rbi-off-black); margin-bottom:14px;">
+                    Moje ovlasti
+                </div>
+                @foreach (var p in new[] {
+                    ("Kreiranje novih narudžbi", true),
+                    ("Pregled vlastitih narudžbi", true),
+                    ("Uređivanje nacrta narudžbi", true),
+                    ("Slanje na verifikaciju", true),
+                    ("Verifikacija narudžbi", false),
+                })
+                {
+                    <div style="display:flex; align-items:center; gap:10px; padding:6px 0;
+                                border-bottom:1px solid var(--rbi-warm-grey-50); font-size:13px;">
+                        <MudIcon Icon="@(p.Item2 ? Icons.Material.Outlined.CheckCircle : Icons.Material.Outlined.Cancel)"
+                                 Style="@($"font-size:16px; color:{(p.Item2 ? "#67D0AB" : "#ddd")}; flex-shrink:0;")" />
+                        <span style="color:@(p.Item2 ? "#2B2D33" : "#bbb");">@p.Item1</span>
+                    </div>
+                }
+            </div>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private bool _loading = true;
+    private BlazorApp.Models.MeDto? _me;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await MeService.GetMeAsync();
+        if (!result.IsSuccess || result.Data is null)
+        { Nav.NavigateTo("/login", replace: true); return; }
+
+        _me = result.Data;
+
+        if (!_me.Roles.Contains(AppRoles.Unosnik, StringComparer.OrdinalIgnoreCase))
+        { Nav.NavigateTo("/access-denied", replace: true); return; }
+
+        if (string.IsNullOrEmpty(RoleState.ActiveRole))
+        {
+            RoleState.Initialize(_me.Roles, AppRoles.Unosnik);
+            await RoleContextApi.SetActiveRoleAsync(AppRoles.Unosnik);
+        }
+
+        _loading = false;
+    }
+}

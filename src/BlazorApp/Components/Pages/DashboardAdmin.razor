@@ -1,0 +1,271 @@
+@page "/dashboard/admin"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject MeService MeService
+@inject UserRoleService UserRoleService
+@inject AccessManagementService AccessSvc
+@inject RoleContextApiService RoleContextApi
+@inject ActiveRoleState RoleState
+@inject NavigationManager Nav
+
+<PageTitle>Administrator — Digitalizacija procjene nekretnina</PageTitle>
+
+@if (_loading)
+{
+    <AppLoadingState />
+}
+else
+{
+    <!-- Breadcrumb -->
+    <AppBreadcrumb Items="@(new List<AppBreadcrumb.BreadcrumbItem> { new("Početna", "/"), new("Administrator", "") })" />
+
+    <!-- Page header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <div class="page-title">Dobrodošli, @(_me?.DisplayName ?? _me?.Username)</div>
+            <div class="page-subtitle">
+                Aktivna uloga: <strong>Administrator</strong> &nbsp;·&nbsp;
+                @DateTime.Now.ToString("dddd, dd.MM.yyyy", new System.Globalization.CultureInfo("bs"))
+            </div>
+        </div>
+    </div>
+
+    <!-- ── KPI kartice ────────────────────────────────────────────────── -->
+    <MudGrid Spacing="3" Style="margin-bottom:28px;">
+        <MudItem xs="12" sm="6" md="3">
+            <AppKpiCard Label="Korisnici" Value="_totalUsers"
+                        ValueText="@(_statsLoading ? "·" : _totalUsers.ToString())"
+                        Icon="@Icons.Material.Outlined.PeopleAlt" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <AppKpiCard Label="Role" Value="_totalRoles"
+                        ValueText="@(_statsLoading ? "·" : _totalRoles.ToString())"
+                        Icon="@Icons.Material.Outlined.AdminPanelSettings" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <AppKpiCard Label="Šifarnici" Value="_totalCodebooks"
+                        ValueText="@(_statsLoading ? "·" : _totalCodebooks.ToString())"
+                        Icon="@Icons.Material.Outlined.LibraryBooks" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <AppKpiCard Label="Audit danas" Value="_auditToday"
+                        ValueText="@(_statsLoading ? "·" : _auditToday.ToString())"
+                        Icon="@Icons.Material.Outlined.History" />
+        </MudItem>
+    </MudGrid>
+
+    <!-- ── Brze akcije ────────────────────────────────────────────────── -->
+    <MudGrid Spacing="3" Style="margin-bottom:28px;">
+        <MudItem xs="12" sm="6" md="4">
+            <AppQuickActionCard Title="Upravljanje korisničkim rolama"
+                                 Description="Dodijelite i uklonite role korisnicima."
+                                 Icon="@Icons.Material.Outlined.ManageAccounts" IconBg="#FFF9D6" IconColor="#8A6500"
+                                 OnClick="@(() => Nav.NavigateTo("/admin/upravljanje-rolama"))" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <AppQuickActionCard Title="Upravljanje šifarnicima"
+                                 Description="Administrirajte referentne podatke sistema."
+                                 Icon="@Icons.Material.Outlined.LibraryBooks" IconBg="#E8F8F2" IconColor="#225B45"
+                                 OnClick="@(() => Nav.NavigateTo("/admin/sifarnici"))" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <AppQuickActionCard Title="Administracija pristupa"
+                                 Description="Role, permissioni i audit log sistema."
+                                 Icon="@Icons.Material.Outlined.AdminPanelSettings" IconBg="#E8E4F8" IconColor="var(--rbi-off-black)"
+                                 OnClick="@(() => Nav.NavigateTo("/admin/pristup"))" />
+        </MudItem>
+    </MudGrid>
+
+    <!-- ── Status sistema + Dostupne funkcionalnosti ─────────────────── -->
+    <MudGrid Spacing="3">
+        <MudItem xs="12" md="6">
+            <div class="card" style="height:100%;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                    <div class="section-title" style="margin:0;">Status sistema</div>
+                    <span style="display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-muted);">
+                        <span class="status-dot @(_checking ? "dot-unknown" : "dot-ok")" style="width:7px;height:7px;"></span>
+                        @(_checking ? "Provjera..." : "Auto-osvježavanje")
+                    </span>
+                </div>
+                @foreach (var s in _services)
+                {
+                    <div class="service-row">
+                        <div class="status-dot @(s.Ok ? "dot-ok" : s.Checked ? "dot-error" : "dot-unknown")"></div>
+                        <span style="flex:1; font-size:14px; color:var(--rbi-off-black);">@s.Name</span>
+                        <span style="font-size:13px; font-weight:600; color:@(s.Ok ? "#225B45" : s.Checked ? "#C65C4A" : "#aaa");">
+                            @(s.Checked ? (s.Ok ? "Aktivan" : "Greška") : "Provjera...")
+                        </span>
+                    </div>
+                }
+                <div style="font-size:11px; color:var(--text-faint); margin-top:12px;">
+                    Posljednja provjera: @_lastCheck.ToLocalTime().ToString("HH:mm:ss")
+                </div>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <div class="card" style="height:100%;">
+                <div class="section-title" style="margin-bottom:16px;">Dostupne funkcionalnosti</div>
+                @foreach (var f in _features)
+                {
+                    <div style="display:flex; align-items:center; gap:10px; padding:7px 0;
+                                border-bottom:1px solid var(--rbi-warm-grey-50); font-size:13.5px; color:#555;">
+                        <MudIcon Icon="@f.Icon" Style="font-size:17px; color:var(--rbi-off-black); flex-shrink:0;" />
+                        @f.Label
+                    </div>
+                }
+            </div>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private bool _loading = true;
+    private bool _checking;
+    private bool _statsLoading = true;
+    private BlazorApp.Models.MeDto? _me;
+
+    // KPI stats
+    private int _totalUsers;
+    private int _activeUsers;
+    private int _totalRoles;
+    private int _totalCodebooks;
+    private int _auditToday;
+
+    private record ServiceItem(string Name, bool Checked = false, bool Ok = false);
+    private List<ServiceItem> _services =
+    [
+        new("Backend API"),
+        new("Keycloak Auth"),
+        new("Baza podataka"),
+    ];
+
+    private static readonly (string Label, string Icon)[] _features =
+    [
+        ("Narudžbe procjene — FL i PL workflow",        Icons.Material.Outlined.Assignment),
+        ("Zadaci i radni tok (CA, CO, vještak)",        Icons.Material.Outlined.AccountTree),
+        ("Upravljanje vještacima i dodjelama",          Icons.Material.Outlined.Engineering),
+        ("In-app notifikacije i protokol narudžbi",     Icons.Material.Outlined.Notifications),
+        ("Upravljanje rolama i permissionima",          Icons.Material.Outlined.ManageAccounts),
+        ("Upravljanje šifarnicima i vrijednostima",     Icons.Material.Outlined.LibraryBooks),
+        ("Centralni audit log sa filterima i CSV",      Icons.Material.Outlined.History),
+    ];
+
+    private DateTime _lastCheck = DateTime.UtcNow;
+    private CancellationTokenSource? _statusCts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await MeService.GetMeAsync();
+        if (!result.IsSuccess || result.Data is null)
+        {
+            Nav.NavigateTo("/login", replace: true);
+            return;
+        }
+
+        _me = result.Data;
+
+        if (!_me.Roles.Contains(AppRoles.Administrator, StringComparer.OrdinalIgnoreCase))
+        {
+            Nav.NavigateTo("/access-denied", replace: true);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(RoleState.ActiveRole))
+        {
+            RoleState.Initialize(_me.Roles, AppRoles.Administrator);
+            await RoleContextApi.SetActiveRoleAsync(AppRoles.Administrator);
+        }
+
+        _loading = false;
+
+        // Učitaj statistike u pozadini da ne usporava render
+        _ = LoadStatsAsync();
+
+        // Status sistema — odmah provjeri (bez klika) + periodično auto-osvježavanje
+        await CheckStatusAsync();
+        _statusCts = new CancellationTokenSource();
+        _ = AutoRefreshStatusAsync(_statusCts.Token);
+    }
+
+    private async Task AutoRefreshStatusAsync(CancellationToken ct)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(20));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                await CheckStatusAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException) { /* stranica zatvorena */ }
+    }
+
+    public void Dispose()
+    {
+        _statusCts?.Cancel();
+        _statusCts?.Dispose();
+    }
+
+    private async Task LoadStatsAsync()
+    {
+        _statsLoading = true;
+        StateHasChanged();
+        try
+        {
+            var today = DateTime.Today;
+
+            // Paralelni pozivi prema API-ju — Keycloak za korisnike, DB za ostalo
+            var tUsers     = UserRoleService.GetUsersAsync(pageSize: 1);
+            var tActive    = UserRoleService.GetUsersAsync(isActive: true, pageSize: 1);
+            var tRoles     = AccessSvc.GetRolesAsync(pageSize: 1);
+            var tAudit     = AccessSvc.GetAuditAsync(from: today, pageSize: 1);
+            var tCodebooks = AccessSvc.GetCodebooksCountAsync();
+
+            await Task.WhenAll(tUsers, tActive, tRoles, tAudit, tCodebooks);
+
+            // Korisnici dolaze iz Keycloak Admin API-ja (stvarno stanje)
+            if (tUsers.Result.IsSuccess)   _totalUsers    = tUsers.Result.Data?.TotalCount    ?? 0;
+            if (tActive.Result.IsSuccess)  _activeUsers   = tActive.Result.Data?.TotalCount   ?? 0;
+            // Role i šifarnici dolaze iz lokalne baze
+            if (tRoles.Result.IsSuccess)   _totalRoles    = tRoles.Result.Data?.TotalCount    ?? 0;
+            _totalCodebooks = tCodebooks.Result;
+            // Audit događaji iz lokalne baze
+            if (tAudit.Result.IsSuccess)   _auditToday    = tAudit.Result.Data?.TotalCount    ?? 0;
+        }
+        finally
+        {
+            _statsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task CheckStatusAsync()
+    {
+        _checking = true;
+        try
+        {
+            var r = await MeService.GetMeAsync();
+            var ok = r.StatusCode is null or 200 or 401 or 403;
+            _services =
+            [
+                new("Backend API",   Checked: true, Ok: ok),
+                new("Keycloak Auth", Checked: true, Ok: ok),
+                new("Baza podataka", Checked: true, Ok: ok),
+            ];
+        }
+        catch
+        {
+            _services = _services.Select(s => new ServiceItem(s.Name, Checked: true, Ok: false)).ToList();
+        }
+        finally
+        {
+            _lastCheck = DateTime.UtcNow;
+            _checking  = false;
+        }
+    }
+}

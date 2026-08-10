@@ -1,0 +1,1338 @@
+@page "/narudzbe/{Id:int}"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject OrderService OrderService
+@inject AccessManagementService AccessSvc
+@inject MeService MeSvc
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+@inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthState
+@inject IJSRuntime JS
+@inject AppraiserApiService AppraiserApi
+@inject DocumentApiService DocumentApi
+@inject HttpClient Http
+
+@inject Us93ApiService Us93Api
+@using BlazorApp.Constants
+
+<PageTitle>Narudžba — Procjena nekretnine</PageTitle>
+
+@if (_loading)
+{
+    <AppLoadingState />
+}
+else if (_error is not null)
+{
+    <AppErrorBanner Message="@_error" OnRetry="LoadOrder" />
+}
+else if (_order is not null)
+{
+    @* ── Breadcrumb ───────────────────────────────────────────────────────── *@
+    <AppBreadcrumb Items="@(new List<AppBreadcrumb.BreadcrumbItem> { new("Početna", "/"), new("Narudžbe", "/narudzbe"), new(_order?.OrderNumber ?? "Detalji", "") })" />
+
+    @* ── Page header ──────────────────────────────────────────────────────── *@
+    <div class="page-header" style="margin-bottom:24px;">
+        <div class="page-header-left">
+            <div class="page-title" title="@_order!.Title"
+                 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:600px;">
+                @_order!.Title
+            </div>
+        </div>
+        <div class="page-header-actions">
+            <AppStatusBadge Status="@_order.Status" Label="@_order.StatusLabel" ExtraStyle="font-size:13px;" />
+            @if (_hasProcjenaAccess)
+            {
+                <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                           StartIcon="@Icons.Material.Outlined.Assessment"
+                           OnClick='@(() => Nav.NavigateTo($"/narudzbe/{Id}/procjena"))'
+                           Style="color:var(--rbi-purple-deep);border-color:var(--rbi-purple-hi);
+                                  font-weight:700;text-transform:none;white-space:nowrap;">
+                    Dokumentacija i procjena
+                </MudButton>
+            }
+            @if (_order.Capabilities.CanSubmit)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Warning"
+                           Disabled="_acting" OnClick="SubmitOrder"
+                           Style="font-weight:700;color:#2B2D33;text-transform:none;">
+                    <MudIcon Icon="@Icons.Material.Outlined.Send" Style="font-size:15px;margin-right:5px;" />
+                    Pošalji CA-u
+                </MudButton>
+            }
+            @if (_canAcceptOrder)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           Disabled="_acting" OnClick="AcceptOrder"
+                           Style="font-weight:700;text-transform:none;white-space:nowrap;">
+                    <MudIcon Icon="@Icons.Material.Outlined.AssignmentTurnedIn" Style="font-size:15px;margin-right:5px;" />
+                    Prihvati narudžbu
+                </MudButton>
+            }
+            @if (_canSubmitAppraisal)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Success"
+                           Disabled="_acting" OnClick="OpenAppraisalDialog"
+                           data-testid="btn-open-appraisal-panel"
+                           Style="font-weight:700;text-transform:none;white-space:nowrap;">
+                    <MudIcon Icon="@Icons.Material.Outlined.Assessment" Style="font-size:15px;margin-right:5px;" />
+                    Dostavi procjenu na CO
+                </MudButton>
+            }
+            @if (_order.Capabilities.CanCancel)
+            {
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small"
+                               Style="color:var(--rbi-coral-deep);"
+                               Disabled="_acting" OnClick="CancelOrder"
+                               title="Otkaži narudžbu" />
+            }
+        </div>
+    </div>
+
+    @* ── Panel: Dostava procjene (datum obilaska) ────────────────────────── *@
+    @if (_appraisalDialogOpen)
+    {
+        <MudPaper Elevation="3" Class="pa-4 mb-4" Style="border-left: 4px solid var(--mud-palette-success); max-width: 480px;">
+            <MudText Typo="Typo.subtitle1" Style="font-weight:700;" Class="mb-2">Dostava procjene — unesite datum obilaska</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-3">
+                Provjerite da ste uploadovali dokument procjene u tabu "Dokumenti".
+            </MudText>
+            <MudTextField T="string"
+                          Value="_visitDateStr"
+                          ValueChanged="OnVisitDateChanged"
+                          Label="Datum obilaska imovine *"
+                          InputType="InputType.Date"
+                          Variant="Variant.Outlined"
+                          data-testid="field-visit-date"
+                          Class="mb-2" />
+            @if (!string.IsNullOrEmpty(_visitDateError))
+            {
+                <MudText Color="Color.Error" Typo="Typo.caption" Class="mb-2">@_visitDateError</MudText>
+            }
+            <MudStack Row Spacing="2" Class="mt-3">
+                <MudButton Variant="Variant.Outlined" OnClick="() => _appraisalDialogOpen = false" Disabled="_acting">Odustani</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success"
+                           OnClick="SubmitAppraisal"
+                           Disabled="_acting"
+                           data-testid="btn-confirm-appraisal">
+                    @if (_acting)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                    }
+                    Dostavi procjenu
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    }
+
+    @* ── Tabovi ───────────────────────────────────────────────────────────── *@
+    <MudTabs Elevation="0" Rounded="false" ApplyEffectsToContainer="true"
+             @bind-ActivePanelIndex="_activeTab">
+
+        @* 1. Pregled — ekstrahovano u OrderDetailPreviewTab.razor (B-2) *@
+        <MudTabPanel Text="Pregled" Icon="@Icons.Material.Outlined.Summarize">
+            <OrderDetailPreviewTab Order="_order!" />
+        </MudTabPanel>
+
+        @* 6. Dokumenti *@
+        <MudTabPanel Text="Dokumenti" Icon="@Icons.Material.Outlined.Folder">
+            <div style="padding-top:20px; display:flex; flex-direction:column; gap:16px;">
+                <DocumentUploadSection OrderId="@Id" ClientType="@_order?.ClientType" />
+
+                @if (_hasProcjenaAccess)
+                {
+                    <div style="text-align:center;">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Warning"
+                                   StartIcon="@Icons.Material.Outlined.Assessment"
+                                   OnClick='@(() => Nav.NavigateTo($"/narudzbe/{Id}/procjena"))'
+                                   Style="font-weight:700;text-transform:none;">
+                            Finalna procjena i mišljenja
+                        </MudButton>
+                    </div>
+                }
+            </div>
+        </MudTabPanel>
+
+        @* 7. Workflow *@
+        <MudTabPanel Text="Workflow" Icon="@Icons.Material.Outlined.Timeline">
+
+            @* ── Tip narudžbe + lanac odgovornih rola (Slika 4 / 4.1) ──────── *@
+            <div class="card" style="padding:16px 20px;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+                    <MudIcon Icon="@(_order.IsLegalEntity ? Icons.Material.Outlined.Business : Icons.Material.Outlined.Person)"
+                             Style="font-size:20px;color:var(--rbi-off-black);" />
+                    <span style="font-size:14px;font-weight:800;color:var(--rbi-off-black);">
+                        @_order.WorkflowTypeLabel
+                    </span>
+                    <span class="badge badge-neutral" style="font-size:11px;">Tok narudžbe</span>
+                </div>
+
+                @* Lanac rola *@
+                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                    @for (var i = 0; i < _roleChain.Length; i++)
+                    {
+                        var role    = _roleChain[i];
+                        var isOwner = i == _activeChainIndex;
+                        <span style="@RoleChipStyle(isOwner)">@role</span>
+                        @if (i < _roleChain.Length - 1)
+                        {
+                            <MudIcon Icon="@Icons.Material.Outlined.ChevronRight"
+                                     Style="font-size:16px;color:var(--text-faint);" />
+                        }
+                    }
+                </div>
+
+                @if (_order.Status is not "Cancelled" and not "Completed")
+                {
+                    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:var(--app-border);">
+                        <div>
+                            <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);">
+                                Trenutno odgovoran
+                            </div>
+                            <div style="font-size:13.5px;font-weight:700;color:var(--rbi-off-black);margin-top:2px;">
+                                @(_order.CurrentOwnerRole ?? "—")
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);">
+                                Sljedeći korak
+                            </div>
+                            <div style="font-size:13.5px;font-weight:600;color:var(--text-secondary);margin-top:2px;">
+                                @(_order.NextResponsibleRole ?? "—")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* ── PL: Quote dashboard vizualizacija (W5) ──────────────── *@
+            @if (_order.IsLegalEntity && _quoteRequests.Count > 0)
+            {
+                <div class="card" style="padding:16px 20px;margin-bottom:16px;border-left:3px solid var(--rbi-blue, #1E6FBF);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <div class="section-title" style="margin:0;font-size:13px;">
+                            <MudIcon Icon="@Icons.Material.Outlined.RequestPage" Style="font-size:16px;vertical-align:middle;margin-right:4px;" />
+                            Ponude vještaka (PL)
+                        </div>
+                        <span class="badge badge-info" style="font-size:10px;">@_quoteRequests.Count ponuda(e)</span>
+                    </div>
+                    @foreach (var q in _quoteRequests)
+                    {
+                        var statusBadge = q.Status switch {
+                            "Sent"       => ("badge-warning", "Poslano"),
+                            "Responded"  => ("badge-info",    $"{q.OfferedPrice:N0} KM / {q.OfferedDays}d"),
+                            "Selected"   => ("badge-active",  "Odabran"),
+                            "ThankYouSent" => ("badge-neutral", "Zahvalnica"),
+                            _            => ("badge-neutral", q.Status)
+                        };
+                        <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rbi-warm-grey-50);">
+                            <MudIcon Icon="@Icons.Material.Outlined.Person" Style="font-size:16px;color:var(--text-secondary);" />
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:13px;font-weight:600;color:var(--rbi-off-black);">@q.AppraiserName</div>
+                                <div style="font-size:11px;color:var(--text-muted);">@(q.AppraiserCity ?? "—")</div>
+                            </div>
+                            <span class="badge @statusBadge.Item1" style="font-size:10px;">@statusBadge.Item2</span>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div style="padding-top:4px;">
+                <div class="card">
+                    @if (_order.Status == OrderStatusDisplay.Cancelled)
+                    {
+                        <AppStatusBadge Status="Cancelled" ExtraStyle="font-size:13px;" />
+                        @if (_order.UpdatedAt.HasValue)
+                        {
+                            <div style="font-size:12.5px;color:var(--text-muted);margin-top:12px;">
+                                Posljednja izmjena: @_order.UpdatedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="display:flex;flex-direction:column;">
+                            @for (var i = 0; i < _workflowSteps.Length; i++)
+                            {
+                                var step    = _workflowSteps[i];
+                                var done    = _order.StatusCode > step.Code;
+                                var current = _order.StatusCode == step.Code;
+                                var isLast  = i == _workflowSteps.Length - 1;
+
+                                <div style="display:flex;align-items:flex-start;gap:14px;">
+                                    <div style="display:flex;flex-direction:column;align-items:center;">
+                                        <div style="@WorkflowDotStyle(done, current)"></div>
+                                        @if (!isLast)
+                                        {
+                                            <div style="width:2px;flex:1;min-height:26px;
+                                                        background:@(done ? "var(--rbi-green-hi)" : "var(--rbi-warm-grey-dark)");"></div>
+                                        }
+                                    </div>
+                                    <div style="padding-bottom:22px;">
+                                        <div style="font-size:14px;font-weight:@(current ? "700" : "500");
+                                                    color:@((done || current) ? "var(--rbi-off-black)" : "#B5AFA6");">
+                                            @step.Label
+                                        </div>
+                                        @if (current)
+                                        {
+                                            <AppStatusBadge Status="@_order.Status" Label="@_order.StatusLabel"
+                                                            ExtraStyle="margin-top:6px;font-size:11px;" />
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @if (!_workflowSteps.Any(s => s.Code == _order.StatusCode))
+                        {
+                            <div style="padding-top:14px;border-top:var(--app-border);">
+                                <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Trenutni status</div>
+                                <AppStatusBadge Status="@_order.Status" Label="@_order.StatusLabel" />
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </MudTabPanel>
+
+        @* 8. Faktura *@
+        <MudTabPanel Text="Faktura" Icon="@Icons.Material.Outlined.Receipt">
+            <div style="padding-top:20px; display:flex; flex-direction:column; gap:16px;">
+
+                @* ── Status fakture ─────────────────────────────────────────── *@
+                <div class="card">
+                    <div style="font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+                                color:var(--text-muted);margin-bottom:12px;">
+                        Status fakture
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                        @{ var invoiceStatusLabel = _order.InvoiceWorkflowStatus switch
+                            {
+                                "None" => "Čeka upload",
+                                "Uploaded" => "Uploadovana",
+                                "SentForPayment" => "U obradi",
+                                "Paid" => "Plaćeno",
+                                _ => _order.InvoiceWorkflowStatus ?? "—"
+                            };
+                            var invoiceStatusColor = _order.InvoiceWorkflowStatus switch
+                            {
+                                "None" => "badge badge-neutral",
+                                "Uploaded" => "badge badge-info",
+                                "SentForPayment" => "badge badge-warning",
+                                "Paid" => "badge badge-active",
+                                _ => "badge badge-neutral"
+                            };
+                        }
+                        <span class="@invoiceStatusColor" style="font-size:12px;">@invoiceStatusLabel</span>
+                    </div>
+
+                    @if (_order.InvoiceUploadedByName is not null)
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Uploadovao/la</span>
+                            <span class="detail-value">@_order.InvoiceUploadedByName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Datum uploada</span>
+                            <span class="detail-value">@_order.InvoiceUploadedAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
+                    }
+                    @if (_order.InvoiceSentForPaymentByName is not null)
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Poslao na plaćanje</span>
+                            <span class="detail-value">@_order.InvoiceSentForPaymentByName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Datum slanja</span>
+                            <span class="detail-value">@_order.InvoiceSentForPaymentAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
+                    }
+                    @if (_order.InvoicePaidByName is not null)
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Plaćanje potvrdio/la</span>
+                            <span class="detail-value">@_order.InvoicePaidByName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Datum plaćanja</span>
+                            <span class="detail-value">@_order.InvoicePaidAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
+                    }
+                </div>
+
+                @* ── Akcije ─────────────────────────────────────────────────── *@
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+                    @if (_order.Capabilities.CanUploadInvoice)
+                    {
+                        <MudButton Variant="Variant.Filled" Class="btn-primary-rbi"
+                                   Disabled="_acting" OnClick="UploadInvoice"
+                                   Style="font-weight:700;text-transform:none;">
+                            <MudIcon Icon="@Icons.Material.Outlined.UploadFile" Style="font-size:15px;margin-right:5px;" />
+                            Upload fakture
+                        </MudButton>
+                    }
+
+                    @if (_order.Capabilities.CanSendInvoiceForPayment)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Warning"
+                                   Disabled="_acting" OnClick="SendInvoiceForPayment"
+                                   Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;">
+                            <MudIcon Icon="@Icons.Material.Outlined.Payment" Style="font-size:15px;margin-right:5px;" />
+                            Pošalji fakturu na plaćanje
+                        </MudButton>
+                    }
+
+                    @if (_order.Capabilities.CanConfirmInvoicePaid)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Success"
+                                   Disabled="_acting" OnClick="ConfirmInvoicePaid"
+                                   Style="font-weight:700;text-transform:none;">
+                            <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Style="font-size:15px;margin-right:5px;" />
+                            Faktura je plaćena
+                        </MudButton>
+                    }
+                </div>
+            </div>
+        </MudTabPanel>
+
+        @* 9. Audit — samo za Administrator *@
+        @if (_isAdmin)
+        {
+        <MudTabPanel Text="Audit" Icon="@Icons.Material.Outlined.History">
+            <div style="padding-top:20px;">
+                @if (_loadingAudit)
+                {
+                    <AppLoadingState />
+                }
+                else if (_auditItems.Count == 0)
+                {
+                    <AppEmptyState Icon="@Icons.Material.Filled.HistoryToggleOff"
+                                   Title="Nema audit zapisa">
+                        <div style="font-size:13.5px;color:var(--text-muted);">Za ovu narudžbu još nema zabilježenih audit zapisa.</div>
+                    </AppEmptyState>
+                }
+                else
+                {
+                    <div class="app-table-wrap">
+                        <MudTable Items="_auditItems" Hover="true" Dense="true" Elevation="0">
+                            <HeaderContent>
+                                <MudTh>Datum/Vrijeme</MudTh>
+                                <MudTh>Korisnik</MudTh>
+                                <MudTh>Akcija</MudTh>
+                                <MudTh>Status</MudTh>
+                                <MudTh>Ozbiljnost</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>
+                                    <div style="font-size:12px;font-family:monospace;white-space:nowrap;">
+                                        @context.TimestampUtc.ToLocalTime().ToString("dd.MM.yy HH:mm:ss")
+                                    </div>
+                                </MudTd>
+                                <MudTd>
+                                    <div style="font-size:13px;font-weight:600;">@(context.ActorUsername ?? "sistem")</div>
+                                    @if (!string.IsNullOrWhiteSpace(context.ActorRole))
+                                    {
+                                        <div style="font-size:11px;color:#9CA3AF;">@context.ActorRole</div>
+                                    }
+                                </MudTd>
+                                <MudTd>
+                                    <span class="mono">@context.Action</span>
+                                </MudTd>
+                                <MudTd>
+                                    @{ var (cls, lbl) = GetStatusBadge(context.Status); }
+                                    <span class="@cls">@lbl</span>
+                                </MudTd>
+                                <MudTd>
+                                    @{ var (scls, slbl) = GetSeverityBadge(context.Severity); }
+                                    <span class="@scls">@slbl</span>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </div>
+                }
+            </div>
+        </MudTabPanel>
+        }
+
+    </MudTabs>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private bool _canDeliverOriginal =>
+    _isVjestak && _order is not null &&
+    (_order.Status == "ReadyForProcedure" || _order.Status == "COApproved");
+
+
+    private AppraisalOrderDto? _order;
+    private bool  _loading = true;
+    private bool  _acting;
+    private string? _error;
+    private int   _activeTab;
+    private List<QuoteRequestListItem> _quoteRequests = [];
+
+    private MeDto? _me;
+
+    // Pristup "Dokumentacija i procjena" (US 92/93/94) — ista pravila kao NarudzbaProcjena.razor
+    private bool _hasProcjenaAccess =>
+        _me?.Permissions.Contains(AppPermissions.OrdersConfirmOriginal, StringComparer.OrdinalIgnoreCase) == true
+        || _me?.Permissions.Contains(AppPermissions.OrdersApproveFinal, StringComparer.OrdinalIgnoreCase) == true
+        || _me?.Permissions.Contains(AppPermissions.OpinionsSubmitLegal, StringComparer.OrdinalIgnoreCase) == true
+        || _me?.Roles.Contains(AppRoles.KolateralAdministrator, StringComparer.OrdinalIgnoreCase) == true;
+
+    // Audit
+    private bool _isAdmin;
+    private bool _isVjestak;
+    private bool _loadingAudit;
+
+    // Dostava procjene
+    private DateTime? _visitDate;
+    private string    _visitDateStr  = "";
+    private string?   _visitDateError;
+    private bool      _appraisalDialogOpen;
+
+    // Vještak prihvata narudžbu odmah po prijemu (prije izrade procjene).
+    private bool _canAcceptOrder =>
+        _isVjestak && _order is not null && _order.Status == OrderStatusDisplay.OrderSentToAppraiser;
+
+    // Vještak može odbiti narudžbu (isti uvjet kao prihvatanje).
+    private bool _canRejectOrder =>
+        _isVjestak && _order is not null && _order.Status == "OrderSentToAppraiser";
+
+    // Vještak može zatražiti doplatu dok je narudžba u izradi.
+    private bool _canRequestAdditionalPayment =>
+        _isVjestak && _order is not null &&
+        _order.Status is "AppraisalInProgress" or "OrderSentToAppraiser";
+
+    // CA potvrđuje doplatu.
+    private bool _canConfirmAdditionalPayment =>
+        _isCA && _order is not null && _order.Status == "AdditionalPaymentRequested";
+
+    // Vještak može dostaviti procjenu kad je narudžba kod njega.
+    private bool _canSubmitAppraisal =>
+        _isVjestak && _order is not null &&
+        _order.Status is OrderStatusDisplay.OrderSentToAppraiser
+            or OrderStatusDisplay.AppraisalInProgress
+            or OrderStatusDisplay.AdditionalPaymentCompleted
+            or OrderStatusDisplay.AppraisalReturnedForRework;
+    private bool _hasSecondaryActions =>
+        _hasProcjenaAccess
+        || (_order?.Capabilities.CanRequestAdditionalPayment == true && _isVjestak)
+        || _order?.Capabilities.CanGenerateDocuments == true
+        || _order?.Capabilities.CanSendQuoteRequests == true
+        || _order?.Capabilities.CanSendThankYou == true
+        || (_order?.Capabilities.CanReturnForRework == true && !_isVjestak)
+        || (_order?.Capabilities.CanRejectOrder == true && _isVjestak)
+        || _order?.Capabilities.CanAdminRejectOrder == true
+        || _order?.Capabilities.CanCancel == true;
+
+    private static readonly Dictionary<int, int> FlPhaseMap = new()
+    {
+        [0] = 0,    // Draft → Prodaja
+        [10] = 0,   // SubmittedBySales → Prodaja
+        [20] = 1,   // AcceptedByCA → CA
+        [30] = 1,   // DocumentationReviewInProgress → CA
+        [40] = 1,   // ReturnedForCorrection → CA
+        [45] = 1,   // CorrectionSubmitted → CA
+        [50] = 1,   // DocumentationApproved → CA
+        [80] = 1,   // ProtocolCreated → CA
+        [90] = 1,   // AppraiserSelected → CA
+        [95] = 1,   // DocumentsGenerated → CA
+        [100] = 2,  // OrderSentToAppraiser → Vještak
+        [105] = 2,  // AppraiserRejected → Vještak
+        [110] = 2,  // AdditionalPaymentRequested → Vještak
+        [115] = 2,  // AdditionalPaymentCompleted → Vještak
+        [120] = 2,  // AppraisalInProgress → Vještak
+        [125] = 2,  // AppraisalReturnedForRework → Vještak
+        [130] = 3,  // AppraisalReceived → CO pregled
+        [140] = 3,  // COApproved → CO pregled
+        [150] = 3,  // ReadyForProcedure → CO pregled
+        [160] = 4,  // OriginalReceived → Faktura
+        [200] = 5,  // Completed → Završeno
+        [999] = 5,  // Cancelled → Završeno
+    };
+
+    private static readonly Dictionary<int, int> PlPhaseMap = new()
+    {
+        [0] = 0,    // Draft → Prodaja
+        [10] = 0,   // SubmittedBySales → Prodaja
+        [20] = 1,   // AcceptedByCA → CA
+        [30] = 1,   // DocumentationReviewInProgress → CA
+        [40] = 1,   // ReturnedForCorrection → CA
+        [45] = 1,   // CorrectionSubmitted → CA
+        [50] = 1,   // DocumentationApproved → CA
+        [60] = 2,   // AccessCheckRequested → CO pristup
+        [65] = 2,   // AccessCheckApproved → CO pristup
+        [70] = 2,   // AccessCheckRejected → CO pristup
+        [80] = 3,   // ProtocolCreated → Ponude
+        [90] = 3,   // AppraiserSelected → Ponude
+        [95] = 3,   // DocumentsGenerated → Ponude
+        [100] = 4,  // OrderSentToAppraiser → Vještak
+        [105] = 4,  // AppraiserRejected → Vještak
+        [110] = 4,  // AdditionalPaymentRequested → Vještak
+        [115] = 4,  // AdditionalPaymentCompleted → Vještak
+        [120] = 4,  // AppraisalInProgress → Vještak
+        [125] = 4,  // AppraisalReturnedForRework → Vještak
+        [130] = 5,  // AppraisalReceived → CO pregled
+        [140] = 5,  // COApproved → CO pregled
+        [150] = 5,  // ReadyForProcedure → CO pregled
+        [160] = 6,  // OriginalReceived → Faktura
+        [200] = 7,  // Completed → Završeno
+        [999] = 7,  // Cancelled → Završeno
+    };
+
+    private static int ResolveWorkflowStepIndex(int statusCode, bool isPL)
+    {
+        var map = isPL ? PlPhaseMap : FlPhaseMap;
+        return map.GetValueOrDefault(statusCode, isPL ? 7 : 5);
+    }
+
+    private bool _isCA;
+    private List<AuditLogItemDto> _auditItems = [];
+
+    // Mapa nekretnine (read-only)
+
+    private sealed record WorkflowStep(int Code, string Label);
+    private sealed record QuoteRequestListItem(int Id, int OrderId, int AppraiserId,
+        string AppraiserName, string? AppraiserCity, string? AppraiserEmail,
+        string Status, DateTime SentAt, DateTime Deadline,
+        decimal? OfferedPrice, int? OfferedDays, DateTime? RespondedAt, DateTime? ThankYouSentAt);
+
+    // FL (Slika 4): Klijent → Prodaja → CA → Vještak → CO — bez CO provjere pristupa.
+    private static readonly WorkflowStep[] _workflowStepsFL =
+    [
+        new(0,   "Nacrt"),
+        new(10,  "Poslano CA-u"),
+        new(20,  "Prihvaćeno od CA"),
+        new(30,  "Pregled dokumentacije"),
+        new(40,  "Vraćeno na dopunu"),
+        new(45,  "Dopuna dostavljena"),
+        new(50,  "Dokumentacija odobrena"),
+        new(90,  "Vještak odabran"),
+        new(100, "Poslano vještaku"),
+        new(130, "Procjena zaprimljena"),
+        new(140, "Odobreno od CO"),
+        new(150, "Spremno za proceduru"),
+        new(160, "Original zaprimljen"),
+        new(200, "Završeno"),
+    ];
+
+    // PL (Slika 4.1): Klijent → Prodaja → CA → CO → CA → Prodaja → CA → Vještak → CO
+    private static readonly WorkflowStep[] _workflowStepsPL =
+    [
+        new(0,   "Nacrt"),
+        new(10,  "Poslano CA-u"),
+        new(20,  "Prihvaćeno od CA"),
+        new(30,  "Pregled dokumentacije"),
+        new(60,  "Zahtjev za pristup (CO)"),
+        new(65,  "Pristup potvrđen"),
+        new(40,  "Vraćeno na dopunu (Prodaja)"),
+        new(45,  "Dopuna dostavljena"),
+        new(50,  "Dokumentacija odobrena"),
+        new(90,  "Vještak odabran"),
+        new(100, "Poslano vještaku"),
+        new(130, "Procjena zaprimljena"),
+        new(140, "Odobreno od CO"),
+        new(150, "Spremno za proceduru"),
+        new(160, "Original zaprimljen"),
+        new(200, "Završeno"),
+    ];
+
+    private WorkflowStep[] _workflowSteps =>
+        (_order?.IsLegalEntity ?? false) ? _workflowStepsPL : _workflowStepsFL;
+
+    // Lanac odgovornih rola za prikaz iznad timeline-a (Slika 4 / 4.1).
+    private string[] _roleChain =>
+        (_order?.IsLegalEntity ?? false)
+            ? ["Klijent", "Prodaja", "CA", "CO", "CA", "Prodaja", "CA", "Vještak", "CO"]
+            : ["Klijent", "Prodaja", "CA", "Vještak", "CO"];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var meResult = await MeSvc.GetMeAsync();
+        if (meResult.IsSuccess) _me = meResult.Data;
+
+        await LoadOrder();
+        if (_order is null) return;
+
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var roles = authState.User.FindAll("roles").Select(c => c.Value).ToList();
+        _isAdmin   = roles.Any(r => r.Equals(AppRoles.Administrator,         StringComparison.OrdinalIgnoreCase));
+        _isVjestak = roles.Any(r => r.Equals(AppRoles.Vjestak,               StringComparison.OrdinalIgnoreCase));
+        _isCA      = roles.Any(r => r.Equals(AppRoles.KolateralAdministrator, StringComparison.OrdinalIgnoreCase));
+
+        if (_isAdmin) await LoadAuditAsync();
+
+    }
+
+
+    private async Task LoadOrder()
+    {
+        _loading = true;
+        _error   = null;
+        StateHasChanged();
+
+        var r = await OrderService.GetByIdAsync(Id);
+        _loading = false;
+
+        if (r.IsSuccess)
+        {
+            _order = r.Data;
+            if (_order?.IsLegalEntity == true)
+                await LoadQuoteRequestsAsync();
+        }
+        else _error = r.StatusCode == 403
+            ? "Nemate pristup ovoj narudžbi."
+            : r.StatusCode == 404
+            ? "Narudžba nije pronađena."
+            : r.ErrorMessage ?? "Greška pri učitavanju narudžbe.";
+    }
+
+    private async Task LoadQuoteRequestsAsync()
+    {
+        try
+        {
+            var result = await Http.GetFromJsonAsync<List<QuoteRequestListItem>>($"/api/orders/{Id}/quote-requests");
+            _quoteRequests = result ?? [];
+        }
+        catch { _quoteRequests = []; }
+    }
+
+    private async Task LoadAuditAsync()
+    {
+        _loadingAudit = true;
+        var result = await AccessSvc.GetAuditAsync(
+            entityType: "AppraisalOrder", entityKey: Id.ToString(), pageSize: 50);
+
+        if (result.IsSuccess && result.Data is not null)
+            _auditItems = result.Data.Items.ToList();
+
+        _loadingAudit = false;
+    }
+
+    private async Task AcceptOrder()
+    {
+        if (_order is null) return;
+
+        _acting = true;
+        var r   = await OrderService.AcceptByAppraiserAsync(Id);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Narudžba prihvaćena — možete pristupiti izradi i dostavi procjene.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri prihvatanju narudžbe.", Severity.Error);
+    }
+
+    private void OpenAppraisalDialog()
+    {
+        _visitDate      = null;
+        _visitDateStr   = "";
+        _visitDateError = null;
+        _appraisalDialogOpen = true;
+    }
+
+    private void OnVisitDateChanged(string value)
+    {
+        _visitDateStr   = value;
+        _visitDateError = null;
+        if (DateTime.TryParse(value, out var d))
+            _visitDate = DateTime.SpecifyKind(d.Date, DateTimeKind.Utc);
+        else
+            _visitDate = null;
+    }
+
+    private async Task SubmitAppraisal()
+    {
+        if (_order is null) return;
+
+        if (!_visitDate.HasValue)
+        {
+            _visitDateError = "Obavezno unesite datum obilaska imovine.";
+            return;
+        }
+
+        _appraisalDialogOpen = false;
+        _acting = true;
+        var r   = await OrderService.SubmitAppraisalAsync(Id, _visitDate.Value);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Procjena je dostavljena kolateral oficiru.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri dostavi procjene.", Severity.Error);
+    }
+
+    // ── PL zahtjev za ponudu ────────────────────────────────────────────
+
+    private async Task OpenSendQuoteDialog()
+    {
+        if (_order is null) return;
+
+        _acting = true;
+        var candidatesResult = await AppraiserApi.GetCandidatesAsync(Id);
+        _acting = false;
+
+        if (!candidatesResult.IsSuccess || candidatesResult.Data is null || candidatesResult.Data.Count == 0)
+        {
+            Snackbar.Add("Nema dostupnih vještaka za slanje ponude.", Severity.Warning);
+            return;
+        }
+
+        var parameters = new MudBlazor.DialogParameters
+        {
+            ["ContentText"] = $"Odaberite vještake i rok za dostavu ponude za narudžbu '{_order.OrderNumber}'.\n" +
+                              $"Sistem će poslati zahtjev za ponudu na sve odabrane vještake.",
+            ["ConfirmText"] = "Pošalji zahtjeve"
+        };
+
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Pošalji zahtjev za ponudu", parameters);
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            var deadline = DateTime.UtcNow.Date.AddHours(17);
+            var allIds = candidatesResult.Data.Select(c => c.Id).ToList();
+            var request = new SendQuoteRequestsRequest { AppraiserIds = allIds, Deadline = deadline };
+
+            _acting = true;
+            var r = await AppraiserApi.SendQuoteRequestsAsync(Id, request);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add(r.Data?.Message ?? "Zahtjevi za ponudu poslani.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju zahtjeva.", Severity.Error);
+        }
+    }
+
+    private async Task SendThankYou()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Pošalji zahvalnicu",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = "Zahvalnica će biti poslana svim vještacima koji nisu odabrani za ovu narudžbu.",
+                ["ConfirmText"] = "Pošalji zahvalnicu"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await AppraiserApi.SendThankYouAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add(r.Data?.Message ?? "Zahvalnica poslana.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju zahvalnice.", Severity.Error);
+        }
+    }
+
+    private async Task GenerateDocuments()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Generiši narudžbenicu i izjavu",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Sistem će automatski generisati narudžbenicu i izjavu za narudžbu '{_order.OrderNumber}' " +
+                                  "sa podacima iz Protokola narudžbi. Dokumenti će biti dostupni u tabu Dokumenti.",
+                ["ConfirmText"] = "Generiši dokumente"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await OrderService.GenerateOrderDocumentsAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                var count = r.Data?.GeneratedDocuments?.Count ?? 0;
+                Snackbar.Add($"Generisano {count} dokument(a). Dostupni u tabu Dokumenti.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri generisanju dokumenata.", Severity.Error);
+        }
+    }
+
+   private async Task RequestAdditionalPayment()
+{
+    if (_order is null) return;
+
+    var dialog = await DialogService.ShowAsync<Shared.AmountInputDialog>(
+        "Zatraži doplatu",
+        new MudBlazor.DialogParameters
+        {
+            ["Title"]       = "Zatraži doplatu",
+            ["ConfirmText"] = "Zatraži doplatu"
+        });
+
+    var result = await dialog.Result;
+    if (result is null || result.Canceled) return;
+
+    var amount = result.Data is decimal d ? d : (decimal?)null;
+
+    _acting = true;
+    var r = await OrderService.RequestAdditionalPaymentAsync(Id, amount);
+    _acting = false;
+
+    if (r.IsSuccess)
+    {
+        var amountText = amount.HasValue ? $" ({amount.Value:N2} KM)" : "";
+        Snackbar.Add($"Zahtjev za doplatu{amountText} poslan kolateral administratoru.", Severity.Success);
+        await LoadOrder();
+    }
+    else Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju zahtjeva za doplatu.", Severity.Error);
+}
+    private async Task CompleteSignedDocumentImport()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Završi import potpisanih dokumenata",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Potvrđujete da ste uploadovali potpisane dokumente (narudžbenicu i izjavu) za narudžbu '{_order.OrderNumber}'. " +
+                                  "Kolateral administrator će biti obaviješten.",
+                ["ConfirmText"] = "Završi import"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r   = await AppraiserApi.CompleteSignedDocumentImportAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add("Potpisani dokumenti uspješno uvezeni.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri završavanju importa.", Severity.Error);
+        }
+    }
+
+    private async Task DeliverOriginalToOffice()
+{
+    if (_order is null) return;
+
+    var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+        "Dostavi original procjene u poslovnicu",
+        new MudBlazor.DialogParameters
+        {
+            ["ContentText"] = $"Potvrđujete da ste original procjene za narudžbu '{_order.OrderNumber}' fizički dostavili u poslovnicu. " +
+                              "Ova radnja se evidentira u sistemu.",
+            ["ConfirmText"] = "Potvrdi dostavu originala"
+        });
+
+    if (await dialog.Result is { Canceled: false })
+    {
+        _acting = true;
+        var r = await Us93Api.DeliverOriginalToOfficeAsync(Id);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Original procjene označen kao dostavljen u poslovnicu.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri dostavi originala.", Severity.Error);
+    }
+}
+    private async Task CompleteAdditionalPayment()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Potvrdi izvršenu doplatu",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Potvrda da je doplata za narudžbu '{_order.OrderNumber}' izvršena. " +
+                                  "Vještak će primiti obavijest da može nastaviti sa izradom procjene.",
+                ["ConfirmText"] = "Potvrdi doplatu"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r   = await OrderService.ConfirmAdditionalPaymentAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add("Doplata potvrđena — vještak obaviješten.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri potvrdi doplate.", Severity.Error);
+        }
+    }
+
+    private async Task SubmitOrder()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Pošalji narudžbu",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Narudžba '{_order.OrderNumber}' bit će poslana CA-u na obradu.",
+                ["ConfirmText"] = "Pošalji"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r   = await OrderService.SubmitAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add($"Narudžba {_order.OrderNumber} uspješno poslana CA-u.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju.", Severity.Error);
+        }
+    }
+
+    private async Task CancelOrder()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Otkazivanje narudžbe",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Narudžba '{_order.OrderNumber}' bit će otkazana. Ova radnja se ne može poništiti.",
+                ["ConfirmText"] = "Otkaži narudžbu",
+                ["IsDanger"]    = true
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r   = await OrderService.CancelAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add("Narudžba je otkazana.", Severity.Warning);
+                Nav.NavigateTo("/narudzbe");
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri otkazivanju.", Severity.Error);
+        }
+    }
+
+    // ── Odbijanje narudžbe (vještak) ────────────────────────────────────
+
+    private async Task RejectOrder()
+    {
+        if (_order is null) return;
+
+        var reasons = new[] { "Nisam u gradu", "Ne mogu stići od dr. obaveza", "Bolest", "Smrtni slučaj", "Ostali razlozi" };
+
+        var dialog = await DialogService.ShowAsync<Shared.SelectReasonDialog>(
+            "Odbijanje narudžbe",
+            new MudBlazor.DialogParameters
+            {
+                ["Title"] = "Odbijanje narudžbe",
+                ["Reasons"] = reasons,
+                ["RequireCommentForLast"] = true,
+                ["CommentLabel"] = "Obrazloženje (obavezno za 'Ostali razlozi')"
+            });
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled) return;
+
+        var data = (Shared.ReasonDialogResult)result.Data!;
+
+        var reasonInt = Array.IndexOf(reasons, data.Reason) + 1;
+        if (reasonInt <= 0) reasonInt = 5;
+
+        _acting = true;
+        var r = await OrderService.RejectByAppraiserAsync(Id, reasonInt, data.Comment);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Narudžba odbijena — sistem traži sljedećeg vještaka.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri odbijanju narudžbe.", Severity.Error);
+    }
+
+    // ── Administrativno odbijanje (CA/CO) ──────────────────────────────────
+
+    private async Task AdminRejectOrder()
+    {
+        if (_order is null) return;
+
+        var reasons = new[] { "Greška u podacima narudžbe", "Promjena uslova klijenta", "Klijent odustao", "Operativni razlozi", "Ostalo" };
+
+        var dialog = await DialogService.ShowAsync<Shared.SelectReasonDialog>(
+            "Administrativno odbijanje narudžbe",
+            new MudBlazor.DialogParameters
+            {
+                ["Title"] = "Administrativno odbijanje",
+                ["Reasons"] = reasons,
+                ["RequireCommentForLast"] = true,
+                ["CommentLabel"] = "Obrazloženje (obavezno za 'Ostalo')"
+            });
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled) return;
+
+        var data = (Shared.ReasonDialogResult)result.Data!;
+
+        _acting = true;
+        var r = await OrderService.AdminRejectOrderAsync(Id, data.Reason, data.Comment);
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Narudžba administrativno odbijena.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri odbijanju narudžbe.", Severity.Error);
+    }
+
+    // ── Dorada procjene (CO vraća) ──────────────────────────────────────
+
+    private async Task ReturnForRework()
+    {
+        if (_order is null) return;
+
+        var categories = new[] { "Velika razlika u vrijednosti", "Neadekvatna metodologija", "Tehničke greške", "Slobodni unos komentara" };
+
+        var dialog = await DialogService.ShowAsync<Shared.SelectReasonDialog>(
+            "Vrati procjenu na doradu",
+            new MudBlazor.DialogParameters
+            {
+                ["Reasons"] = categories,
+                ["RequireComment"] = true,
+                ["CommentLabel"] = "Komentar za vještaka (obavezan — šalje se u email)"
+            });
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled) return;
+
+        var data = (Shared.ReasonDialogResult)result.Data!;
+
+        _acting = true;
+        var r = await OrderService.ReturnForReworkAsync(Id, data.Reason, data.Comment ?? "");
+        _acting = false;
+
+        if (r.IsSuccess)
+        {
+            Snackbar.Add("Procjena vraćena na doradu — vještak obaviješten.", Severity.Success);
+            await LoadOrder();
+        }
+        else Snackbar.Add(r.ErrorMessage ?? "Greška pri vraćanju na doradu.", Severity.Error);
+    }
+
+    // ── Faktura workflow ────────────────────────────────────────────────
+
+    private async Task UploadInvoice()
+    {
+        if (_order is null) return;
+
+        var documents = await DocumentApi.GetByOrderAsync(Id);
+        if (!documents.IsSuccess || documents.Data is null || documents.Data.Count == 0)
+        {
+            Snackbar.Add("Nema uploadovanih dokumenata. Prvo uploadujte fakturu u tab Dokumenti.", Severity.Warning);
+            return;
+        }
+
+        var invoiceDoc = documents.Data
+            .OrderByDescending(d => d.UploadedAt)
+            .FirstOrDefault();
+
+        if (invoiceDoc is null) return;
+
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Upload fakture",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Posljednji uploadovani dokument '{invoiceDoc.DisplayName}' će biti označen kao faktura za narudžbu '{_order.OrderNumber}'. " +
+                                  "CA će primiti notifikaciju o uploadu.",
+                ["ConfirmText"] = "Potvrdi upload fakture"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await OrderService.UploadInvoiceAsync(Id, invoiceDoc.Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add(r.Data?.Message ?? "Faktura uploadovana.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri uploadu fakture.", Severity.Error);
+        }
+    }
+
+    private async Task SendInvoiceForPayment()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Pošalji fakturu na plaćanje",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Faktura za narudžbu '{_order.OrderNumber}' će biti poslana na plaćanje. " +
+                                  "Status se mijenja na 'u obradi'. Likvidatura i ostale relevantne role će primiti notifikaciju.",
+                ["ConfirmText"] = "Pošalji na plaćanje"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await OrderService.SendInvoiceForPaymentAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add(r.Data?.Message ?? "Faktura poslana na plaćanje.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri slanju na plaćanje.", Severity.Error);
+        }
+    }
+
+    private async Task ConfirmInvoicePaid()
+    {
+        if (_order is null) return;
+        var dialog = await DialogService.ShowAsync<Shared.ConfirmDialog>(
+            "Potvrdi plaćanje fakture",
+            new MudBlazor.DialogParameters
+            {
+                ["ContentText"] = $"Potvrđujete da je faktura za narudžbu '{_order.OrderNumber}' plaćena. " +
+                                  "Status se mijenja iz 'u obradi' na 'plaćeno'.",
+                ["ConfirmText"] = "Potvrdi plaćanje"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await OrderService.ConfirmInvoicePaidAsync(Id);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add(r.Data?.Message ?? "Plaćanje fakture potvrđeno.", Severity.Success);
+                await LoadOrder();
+            }
+            else Snackbar.Add(r.ErrorMessage ?? "Greška pri potvrdi plaćanja.", Severity.Error);
+        }
+    }
+
+    // Kratki naziv role koja je trenutno vlasnik — za isticanje u lancu rola.
+    private string? OwnerRoleShort => _order?.CurrentOwnerRole switch
+    {
+        "Prodaja"                 => "Prodaja",
+        "Kolateral administrator" => "CA",
+        "Kolateral oficir"        => "CO",
+        "Vještak"                 => "Vještak",
+        _                         => null
+    };
+
+    // Indeks trenutno aktivne karike u lancu rola. Highlight-a se SAMO jedna karika —
+    // u PL lancu se ime role ponavlja (Prodaja/CA/CO više puta) pa poređenje po imenu
+    // (ranija logika) osvjetljava obje "Prodaja" karike. Mapiramo status → poziciju.
+    private int _activeChainIndex
+    {
+        get
+        {
+            if (_order is null) return -1;
+            var s = _order.StatusCode;
+
+            if (_order.IsLegalEntity)
+            {
+                // PL: [0 Klijent,1 Prodaja,2 CA,3 CO,4 CA,5 Prodaja,6 CA,7 Vještak,8 CO]
+                return s switch
+                {
+                    <= 0                            => 1,  // Nacrt — Prodaja kreira
+                    10                              => 2,  // Poslano CA-u
+                    20 or 30                        => 2,  // CA prihvat / pregled dokumentacije
+                    60                              => 3,  // CO provjera pristupa
+                    70                              => 4,  // pristup vraćen na CA
+                    40                              => 5,  // vraćeno na dopunu — Prodaja
+                    45                              => 6,  // dopuna dostavljena — CA
+                    65 or 50 or 80 or 90 or 95      => 6,  // pristup potvrđen / odabir vještaka — CA
+                    100 or 110 or 115 or 120 or 130 => 7,  // kod vještaka
+                    >= 140                          => 8,  // CO odobrenje i dalje u proceduru
+                    _                               => 2
+                };
+            }
+
+            // FL: [0 Klijent,1 Prodaja,2 CA,3 Vještak,4 CO]
+            return s switch
+            {
+                <= 0                                         => 1,  // Nacrt — Prodaja
+                40                                           => 1,  // vraćeno na dopunu — Prodaja
+                10 or 20 or 30 or 45 or 50 or 80 or 90 or 95 => 2,  // CA
+                100 or 110 or 115 or 120 or 130              => 3,  // kod vještaka
+                >= 140                                       => 4,  // CO
+                _                                            => 2
+            };
+        }
+    }
+
+    private static string RoleChipStyle(bool isOwner)
+    {
+        var baseStyle = "display:inline-flex;align-items:center;padding:4px 10px;border-radius:12px;" +
+                        "font-size:12px;font-weight:700;white-space:nowrap;";
+        return isOwner
+            ? baseStyle + "background:var(--rbi-yellow);color:var(--rbi-off-black);box-shadow:0 0 0 3px rgba(254,230,0,0.25);"
+            : baseStyle + "background:var(--rbi-warm-grey-50);color:var(--text-secondary);border:1px solid var(--rbi-warm-grey-dark);";
+    }
+
+    private static string WorkflowDotStyle(bool done, bool current)
+    {
+        var bg = done ? "var(--rbi-green-deep)" : current ? "var(--rbi-yellow)" : "var(--rbi-warm-grey-dark)";
+        var style = $"width:14px;height:14px;border-radius:50%;background:{bg};flex-shrink:0;margin-top:2px;";
+        if (current) style += "box-shadow:0 0 0 4px rgba(254,230,0,0.25);";
+        return style;
+    }
+
+    private string? ClientTypeFullLabel => _order?.ClientType switch
+    {
+        "FL" => "Fizičko lice",
+        "PL" => "Pravno lice",
+        _    => _order?.ClientType
+    };
+
+    private string JmbgLabel => "JMBG";
+
+    // Audit badge helpers (vidi AccessManagement.razor)
+    private static (string cssClass, string label) GetStatusBadge(string status) => status switch
+    {
+        "Success"          => ("badge badge-active",  "Uspješno"),
+        "Failed"           => ("badge badge-error",   "Neuspješno"),
+        "Forbidden"        => ("badge badge-warning", "Zabranjeno"),
+        "Conflict"         => ("badge badge-warning", "Konflikt"),
+        "ValidationFailed" => ("badge badge-neutral", "Validacija"),
+        "SystemError"      => ("badge badge-error",   "Sistemska greška"),
+        _                  => ("badge badge-neutral", status)
+    };
+
+    private static (string cssClass, string label) GetSeverityBadge(string severity) => severity switch
+    {
+        "Info"     => ("badge badge-info",    "Info"),
+        "Warning"  => ("badge badge-warning", "Upozorenje"),
+        "Security" => ("badge badge-info",    "Sigurnost"),
+        "Critical" => ("badge badge-error",   "Kritično"),
+        _          => ("badge badge-neutral", severity)
+    };
+
+}

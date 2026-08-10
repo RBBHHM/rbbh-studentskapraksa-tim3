@@ -1,0 +1,199 @@
+@inject Us93ApiService Api93
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IJSRuntime JS
+
+@* ── Kućica Kolateral oficir — US-93 ──────────────────────────────────── *@
+<div class="card" style="padding:0;overflow:hidden;">
+
+    @* Zaglavlje kućice *@
+    <div style="background:var(--rbi-off-black);padding:13px 18px;display:flex;align-items:center;gap:10px;">
+        <MudIcon Icon="@Icons.Material.Outlined.AccountBalance"
+                 Style="font-size:17px;color:#E0D0FF;" />
+        <span style="font-size:12px;font-weight:700;text-transform:uppercase;
+                     letter-spacing:.7px;color:#E0D0FF;">
+            Kolateral oficir
+        </span>
+    </div>
+
+    <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+
+        @* ─ Preuzmi finalnu procjenu ─────────────────────────────────────── *@
+        @if (CanDownload)
+        {
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                        padding:10px 14px;background:#F8F6F2;border-radius:8px;gap:12px;">
+                <div>
+                    <div style="font-size:13.5px;font-weight:600;color:var(--rbi-off-black);">
+                        Finalna procjena
+                    </div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">
+                        PDF dokument spreman za preuzimanje
+                    </div>
+                </div>
+                <div style="display:flex;gap:6px;">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Warning"
+                               Size="Size.Small"
+                               Disabled="_acting"
+                               StartIcon="@Icons.Material.Outlined.Download"
+                               OnClick="DownloadFinalAsync"
+                               Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;white-space:nowrap;flex-shrink:0;">
+                        Preuzmi
+                    </MudButton>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Print" Size="Size.Small"
+                                   OnClick="PrintFinalAsync" title="Printaj procjenu"
+                                   Style="color:var(--text-secondary);" />
+                </div>
+            </div>
+        }
+
+        @if (Order.IsReadyForProcedure || Order.IsOriginalReceived || Order.Status == "Completed")
+        {
+            @* CO je već odobrio — prikaži status *@
+            <div style="display:flex;align-items:flex-start;gap:12px;
+                        padding:10px 14px;background:#F5F0FF;border-radius:8px;
+                        border:1px solid #C9AAFF;">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                         Style="font-size:20px;color:var(--rbi-off-black);margin-top:1px;flex-shrink:0;" />
+                <div>
+                    <div style="font-size:13.5px;font-weight:700;color:var(--rbi-off-black);">
+                        Procjena odobrena — može dalje u proceduru
+                    </div>
+                    @if (Order.CoApprovedAt.HasValue)
+                    {
+                        <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">
+                            @(Order.CoApprovedByName ?? "—") ·
+                            @Order.CoApprovedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else if (CanApprove)
+        {
+            @* Task koji čeka akciju CO-a *@
+            <div style="display:flex;flex-direction:column;gap:10px;
+                        padding:12px 14px;border:1.5px dashed #C9AAFF;border-radius:8px;"
+                 data-testid="co-approve-section">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <MudIcon Icon="@Icons.Material.Outlined.RadioButtonUnchecked"
+                             Style="font-size:20px;color:var(--text-muted);flex-shrink:0;" />
+                    <div>
+                        <div style="font-size:13.5px;font-weight:600;color:var(--rbi-off-black);">
+                            Procjena može dalje u proceduru
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">
+                            Odobrenje šalje notifikaciju AM/SM/UB
+                        </div>
+                    </div>
+                </div>
+                @* Ocjena vještaka (obavezna za API) *@
+                <div style="display:flex;align-items:center;gap:10px;" data-testid="co-appraiser-rating">
+                    <span style="font-size:12.5px;color:var(--rbi-off-black);font-weight:600;white-space:nowrap;">
+                        Ocjena vještaka:
+                    </span>
+                    <MudRating @bind-SelectedValue="_appraiserRating"
+                               MaxValue="5"
+                               Size="Size.Small"
+                               Color="Color.Warning"
+                               data-testid="rating-stars" />
+                    <span style="font-size:12px;color:var(--text-muted);">(@_appraiserRating / 5)</span>
+                </div>
+                <MudButton Variant="Variant.Filled"
+                           Disabled="_acting"
+                           OnClick="ApproveFinalAsync"
+                           data-testid="btn-approve-appraisal"
+                           Style="background:var(--rbi-off-black);color:#E0D0FF;font-weight:700;
+                                  text-transform:none;white-space:nowrap;align-self:flex-end;">
+                    Odobri procjenu
+                </MudButton>
+            </div>
+        }
+        else
+        {
+            <div style="text-align:center;padding:16px 8px;color:var(--text-muted);font-size:13px;">
+                Odobrenje nije dostupno za trenutni status narudžbe.
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public AppraisalOrderDetailDto Order { get; set; } = default!;
+    [Parameter] public EventCallback OnRefresh { get; set; }
+
+    private bool _acting;
+    private int  _appraiserRating = 4; // default ocjena 4/5
+
+    // Vidljivo kad backend kaže da smije, ili kad status sugerira da procjena postoji
+    private bool CanApprove =>
+        Order.Capabilities.CanApproveFinal ||
+        Order.Status == "AcceptedByCA";
+
+    // Vidljivost dugmeta za preuzimanje: koristi capabilities (T4) uz status fallback
+    private bool CanDownload =>
+        Order.Capabilities.CanDownloadFinal ||
+        Order.Status is "AcceptedByCA" or "ReadyForProcedure" or "OriginalReceived" or "Completed";
+
+    private async Task DownloadFinalAsync()
+    {
+        _acting = true;
+        var r = await Api93.GetFinalAppraisalAsync(Order.Id);
+        _acting = false;
+
+        if (!r.IsSuccess)
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri dohvatu dokumenta.", Severity.Error);
+            return;
+        }
+
+        await JS.InvokeVoidAsync("open", $"/files/documents/{r.Data!.DocumentId}", "_blank");
+    }
+
+    private async Task PrintFinalAsync()
+    {
+        _acting = true;
+        var r = await Api93.GetFinalAppraisalAsync(Order.Id);
+        _acting = false;
+
+        if (!r.IsSuccess)
+        {
+            Snackbar.Add(r.ErrorMessage ?? "Greška pri dohvatu dokumenta.", Severity.Error);
+            return;
+        }
+
+        await JS.InvokeVoidAsync("open", $"/files/documents/{r.Data!.DocumentId}#print", "_blank");
+    }
+
+    private async Task ApproveFinalAsync()
+    {
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>(
+            "Odobravanje procjene",
+            new DialogParameters
+            {
+                ["ContentText"] = $"Narudžba {Order.OrderNumber}: potvrđujete da je finalna procjena " +
+                                  "pregledana i može dalje u proceduru? " +
+                                  "AM/SM/UB će biti obaviješten/a.",
+                ["ConfirmText"] = "Odobri procjenu"
+            });
+
+        if (await dialog.Result is { Canceled: false })
+        {
+            _acting = true;
+            var r = await Api93.ApproveFinalAsync(Order.Id, _appraiserRating);
+            _acting = false;
+
+            if (r.IsSuccess)
+            {
+                Snackbar.Add("Procjena odobrena. Notifikacija poslana prodajnom timu.", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(r.ErrorMessage ?? "Greška pri odobravanju.", Severity.Error);
+            }
+        }
+    }
+}

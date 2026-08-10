@@ -1,0 +1,13 @@
+@*
+    AppLoadingState — centrirani spinner za "učitavanje" stanje liste/stranice.
+    Koristi zajedničku ".loading-state" CSS klasu (definisana u app.css) — zamjenjuje
+    ranije fragmentirane varijante (neke stranice su koristile ovu klasu, neke ručni
+    "display:flex;justify-content:center;padding:48px" inline stil).
+*@
+<div class="loading-state" role="status" aria-live="polite" aria-label="Učitavanje">
+    <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="@Size" />
+</div>
+
+@code {
+    [Parameter] public Size Size { get; set; } = MudBlazor.Size.Medium;
+}

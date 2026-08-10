@@ -1,0 +1,204 @@
+@* ── OrderDetailActionBar — primarne i sekundarne workflow akcije ─────────────────
+   Ekstrahovano iz OrderDetail.razor (L3 refactoring).
+   Parametri: sve capability flags + EventCallbacks za svaku akciju.
+*@
+@using BlazorApp.Constants
+
+@* ── Primarni gumb — Next Best Action ── *@
+@if (Capabilities.CanSubmit)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Warning"
+               Disabled="Acting" OnClick="OnSubmitOrder"
+               Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;">
+        <MudIcon Icon="@Icons.Material.Outlined.Send" Style="font-size:15px;margin-right:5px;" />
+        Pošalji CA-u
+    </MudButton>
+}
+else if (CanAcceptOrder)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Warning"
+               Disabled="Acting" OnClick="OnAcceptOrder"
+               data-testid="btn-accept-order"
+               Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.AssignmentTurnedIn" Style="font-size:15px;margin-right:5px;" />
+        Prihvati narudžbu
+    </MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+               Disabled="Acting" OnClick="OnRejectOrder"
+               Style="font-weight:700;text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.Cancel" Style="font-size:15px;margin-right:5px;" />
+        Odbij narudžbu
+    </MudButton>
+}
+@if (CanRequestAdditionalPayment)
+{
+    <MudButton Variant="Variant.Outlined" Color="Color.Warning"
+               Disabled="Acting" OnClick="OnRequestAdditionalPayment"
+               Style="font-weight:700;text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.Payment" Style="font-size:15px;margin-right:5px;" />
+        Traži doplatu
+    </MudButton>
+}
+@if (CanConfirmAdditionalPayment)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Success"
+               Disabled="Acting" OnClick="OnConfirmAdditionalPayment"
+               Style="font-weight:700;text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.CheckCircle" Style="font-size:15px;margin-right:5px;" />
+        Doplata izvršena
+    </MudButton>
+}
+else if (CanSubmitAppraisal)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Warning"
+               Disabled="Acting" OnClick="OnSubmitAppraisal"
+               Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.Assessment" Style="font-size:15px;margin-right:5px;" />
+        Dostavi procjenu na CO
+    </MudButton>
+}
+else if (Capabilities.CanCompleteAdditionalPayment && !IsVjestak)
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Warning"
+               Disabled="Acting" OnClick="OnCompleteAdditionalPayment"
+               Style="font-weight:700;color:var(--rbi-off-black);text-transform:none;white-space:nowrap;">
+        <MudIcon Icon="@Icons.Material.Outlined.Paid" Style="font-size:15px;margin-right:5px;" />
+        Doplata izvršena
+    </MudButton>
+}
+
+@* ── Sekundarne akcije: dropdown ── *@
+@if (HasSecondaryActions)
+{
+    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" AnchorOrigin="Origin.BottomRight"
+             Dense="true" Style="margin-left:4px;" aria-label="Više akcija">
+
+        @if (HasProcjenaAccess || Capabilities.CanGenerateDocuments)
+        {
+            <div style="padding:4px 16px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);">
+                Dokumenti
+            </div>
+        }
+        @if (HasProcjenaAccess)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Assessment"
+                         OnClick="OnNavigateToProcjena">
+                Dokumentacija i procjena
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanGenerateDocuments)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Description"
+                         OnClick="OnGenerateDocuments" Disabled="Acting">
+                Generiši narudžbenicu
+            </MudMenuItem>
+        }
+
+        @if ((Capabilities.CanRequestAdditionalPayment && IsVjestak)
+          || Capabilities.CanSendQuoteRequests
+          || Capabilities.CanSendThankYou)
+        {
+            <MudDivider />
+            <div style="padding:4px 16px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);">
+                Workflow
+            </div>
+        }
+        @if (Capabilities.CanRequestAdditionalPayment && IsVjestak)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.RequestQuote"
+                         OnClick="OnRequestAdditionalPayment" Disabled="Acting">
+                Zatraži doplatu
+            </MudMenuItem>
+        }
+        @if (IsVjestak && (OrderStatus is "AppraisalInProgress" or "OrderSentToAppraiser"))
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.UploadFile"
+                         OnClick="OnCompleteSignedDocumentImport" Disabled="Acting">
+                Završi import potpisanih dokumenata
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanSendQuoteRequests)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.RequestPage"
+                         OnClick="OnOpenSendQuoteDialog" Disabled="Acting">
+                Pošalji zahtjev za ponudu
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanSendThankYou)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.ThumbUp"
+                         OnClick="OnSendThankYou" Disabled="Acting">
+                Zahvalnica
+            </MudMenuItem>
+        }
+
+        @if ((Capabilities.CanReturnForRework && !IsVjestak)
+          || (Capabilities.CanRejectOrder && IsVjestak)
+          || Capabilities.CanAdminRejectOrder
+          || Capabilities.CanCancel)
+        {
+            <MudDivider />
+        }
+        @if (Capabilities.CanReturnForRework && !IsVjestak)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Replay"
+                         OnClick="OnReturnForRework" Disabled="Acting"
+                         Style="color:var(--rbi-coral-deep);">
+                Vrati na doradu
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanRejectOrder && IsVjestak)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Cancel"
+                         OnClick="OnRejectOrder" Disabled="Acting"
+                         Style="color:var(--rbi-coral-deep);">
+                Odbij narudžbu
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanAdminRejectOrder)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Block"
+                         OnClick="OnAdminRejectOrder" Disabled="Acting"
+                         Style="color:var(--rbi-coral-deep);">
+                Administrativno odbij
+            </MudMenuItem>
+        }
+        @if (Capabilities.CanCancel)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Delete"
+                         OnClick="OnCancelOrder" Disabled="Acting"
+                         Style="color:var(--rbi-coral-deep);">
+                Otkaži narudžbu
+            </MudMenuItem>
+        }
+    </MudMenu>
+}
+
+@code {
+    [Parameter, EditorRequired] public OrderCapabilitiesDto Capabilities { get; set; } = null!;
+    [Parameter] public bool Acting { get; set; }
+    [Parameter] public bool CanAcceptOrder { get; set; }
+    [Parameter] public bool CanRequestAdditionalPayment { get; set; }
+    [Parameter] public bool CanConfirmAdditionalPayment { get; set; }
+    [Parameter] public bool CanSubmitAppraisal { get; set; }
+    [Parameter] public bool IsVjestak { get; set; }
+    [Parameter] public bool HasSecondaryActions { get; set; }
+    [Parameter] public bool HasProcjenaAccess { get; set; }
+    [Parameter] public string? OrderStatus { get; set; }
+
+    [Parameter] public EventCallback OnSubmitOrder { get; set; }
+    [Parameter] public EventCallback OnAcceptOrder { get; set; }
+    [Parameter] public EventCallback OnRejectOrder { get; set; }
+    [Parameter] public EventCallback OnAdminRejectOrder { get; set; }
+    [Parameter] public EventCallback OnRequestAdditionalPayment { get; set; }
+    [Parameter] public EventCallback OnConfirmAdditionalPayment { get; set; }
+    [Parameter] public EventCallback OnCompleteAdditionalPayment { get; set; }
+    [Parameter] public EventCallback OnSubmitAppraisal { get; set; }
+    [Parameter] public EventCallback OnNavigateToProcjena { get; set; }
+    [Parameter] public EventCallback OnGenerateDocuments { get; set; }
+    [Parameter] public EventCallback OnCompleteSignedDocumentImport { get; set; }
+    [Parameter] public EventCallback OnOpenSendQuoteDialog { get; set; }
+    [Parameter] public EventCallback OnSendThankYou { get; set; }
+    [Parameter] public EventCallback OnReturnForRework { get; set; }
+    [Parameter] public EventCallback OnCancelOrder { get; set; }
+}

@@ -1,0 +1,179 @@
+@* ── OrderDetailPreviewTab — Pregled tab sadržaj ─────────────────────────────────
+   Ekstrahovano iz OrderDetail.razor (B-2 refactoring).
+   Prikazuje: Narudžba, Kolateral administrator, Klijent, Nekretnina, Kontakt, Napomena.
+*@
+
+<div style="padding-top:20px; display:flex; flex-direction:column; gap:16px;">
+
+    @* ── Narudžba ──────────────────────────────── *@
+    <div class="card">
+        <div class="od-section-title">
+            <MudIcon Icon="@Icons.Material.Outlined.Description" Style="font-size:16px;" /> Narudžba
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Broj narudžbe</span>
+            <span class="detail-value">@Order.OrderNumber</span>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Order.ProtocolNumber))
+        {
+            <div class="detail-row">
+                <span class="detail-label">Broj protokola</span>
+                <span class="detail-value" style="font-weight:700;color:var(--rbi-purple-deep);">@Order.ProtocolNumber</span>
+            </div>
+        }
+        <div class="detail-row">
+            <span class="detail-label">Kreirana</span>
+            <span class="detail-value">@Order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+        </div>
+        @if (Order.SubmittedAt.HasValue)
+        {
+            <div class="detail-row">
+                <span class="detail-label">Poslana CA-u</span>
+                <span class="detail-value">@Order.SubmittedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+        }
+        <div class="detail-row">
+            <span class="detail-label">Inicirao</span>
+            <span class="detail-value">@(Order.CreatedByName ?? "—") (@(Order.CreatedByRole ?? "—"))</span>
+        </div>
+    </div>
+
+    @* ── Kolateral administrator ───────────────── *@
+    @if (Order.StatusCode >= 20)
+    {
+        <div class="card">
+            <div class="od-section-title">
+                <MudIcon Icon="@Icons.Material.Outlined.AdminPanelSettings" Style="font-size:16px;" /> Kolateral administrator
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Order.AcceptedByCAName))
+            {
+                <div class="detail-row">
+                    <span class="detail-label">Prihvatio/la CA</span>
+                    <span class="detail-value">@Order.AcceptedByCAName</span>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Order.DocumentationReviewStatus))
+            {
+                <div class="detail-row">
+                    <span class="detail-label">Status dokumentacije</span>
+                    <span class="detail-value">@Order.DocumentationReviewStatus</span>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Order.AppraiserName))
+            {
+                <div class="detail-row">
+                    <span class="detail-label">Ime procjenitelja</span>
+                    <span class="detail-value">@Order.AppraiserName</span>
+                </div>
+            }
+        </div>
+    }
+
+    @* ── Klijent ───────────────────────────────── *@
+    <div class="card">
+        <div class="od-section-title">
+            <MudIcon Icon="@Icons.Material.Outlined.Person" Style="font-size:16px;" /> Klijent
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Klijent</span>
+            <span class="detail-value">@(Order.ClientName ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Tip klijenta</span>
+            <span class="detail-value">@(ClientTypeLabel ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">JMBG</span>
+            <span class="detail-value">@(Order.ClientIdentifier ?? "—")</span>
+        </div>
+    </div>
+
+    @* ── Nekretnina + Lokacija ──────────────────── *@
+    <div class="card">
+        <div class="od-section-title">
+            <MudIcon Icon="@Icons.Material.Outlined.Home" Style="font-size:16px;" /> Nekretnina i lokacija
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Tip kolaterala</span>
+            <span class="detail-value">@(Order.CollateralTypeLabel ?? "—")</span>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Order.CombinedCollateralTypeLabel))
+        {
+            <div class="detail-row">
+                <span class="detail-label">Kombinirani tip</span>
+                <span class="detail-value">@Order.CombinedCollateralTypeLabel</span>
+            </div>
+        }
+        <div class="detail-row">
+            <span class="detail-label">Adresa nekretnine</span>
+            <span class="detail-value">@(Order.PropertyAddress ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Grad</span>
+            <span class="detail-value">@(Order.City ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Poslovnica</span>
+            <span class="detail-value">@(Order.Branch ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Adresa poslovnice</span>
+            <span class="detail-value">@(Order.BranchAddress ?? "—")</span>
+        </div>
+    </div>
+
+    @* ── Kontakt ──────────────────────────────── *@
+    <div class="card">
+        <div class="od-section-title">
+            <MudIcon Icon="@Icons.Material.Outlined.Phone" Style="font-size:16px;" /> Kontakt i dostava
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Kontakt ime</span>
+            <span class="detail-value">@(Order.ContactName ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Kontakt telefon</span>
+            <span class="detail-value">@(Order.ContactPhone ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Kontakt email</span>
+            <span class="detail-value">@(Order.ContactEmail ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Osoba za dostavu originala</span>
+            <span class="detail-value">@(Order.DeliveryContactName ?? "—")</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">AM za mail</span>
+            <span class="detail-value">@(Order.AmRecipientName ?? "—")</span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Order.InternalNote))
+    {
+        <div class="card">
+            <div class="od-section-title">
+                <MudIcon Icon="@Icons.Material.Outlined.StickyNote2" Style="font-size:16px;" /> Interna napomena
+            </div>
+            <div style="font-size:14px;color:var(--rbi-off-black);line-height:1.7;">
+                @Order.InternalNote
+            </div>
+        </div>
+    }
+
+    <div class="of-title-box">
+        <div class="of-title-label">Generisani naslov narudžbe</div>
+        <div class="of-title-text">@Order.Title</div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public AppraisalOrderDto Order { get; set; } = null!;
+
+    private string? ClientTypeLabel => Order.ClientType switch
+    {
+        BlazorApp.Constants.ClientTypes.FizickoLice => "Fizičko lice",
+        BlazorApp.Constants.ClientTypes.PravnoLice  => "Pravno lice",
+        _                                           => Order.ClientType
+    };
+}

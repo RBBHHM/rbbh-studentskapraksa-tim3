@@ -1,0 +1,569 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using BlazorApp.Services
+@using BlazorApp.Models
+@using BlazorApp.Constants
+@inject MeService MeService
+@inject NotificationApiService NotificationApi
+@inject NavigationManager Nav
+
+<MudThemeProvider Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@if (_initializing)
+{
+    <div style="min-height:100vh; background:#F8F6F2; display:flex; align-items:center; justify-content:center;">
+        <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Medium" />
+    </div>
+}
+else if (_me is null)
+{
+    <div style="min-height:100vh; background:#F8F6F2; display:flex; align-items:center; justify-content:center;">
+        <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Small" />
+    </div>
+}
+else
+{
+    <MudLayout>
+        <a href="#main-content" class="skip-to-content">Preskoči na sadržaj</a>
+        <MudAppBar Elevation="0" Fixed="true"
+                   Style="background:#FEE600; color:var(--rbi-off-black); z-index:1400; height:64px; border-bottom:1px solid rgba(0,0,0,0.08);">
+
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                           OnClick="ToggleSidebar" Style="color:var(--rbi-off-black); margin-right:4px;" aria-label="Prebaci meni" />
+
+            <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+                <img src="images/rbbh-logo.png" alt="Raiffeisen" style="height:32px; width:auto; display:block; flex-shrink:0;" />
+                <div style="line-height:1.25;">
+                    <div style="font-size:14px; font-weight:700; color:var(--rbi-off-black); white-space:nowrap;">Digitalizacija procjene nekretnina</div>
+                    <div style="font-size:11px; color:#555; font-weight:400;">Raiffeisen Bank d.d.</div>
+                </div>
+            </div>
+
+            <MudSpacer />
+
+            <div style="display:flex; align-items:center; gap:4px;">
+                @if (_hasNotificationsAccess)
+                {
+                    <div style="position:relative;">
+                        <MudBadge Content="@_unreadCount" Color="Color.Error" Overlap="true" Visible="@(_unreadCount > 0)" Class="mx-1">
+                            <MudIconButton Icon="@Icons.Material.Outlined.NotificationsNone" Style="color:var(--rbi-off-black);"
+                                           OnClick="ToggleNotifMenu" aria-label="Obavještenja" />
+                        </MudBadge>
+
+                        @if (_notifMenuOpen)
+                        {
+                            <div style="position:absolute; top:50px; right:0; background:#fff; border:1px solid #E5DDD2;
+                                        border-radius:8px; box-shadow:0 4px 20px rgba(43,45,51,0.16);
+                                        width:340px; z-index:1500; padding:6px;">
+                                <div style="padding:10px 14px; border-bottom:1px solid #F1EDE6; margin-bottom:4px;
+                                            font-size:13px; font-weight:700; color:var(--rbi-off-black);">
+                                    Obavještenja
+                                </div>
+
+                                @if (_loadingNotifications)
+                                {
+                                    <div style="display:flex; justify-content:center; padding:20px;">
+                                        <MudProgressCircular Indeterminate="true" Color="Color.Warning" Size="Size.Small" />
+                                    </div>
+                                }
+                                else if (_recentNotifications.Count == 0)
+                                {
+                                    <div style="padding:20px 14px; text-align:center; font-size:13px; color:var(--text-muted);">
+                                        Nemate obavještenja.
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="max-height:360px; overflow-y:auto;">
+                                        @foreach (var n in _recentNotifications)
+                                        {
+                                            var hasOrder = n.RelatedEntityType is "Order" or "AppraisalOrder"
+                                                           && !string.IsNullOrEmpty(n.RelatedEntityId);
+                                            <div @onclick="@(() => OnNotificationClick(n))"
+                                                 style="padding:10px 14px; border-radius:8px; cursor:pointer;
+                                                        background:@(n.IsRead ? "transparent" : "#FFF9D6");"
+                                                 onmouseover="this.style.background='#F8F6F2'"
+                                                 onmouseout="this.style.background='@(n.IsRead ? "transparent" : "#FFF9D6")'">
+                                                <div style="font-size:13px; font-weight:@(n.IsRead ? "500" : "700"); color:var(--rbi-off-black);">
+                                                    @n.Subject
+                                                </div>
+                                                <div style="font-size:12px; color:#777; margin-top:2px; line-height:1.4;">
+                                                    @n.Message
+                                                </div>
+                                                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                                                    <span style="font-size:11px; color:#9B9590;">
+                                                        @n.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy. HH:mm")
+                                                    </span>
+                                                    @if (hasOrder)
+                                                    {
+                                                        <span style="font-size:11px; color:var(--rbi-purple-deep); font-weight:600;">
+                                                            Otvori narudžbu →
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+
+                                <div style="border-top:1px solid #F1EDE6; margin-top:4px; padding-top:6px;">
+                                    <MudButton Href="/obavjestenja" Variant="Variant.Text" FullWidth="true" Size="Size.Small"
+                                               Style="color:var(--text-secondary); font-size:12.5px; text-transform:none;">
+                                        Pogledaj sva obavještenja
+                                    </MudButton>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div style="width:1px; height:28px; background:rgba(43,45,51,0.18); margin:0 4px;"></div>
+                }
+                <MudTooltip Text="Pomoć i dokumentacija" Placement="Placement.Bottom">
+                    <MudIconButton Icon="@Icons.Material.Outlined.HelpOutline"
+                                   Style="color:var(--rbi-off-black);"
+                                   aria-label="Pomoć"
+                                   OnClick="@(() => _showHelp = true)" />
+                </MudTooltip>
+                <div style="width:1px; height:28px; background:rgba(43,45,51,0.18); margin:0 4px;"></div>
+                <div style="position:relative;">
+                    <div @onclick="ToggleProfileMenu"
+                         style="display:flex; align-items:center; gap:10px; cursor:pointer; padding:4px 10px; border-radius:8px;">
+                        <div style="width:32px; height:32px; background:#2B2D33; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <MudIcon Icon="@Icons.Material.Filled.Person" Style="color:#FEE600; font-size:18px;" />
+                        </div>
+                        <div style="line-height:1.2;">
+                            <div style="font-size:13px; font-weight:700; color:var(--rbi-off-black); white-space:nowrap;">@(_me.DisplayName ?? _me.Username)</div>
+                            <div style="font-size:11px; color:#555;">@AppRoles.PrimaryDisplayName(_me.Roles)</div>
+                        </div>
+                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Style="font-size:17px; color:#555;" />
+                    </div>
+
+                    @if (_profileMenuOpen)
+                    {
+                        <div style="position:absolute; top:50px; right:0; background:#fff; border:1px solid #E5DDD2;
+                                    border-radius:8px; box-shadow:0 4px 20px rgba(43,45,51,0.16);
+                                    min-width:220px; z-index:1500; padding:6px;">
+                            <div style="padding:10px 14px 12px; border-bottom:1px solid #F1EDE6; margin-bottom:4px;">
+                                <div style="font-size:13px; font-weight:700; color:var(--rbi-off-black);">@(_me.DisplayName ?? _me.Username)</div>
+                                @if (!string.IsNullOrWhiteSpace(_me.Email))
+                                {
+                                    <div style="font-size:12px; color:#777; margin-top:1px;">@_me.Email</div>
+                                }
+                                <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">@AppRoles.PrimaryDisplayName(_me.Roles)</div>
+                            </div>
+                            <button @onclick="Logout"
+                                    style="width:100%; padding:9px 14px; background:none; border:none; cursor:pointer;
+                                           text-align:left; font-size:13.5px; font-family:'Inter',sans-serif; font-weight:600;
+                                           color:var(--rbi-coral-deep); border-radius:6px; display:flex; align-items:center; gap:10px;"
+                                    onmouseover="this.style.background='#FFF0EC'"
+                                    onmouseout="this.style.background='none'">
+                                <MudIcon Icon="@Icons.Material.Outlined.Logout" Style="font-size:18px;" />
+                                Odjava
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </MudAppBar>
+
+        <MudDrawer @bind-Open="_sidebarOpen" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Mini"
+                   MiniWidth="64px" Width="200px" Elevation="0"
+                   Style="background:#FFFFFF; border-right:1px solid #F1EDE6;">
+            <div style="display:flex; flex-direction:column; height:100%; overflow:hidden;">
+                <div style="flex:1; overflow-y:auto; overflow-x:hidden; padding:10px 0;">
+
+                    <MudTooltip Text="Početna" Placement="Placement.Right" Disabled="_sidebarOpen">
+                        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">
+                            @if (_sidebarOpen) { <span>Početna</span> }
+                        </MudNavLink>
+                    </MudTooltip>
+
+                    @* ── PRODAJNE ROLE (AM, SM, UB) — posebna navigacija ──────────────────────────────── *@
+                    @if (_hasSalesAccess)
+                    {
+                        @if (_sidebarOpen)
+                        {
+                            <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); padding:14px 20px 4px;">Narudžbe</div>
+                        }
+
+                        <MudTooltip Text="Nova narudžba" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/narudzbe/nova" Match="NavLinkMatch.Prefix"
+                                        Icon="@Icons.Material.Outlined.AddCircleOutline">
+                                @if (_sidebarOpen) { <span>Nova narudžba</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                        <MudTooltip Text="Pregled narudžbi" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/narudzbe" Match="NavLinkMatch.All"
+                                        Icon="@Icons.Material.Outlined.ListAlt">
+                                @if (_sidebarOpen) { <span>Pregled narudžbi</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                        @if (_sidebarOpen)
+                        {
+                            <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); padding:14px 20px 4px;">Alati</div>
+                        }
+
+                        @* Dokumentacija (dijeljeni dokumenti: cjenovnici, urneci) — vidljivo AM/SM/UB *@
+                        <MudNavLink Href="/dokumentacija" Match="NavLinkMatch.Prefix"
+                                    Icon="@Icons.Material.Outlined.Description">
+                            @if (_sidebarOpen) { <span>Dokumentacija</span> }
+                        </MudNavLink>
+                    }
+
+                    @* ── OSTALE ROLE — Narudžbe sekcija (CA, CO, Vještak, Pravna, Protokol) ─────────── *@
+                    @if (!_hasSalesAccess && _hasOrdersAccess)
+                    {
+                        @if (_sidebarOpen)
+                        {
+                            <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); padding:14px 20px 4px;">Narudžbe</div>
+                        }
+
+                        <MudTooltip Text="Narudžbe" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/narudzbe" Match="NavLinkMatch.All"
+                                        Icon="@Icons.Material.Outlined.ListAlt">
+                                @if (_sidebarOpen) { <span>Narudžbe</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                        @if (_hasTasks)
+                        {
+                            <MudTooltip Text="Moji zadaci" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                <MudNavLink Href="/moji-taskovi" Match="NavLinkMatch.Prefix"
+                                            Icon="@Icons.Material.Outlined.AssignmentTurnedIn">
+                                    @if (_sidebarOpen) { <span>Moji zadaci</span> }
+                                </MudNavLink>
+                            </MudTooltip>
+                        }
+
+                        @if (_isCA || _isProtokol)
+                        {
+                            <MudTooltip Text="Protokol narudžbi" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                <MudNavLink Href="/protokol" Match="NavLinkMatch.Prefix"
+                                            Icon="@Icons.Material.Outlined.MenuBook">
+                                    @if (_sidebarOpen) { <span>Protokol narudžbi</span> }
+                                </MudNavLink>
+                            </MudTooltip>
+                        }
+
+                        @if (_hasAppraisersAccess)
+                        {
+                            <MudTooltip Text="Vještaci" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                <MudNavLink Href="/sifarnici/vjestaci" Match="NavLinkMatch.Prefix"
+                                            Icon="@Icons.Material.Outlined.Engineering">
+                                    @if (_sidebarOpen) { <span>Vještaci</span> }
+                                </MudNavLink>
+                            </MudTooltip>
+                        }
+
+                        @if (_hasReportsAccess || _hasSharedDocsAccess)
+                        {
+                            @if (_sidebarOpen)
+                            {
+                                <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); padding:14px 20px 4px;">Alati</div>
+                            }
+
+                            @if (_hasReportsAccess)
+                            {
+                                <MudTooltip Text="Izvještaji" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                    <MudNavLink Href="/izvjestaji" Match="NavLinkMatch.Prefix"
+                                                Icon="@Icons.Material.Outlined.BarChart">
+                                        @if (_sidebarOpen) { <span>Izvještaji</span> }
+                                    </MudNavLink>
+                                </MudTooltip>
+                            }
+
+                            @if (_hasSharedDocsAccess)
+                            {
+                                <MudTooltip Text="Dokumentacija" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                    <MudNavLink Href="/dokumentacija" Match="NavLinkMatch.Prefix"
+                                                Icon="@Icons.Material.Outlined.Description">
+                                        @if (_sidebarOpen) { <span>Dokumentacija</span> }
+                                    </MudNavLink>
+                                </MudTooltip>
+
+                                @if (_isCA)
+                                {
+                                    <MudTooltip Text="Šifarnici" Placement="Placement.Right" Disabled="_sidebarOpen">
+                                        <MudNavLink Href="/admin/sifarnici" Match="NavLinkMatch.Prefix"
+                                                    Icon="@Icons.Material.Outlined.LibraryBooks">
+                                            @if (_sidebarOpen) { <span>Šifarnici</span> }
+                                        </MudNavLink>
+                                    </MudTooltip>
+                                }
+                            }
+                        }
+                    }
+
+                    @if (_isAdmin)
+                    {
+                        @if (_sidebarOpen)
+                        {
+                            <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#9B9590; padding:14px 20px 4px;">Administracija</div>
+                        }
+
+                        <MudTooltip Text="Upravljanje rolama" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/admin/upravljanje-rolama" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts">
+                                @if (_sidebarOpen) { <span>Upravljanje rolama</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                        <MudTooltip Text="Šifarnici" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/admin/sifarnici" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.LibraryBooks">
+                                @if (_sidebarOpen) { <span>Šifarnici</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                        <MudTooltip Text="Administracija pristupa" Placement="Placement.Right" Disabled="_sidebarOpen">
+                            <MudNavLink Href="/admin/pristup" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.AdminPanelSettings">
+                                @if (_sidebarOpen) { <span>Administracija pristupa</span> }
+                            </MudNavLink>
+                        </MudTooltip>
+
+                    }
+                </div>
+
+            </div>
+        </MudDrawer>
+
+        <MudMainContent Style="background:#F8F6F2; min-height:100vh;" id="main-content">
+            <div style="padding:28px; max-width:1400px; margin:0 auto;">
+                @Body
+            </div>
+        </MudMainContent>
+    </MudLayout>
+
+    @if (_profileMenuOpen || _notifMenuOpen)
+    {
+        <div style="position:fixed; inset:0; z-index:1050;" @onclick="CloseMenus"></div>
+    }
+}
+
+@* ── Help dialog ──────────────────────────────────────────────────────────── *@
+@if (_showHelp)
+{
+    <div style="position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9000; display:flex; align-items:center; justify-content:center;"
+         @onclick="@(() => _showHelp = false)">
+        <div style="background:var(--surface, #fff); border-radius:12px; padding:32px; max-width:480px; width:90%;
+                    box-shadow:0 8px 48px rgba(0,0,0,0.18);"
+             @onclick:stopPropagation>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                <MudIcon Icon="@Icons.Material.Outlined.HelpOutline"
+                         Style="font-size:24px; color:var(--accent, #1B3F6E);" />
+                <div style="font-size:18px; font-weight:700; color:var(--rbi-off-black);">
+                    Pomoć i dokumentacija
+                </div>
+                <MudIconButton Icon="@Icons.Material.Outlined.Close"
+                               Size="Size.Small" Style="margin-left:auto;"
+                               OnClick="@(() => _showHelp = false)" />
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; font-size:14px;">
+                <a href="/narudzbe/nova/FL" style="display:flex; gap:10px; align-items:center; text-decoration:none;
+                    padding:12px; border-radius:8px; border:1px solid var(--border, #D4DAE4);
+                    color:inherit; transition:background .15s;"
+                   @onclick="@(() => _showHelp = false)">
+                    <MudIcon Icon="@Icons.Material.Outlined.AddCircleOutline"
+                             Style="font-size:20px; color:var(--accent);" />
+                    <div>
+                        <div style="font-weight:600;">Nova narudžba procjene (FL)</div>
+                        <div style="font-size:12px; color:var(--text-muted);">Pokrenite FL (fizičko lice) proces procjene</div>
+                    </div>
+                </a>
+                <a href="/narudzbe/nova/PL" style="display:flex; gap:10px; align-items:center; text-decoration:none;
+                    padding:12px; border-radius:8px; border:1px solid var(--border, #D4DAE4);
+                    color:inherit; transition:background .15s;"
+                   @onclick="@(() => _showHelp = false)">
+                    <MudIcon Icon="@Icons.Material.Outlined.Business"
+                             Style="font-size:20px; color:var(--accent);" />
+                    <div>
+                        <div style="font-weight:600;">Nova narudžba procjene (PL)</div>
+                        <div style="font-size:12px; color:var(--text-muted);">Pokrenite PL (pravno lice) proces procjene</div>
+                    </div>
+                </a>
+                <a href="/narudzbe" style="display:flex; gap:10px; align-items:center; text-decoration:none;
+                    padding:12px; border-radius:8px; border:1px solid var(--border, #D4DAE4);
+                    color:inherit; transition:background .15s;"
+                   @onclick="@(() => _showHelp = false)">
+                    <MudIcon Icon="@Icons.Material.Outlined.ListAlt"
+                             Style="font-size:20px; color:var(--accent);" />
+                    <div>
+                        <div style="font-weight:600;">Pregled narudžbi</div>
+                        <div style="font-size:12px; color:var(--text-muted);">Lista svih narudžbi s filterima i sortiranjem</div>
+                    </div>
+                </a>
+                <a href="/moji-taskovi" style="display:flex; gap:10px; align-items:center; text-decoration:none;
+                    padding:12px; border-radius:8px; border:1px solid var(--border, #D4DAE4);
+                    color:inherit; transition:background .15s;"
+                   @onclick="@(() => _showHelp = false)">
+                    <MudIcon Icon="@Icons.Material.Outlined.AssignmentTurnedIn"
+                             Style="font-size:20px; color:var(--accent);" />
+                    <div>
+                        <div style="font-weight:600;">Moji zadaci</div>
+                        <div style="font-size:12px; color:var(--text-muted);">Pregled i upravljanje vašim workflow zadacima</div>
+                    </div>
+                </a>
+            </div>
+
+            <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border, #D4DAE4);
+                        font-size:12px; color:var(--text-muted); text-align:center;">
+                Digitalizacija procjene nekretnina — RBI BH © 2026
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _sidebarOpen    = true;
+    private bool _initializing   = true;
+    private bool _profileMenuOpen;
+    private bool _notifMenuOpen;
+    private bool _loadingNotifications;
+    private bool _showHelp;
+    private int  _unreadCount;
+    private List<NotificationDto> _recentNotifications = [];
+    private CancellationTokenSource? _pollCts;
+    private MeDto? _me;
+
+    private bool _isAdmin                => _me?.Roles.Contains(AppRoles.Administrator, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isCA                   => _me?.Roles.Contains(AppRoles.KolateralAdministrator, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isCo                   => _me?.Roles.Contains(AppRoles.KolateralOficir, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isVjestak              => _me?.Roles.Contains(AppRoles.Vjestak, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isPravna               => _me?.Roles.Contains(AppRoles.PravnaSluzba, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isProtokol             => _me?.Roles.Contains(AppRoles.Protokol, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isLikvidatura          => _me?.Roles.Contains(AppRoles.Likvidatura, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isSpecijalniRacuni     => _me?.Roles.Contains(AppRoles.SpecijalniRacuni, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _isRacunovodstvo        => _me?.Roles.Contains(AppRoles.Racunovodstvo, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _hasTasks               => _isCA || _isCo || _isVjestak || _isPravna || _isProtokol || _isLikvidatura || _isRacunovodstvo;
+    private bool _hasSalesAccess         => _me?.Roles.Any(r => AppRoles.SalesRoles.Contains(r, StringComparer.OrdinalIgnoreCase)) ?? false;
+    private bool _hasOrdersAccess        => _me?.Permissions.Contains(AppPermissions.OrdersView) ?? false;
+    private bool _hasAppraisersAccess    => _me?.Permissions.Contains(AppPermissions.AppraisersView, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _hasNotificationsAccess => _me?.Permissions.Contains(AppPermissions.NotificationsView) ?? false;
+    private bool _hasSharedDocsAccess    => _me?.Permissions.Contains(AppPermissions.SharedDocumentsView, StringComparer.OrdinalIgnoreCase) ?? false;
+    private bool _hasReportsAccess       => _me?.Permissions.Contains(AppPermissions.ReportsGenerate, StringComparer.OrdinalIgnoreCase) ?? false;
+
+    private void ToggleProfileMenu() => _profileMenuOpen = !_profileMenuOpen;
+    private void CloseProfileMenu()  => _profileMenuOpen = false;
+    private void CloseMenus()
+    {
+        _profileMenuOpen = false;
+        _notifMenuOpen   = false;
+    }
+    private void Logout()            => Nav.NavigateTo("/api/logout", forceLoad: true);
+
+    private readonly MudTheme _theme = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#FEE600", PrimaryDarken = "#D4BF00", PrimaryContrastText = "#2B2D33",
+            Warning = "#F9BB30", Success = "#225B45", Error = "#C65C4A",
+            Background = "#F8F6F2", Surface = "#FFFFFF",
+            AppbarBackground = "#FEE600", AppbarText = "#2B2D33",
+            DrawerBackground = "#FFFFFF", TextPrimary = "#2B2D33", TextSecondary = "#6B6560",
+        },
+        Typography = new Typography { Default = new DefaultTypography { FontFamily = ["Inter","Segoe UI","Roboto","Arial","sans-serif"], FontSize = "14px" } },
+        LayoutProperties = new LayoutProperties { DrawerWidthLeft = "200px", AppbarHeight = "64px" },
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _initializing = true;
+        var r = await MeService.GetMeAsync();
+        if (r.IsSuccess)
+        {
+            _me = r.Data;
+        }
+        else
+        {
+            var uri = new Uri(Nav.Uri).AbsolutePath;
+            if (!uri.Equals("/login", StringComparison.OrdinalIgnoreCase))
+                Nav.NavigateTo("/login", replace: true);
+        }
+        _initializing = false;
+
+        if (_hasNotificationsAccess)
+        {
+            await RefreshUnreadCountAsync();
+            _pollCts = new CancellationTokenSource();
+            _ = PollUnreadCountAsync(_pollCts.Token);
+        }
+    }
+
+    private void ToggleSidebar() => _sidebarOpen = !_sidebarOpen;
+
+    private static string GetInitial(string? name)
+    {
+        var n = name ?? "?";
+        return n.Length > 0 ? n[..1].ToUpperInvariant() : "?";
+    }
+
+    // ── Notifikacije (bell ikona) ───────────────────────────────────────────────
+
+    private async Task ToggleNotifMenu()
+    {
+        _notifMenuOpen = !_notifMenuOpen;
+        if (_notifMenuOpen)
+            await LoadRecentNotificationsAsync();
+    }
+
+    private async Task LoadRecentNotificationsAsync()
+    {
+        _loadingNotifications = true;
+        var r = await NotificationApi.GetInboxAsync(page: 1, pageSize: 5);
+        if (r.IsSuccess && r.Data is not null)
+        {
+            _recentNotifications = r.Data.Items.ToList();
+            _unreadCount         = r.Data.UnreadCount;
+        }
+        _loadingNotifications = false;
+    }
+
+    private async Task RefreshUnreadCountAsync()
+    {
+        var r = await NotificationApi.GetUnreadCountAsync();
+        if (r.IsSuccess && r.Data is not null)
+            _unreadCount = r.Data.Count;
+    }
+
+    private async Task OnNotificationClick(NotificationDto notification)
+    {
+        var hasOrder = !string.IsNullOrEmpty(notification.RelatedEntityId) &&
+                       notification.RelatedEntityType is "Order" or "AppraisalOrder";
+
+        if (!notification.IsRead)
+            _ = NotificationApi.MarkReadAsync(notification.Id);
+
+        _notifMenuOpen = false;
+
+        if (hasOrder)
+            Nav.NavigateTo($"/narudzbe/{notification.RelatedEntityId}");
+        else
+            await LoadRecentNotificationsAsync();
+    }
+
+    private async Task PollUnreadCountAsync(CancellationToken ct)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                await RefreshUnreadCountAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Layout je uništen — prekini polling.
+        }
+    }
+
+    public void Dispose()
+    {
+        _pollCts?.Cancel();
+        _pollCts?.Dispose();
+    }
+}

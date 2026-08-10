@@ -1,0 +1,364 @@
+@page "/dokumentacija"
+@page "/sprint2/dokumentacija"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject SharedDocumentApiService SharedDocApi
+@inject MeService MeSvc
+@inject IJSRuntime JS
+@using BlazorApp.Models
+
+<PageTitle>Dokumentacija — Digitalizacija procjene nekretnina</PageTitle>
+
+@if (_initializing)
+{
+    <AppLoadingState />
+}
+else
+{
+    <MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-6">
+            <MudStack Spacing="0">
+                <MudText Typo="Typo.h5" Style="font-weight:700;">Dokumentacija</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Cjenovnik procjena, lista dokumentacije po tipu kolaterala i ostali dijeljeni dokumenti.
+                </MudText>
+            </MudStack>
+
+            @if (_canManage)
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.UploadFile"
+                           OnClick="OpenUploadDialog"
+                           Disabled="_loading">
+                    Dodaj dokument
+                </MudButton>
+            }
+        </MudStack>
+
+        @if (!string.IsNullOrWhiteSpace(_error))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon OnClose="() => _error = null">@_error</MudAlert>
+        }
+
+        @if (_loading)
+        {
+            <MudProgressLinear Indeterminate Color="Color.Primary" Class="mb-4" />
+        }
+
+        @if (!_loading && _grouped.Count == 0)
+        {
+            <MudPaper Class="pa-8" Elevation="0" Style="border:1.5px dashed var(--mud-palette-divider); border-radius:12px; text-align:center;">
+                <MudIcon Icon="@Icons.Material.Outlined.FolderOpen" Style="font-size:3rem; color:var(--mud-palette-text-disabled);" />
+                <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mt-2">Nema uploadovanih dokumenata.</MudText>
+            </MudPaper>
+        }
+
+        @foreach (var group in _grouped)
+        {
+            <MudPaper Elevation="1" Class="mb-5 rounded-lg overflow-hidden">
+                <MudStack Row AlignItems="AlignItems.Center" Class="px-5 py-3"
+                          Style="background:var(--mud-palette-surface);">
+                    <MudIcon Icon="@CategoryIcon(group.Key)"
+                             Style="color:var(--mud-palette-primary);" Class="mr-2" />
+                    <MudText Typo="Typo.h6" Style="font-weight:600;">@group.Key</MudText>
+                    <MudSpacer />
+                    <MudChip T="string" Size="Size.Small" Color="Color.Default">@group.Value.Count</MudChip>
+                </MudStack>
+
+                <MudDivider />
+
+                <MudList T="SharedDocumentDto" Dense="true" Padding="false">
+                    @foreach (var doc in group.Value)
+                    {
+                        <MudListItem T="SharedDocumentDto" Dense="true">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width:100%;">
+                                <MudIcon Icon="@Icons.Material.Outlined.PictureAsPdf"
+                                         Style="color:#d32f2f; flex-shrink:0;" Size="Size.Small" />
+
+                                <MudStack Spacing="0" Style="flex:1; min-width:0;">
+                                    <MudText Typo="Typo.body2" Style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                        @doc.Title
+                                    </MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                        @doc.OriginalFileName &nbsp;·&nbsp; @FormatSize(doc.FileSize) &nbsp;·&nbsp; @doc.UploadedAt.ToLocalTime().ToString("dd.MM.yyyy.")
+                                    </MudText>
+                                </MudStack>
+
+                                <MudStack Row Spacing="1" Style="flex-shrink:0;">
+                                    <MudIconButton Icon="@Icons.Material.Outlined.Download"
+                                                   Size="Size.Small"
+                                                   Color="Color.Primary"
+                                                   Title="Preuzmi"
+                                                   OnClick="() => DownloadDoc(doc)" />
+
+                                    @if (_canManage)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       Title="Obriši"
+                                                       OnClick="() => ConfirmDelete(doc)" />
+                                    }
+                                </MudStack>
+                            </MudStack>
+                        </MudListItem>
+                        <MudDivider />
+                    }
+                </MudList>
+            </MudPaper>
+        }
+    </MudContainer>
+
+    @* ── Upload dialog ────────────────────────────────────────────────────────── *@
+    <MudDialog Visible="_uploadOpen" Options="_dialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">Dodaj dokument</MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudStack Spacing="3">
+                <MudTextField @bind-Value="_uploadTitle"
+                              Label="Naziv dokumenta"
+                              Required="true"
+                              MaxLength="300"
+                              HelperText="Npr. Cjenovnik procjena 2026" />
+
+                <MudSelect T="string" @bind-Value="_uploadCategory" Label="Kategorija" Required="true">
+                    @foreach (var cat in _categories)
+                    {
+                        <MudSelectItem T="string" Value="@cat">@cat</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudFileUpload T="IBrowserFile" FilesChanged="OnFileSelected" Accept=".pdf,.xlsx,.xls,.xlsm">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Outlined"
+                                   StartIcon="@Icons.Material.Filled.AttachFile"
+                                   Color="Color.Primary">
+                            Odaberi fajl (PDF ili Excel)
+                        </MudButton>
+                    </ActivatorContent>
+                </MudFileUpload>
+
+                @if (_selectedFile is not null)
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Success">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" Class="mr-1" />
+                        @_selectedFile.Name (@FormatSize(_selectedFile.Size))
+                    </MudText>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(_uploadError))
+                {
+                    <MudAlert Severity="Severity.Error">@_uploadError</MudAlert>
+                }
+            </MudStack>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="CloseUploadDialog" Disabled="_uploading">Odustani</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="SubmitUpload" Disabled="@(_uploading || _selectedFile is null)">
+                @if (_uploading)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                }
+                Dodaj
+            </MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    @* ── Confirm delete dialog ────────────────────────────────────────────────── *@
+    <MudDialog Visible="_deleteOpen" Options="_dialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">Potvrda brisanja</MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudText>Sigurno želite ukloniti <strong>@_deleteTarget?.Title</strong>?</MudText>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="() => _deleteOpen = false">Odustani</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ExecuteDelete">Obriši</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    private bool   _initializing = true;
+    private bool   _canManage;
+    private bool   _loading = true;
+    private string? _error;
+
+    private Dictionary<string, List<SharedDocumentDto>> _grouped = [];
+    private List<string> _categories = [];
+
+    // upload
+    private bool          _uploadOpen;
+    private bool          _uploading;
+    private string        _uploadTitle    = "";
+    private string        _uploadCategory = "";
+    private IBrowserFile? _selectedFile;
+    private string?       _uploadError;
+
+    // delete
+    private bool               _deleteOpen;
+    private SharedDocumentDto? _deleteTarget;
+
+    private readonly DialogOptions _dialogOptions = new()
+        { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var me = await MeSvc.GetMeAsync();
+        var permissions = me.IsSuccess ? me.Data?.Permissions ?? [] : [];
+
+        _canManage = permissions.Contains(AppPermissions.SharedDocumentsManage,
+                                          StringComparer.OrdinalIgnoreCase);
+
+        _initializing = false;
+
+        var catResult = await SharedDocApi.GetCategoriesAsync();
+        if (catResult.IsSuccess && catResult.Data is not null)
+            _categories = catResult.Data;
+
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _error   = null;
+
+        var result = await SharedDocApi.GetAllAsync();
+
+        if (result.IsSuccess && result.Data is not null)
+        {
+            _grouped = result.Data
+                .GroupBy(d => d.Category)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
+        else
+        {
+            _error = result.ErrorMessage ?? "Greška pri učitavanju dokumenata.";
+        }
+
+        _loading = false;
+    }
+
+    private void OpenUploadDialog()
+    {
+        _uploadTitle    = "";
+        _uploadCategory = _categories.FirstOrDefault() ?? "";
+        _selectedFile   = null;
+        _uploadError    = null;
+        _uploading      = false;
+        _uploadOpen     = true;
+    }
+
+    private void CloseUploadDialog() => _uploadOpen = false;
+
+    private void OnFileSelected(IBrowserFile file)
+    {
+        _selectedFile = file;
+        _uploadError  = null;
+    }
+
+    private async Task SubmitUpload()
+    {
+        if (_selectedFile is null) return;
+
+        _uploading   = true;
+        _uploadError = null;
+
+        try
+        {
+            const long maxBytes = 10 * 1024 * 1024;
+
+            if (_selectedFile.Size > maxBytes)
+            {
+                _uploadError = "Fajl prelazi maksimalnu dozvoljenu veličinu (10 MB).";
+                return;
+            }
+
+            var ext = System.IO.Path.GetExtension(_selectedFile.Name).ToLowerInvariant();
+            var allowedExt = new[] { ".pdf", ".xlsx", ".xls", ".xlsm" };
+            if (!allowedExt.Contains(ext))
+            {
+                _uploadError = "Dozvoljen je PDF ili Excel fajl (.pdf, .xlsx, .xls).";
+                return;
+            }
+
+            await using var stream = _selectedFile.OpenReadStream(maxBytes);
+            using var ms = new System.IO.MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            var result = await SharedDocApi.UploadAsync(
+                _uploadTitle.Trim(),
+                _uploadCategory,
+                ms.ToArray(),
+                _selectedFile.Name,
+                _selectedFile.ContentType);
+
+            if (result.IsSuccess)
+            {
+                _uploadOpen = false;
+                await LoadAsync();
+            }
+            else
+            {
+                _uploadError = result.ErrorMessage ?? "Greška pri uploadu.";
+            }
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private void ConfirmDelete(SharedDocumentDto doc)
+    {
+        _deleteTarget = doc;
+        _deleteOpen   = true;
+    }
+
+    private async Task ExecuteDelete()
+    {
+        if (_deleteTarget is null) return;
+        _deleteOpen = false;
+
+        var result = await SharedDocApi.DeleteAsync(_deleteTarget.Id);
+        if (result.IsSuccess)
+            await LoadAsync();
+        else
+            _error = result.ErrorMessage ?? "Greška pri brisanju.";
+
+        _deleteTarget = null;
+    }
+
+    private async Task DownloadDoc(SharedDocumentDto doc)
+    {
+        var result = await SharedDocApi.DownloadAsync(doc.Id);
+        if (!result.IsSuccess)
+        {
+            _error = result.ErrorMessage ?? "Greška pri preuzimanju.";
+            return;
+        }
+        var (content, fileName) = result.Data;
+        var base64 = Convert.ToBase64String(content);
+        await JS.InvokeVoidAsync("downloadFileFromBytes", fileName, base64);
+    }
+
+    private static string FormatSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024):F1} MB";
+    }
+
+    private static string CategoryIcon(string category) => category switch
+    {
+        "Cjenovnik"           => Icons.Material.Outlined.Payments,
+        "Lista dokumentacije" => Icons.Material.Outlined.Assignment,
+        _                     => Icons.Material.Outlined.Folder
+    };
+}

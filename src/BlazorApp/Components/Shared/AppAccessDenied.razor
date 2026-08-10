@@ -1,0 +1,18 @@
+@*
+    AppAccessDenied — zajednički 403 prikaz za sve stranice koje rade role/permission check.
+    Zamjenjuje identičan inline blok koji se ponavljao na: MyOrders, Protokol, MyTasks,
+    AppraiserAdmin — svaki sa istim inline stilovima ali minimalnim razlikama.
+*@
+<div class="app-access-denied">
+    <MudIcon Icon="@Icons.Material.Outlined.Lock"
+             Style="font-size:56px; color:var(--rbi-coral-deep); opacity:.7;" />
+    <div class="app-access-denied-title">@Title</div>
+    <div class="app-access-denied-desc">@Message</div>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string Title   { get; set; } = "Pristup odbijen";
+    [Parameter] public string Message { get; set; } = "Nemate ovlaštenje za pristup ovoj stranici.";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

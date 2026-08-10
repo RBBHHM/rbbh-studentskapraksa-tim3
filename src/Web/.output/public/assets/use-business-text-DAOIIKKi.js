@@ -1,0 +1,1 @@
+import{t as e}from"./useTranslation-Dj5Vy73B.js";function t(){let{i18n:t}=e(),n=t.resolvedLanguage?.toLowerCase().startsWith(`bs`)??!0;return(e,t)=>n?e:t}export{t};

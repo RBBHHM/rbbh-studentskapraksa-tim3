@@ -1,0 +1,150 @@
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+
+@* Bez @if wrappera: MudDialog sam upravlja vidljivošću kroz @bind-Visible i uredno
+   počisti overlay pri zatvaranju. @if bi naglo izbacio dijalog iz stabla i ostavio
+   zaglavljen scrim koji blokira aplikaciju. *@
+<MudDialog @bind-Visible="_visible"
+           Options="@(new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true, CloseOnEscapeKey = true, Position = DialogPosition.Center, NoHeader = true })">
+        <DialogContent>
+            <div style="text-align:center; padding:8px 0;">
+
+                @* Step indicator *@
+                <div style="display:flex; justify-content:center; gap:6px; margin-bottom:24px;">
+                    @for (var i = 0; i < _steps.Length; i++)
+                    {
+                        var idx = i;
+                        <div style="width:@(idx == _step ? "24px" : "8px"); height:8px; border-radius:4px;
+                                    background:@(idx == _step ? "var(--rbi-yellow)" : idx < _step ? "var(--rbi-green-mid)" : "var(--rbi-warm-grey-dark)");
+                                    transition:all 0.2s ease; cursor:pointer;"
+                             @onclick="@(() => _step = idx)"></div>
+                    }
+                </div>
+
+                @* Step content *@
+                <div style="min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+                    <div style="width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+                                background:@_steps[_step].IconBg;">
+                        <MudIcon Icon="@_steps[_step].Icon" Style="font-size:32px; color:var(--rbi-off-black);" />
+                    </div>
+
+                    <div style="font-size:20px; font-weight:800; color:var(--rbi-off-black);">
+                        @_steps[_step].Title
+                    </div>
+
+                    <div style="font-size:14px; color:var(--text-secondary); line-height:1.7; max-width:360px;">
+                        @_steps[_step].Description
+                    </div>
+                </div>
+            </div>
+        </DialogContent>
+        <DialogActions>
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                @if (_step > 0)
+                {
+                    <MudButton Variant="Variant.Text" OnClick="@(() => _step--)"
+                               Style="color:var(--text-secondary);">
+                        Nazad
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Text" OnClick="Dismiss"
+                               Style="color:var(--text-muted); font-size:12px;">
+                        Preskoči
+                    </MudButton>
+                }
+
+                @if (_step < _steps.Length - 1)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => _step++)"
+                               Style="font-weight:700; color:var(--rbi-off-black);">
+                        Naprijed
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="Finish"
+                               Style="font-weight:700; color:var(--rbi-off-black);">
+                        Počni raditi
+                    </MudButton>
+                }
+            </div>
+        </DialogActions>
+    </MudDialog>
+
+@code {
+    [Parameter] public string? UserName { get; set; }
+    [Parameter] public string? RoleName { get; set; }
+
+    private bool _visible;
+    private int _step;
+
+    private record WelcomeStep(string Title, string Description, string Icon, string IconBg);
+
+    private WelcomeStep[] _steps => [
+        new("Dobrodošli, " + (UserName ?? "korisniče") + "!",
+            "Ovo je sistem za digitalizaciju procjene nekretnina Raiffeisen Bank d.d. Bosna i Hercegovina. "
+            + "Ovdje možete kreirati, pratiti i upravljati narudžbama procjene.",
+            Icons.Material.Outlined.Handshake, "var(--rbi-yellow)"),
+        new("Vaša uloga: " + (RoleName ?? "—"),
+            RoleDescription,
+            Icons.Material.Outlined.Badge, "var(--rbi-success-light)"),
+        new("Brzi početak",
+            "Koristite bočni meni za navigaciju. Tipka Alt+N kreira novu narudžbu, a / fokusira pretragu. "
+            + "Za pomoć, kliknite ikonu ⓘ pored polja na formi.",
+            Icons.Material.Outlined.RocketLaunch, "var(--rbi-info-bg)")
+    ];
+
+    private string RoleDescription => RoleName switch
+    {
+        "Account Manager (AM)" or "Sales Manager (SM)" or "Universal Banker (UB)"
+            => "Kao prodajni savjetnik, možete kreirati narudžbe procjene, uploadovati dokumentaciju i pratiti status obrade.",
+        "Kolateral administrator"
+            => "Pregledajte pristigle narudžbe, provjerite dokumentaciju, odaberite vještaka i pratite proces procjene.",
+        "Kolateral oficir"
+            => "Odobravajte procjene, provjeravajte pristup za pravna lica i unosite mišljenja kolateral oficira.",
+        "Vještak"
+            => "Prihvatite dodijeljene narudžbe, izradite procjenu nekretnine i dostavite dokumentaciju.",
+        "Administrator"
+            => "Upravljajte korisnicima, rolama, šifarnicima i pratite audit log sistema.",
+        _ => "Koristite bočni meni da pristupite funkcijama dodijeljenim vašoj roli."
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var seen = await JS.InvokeAsync<string?>("localStorage.getItem", "onboarding_seen");
+                if (string.IsNullOrEmpty(seen))
+                {
+                    _visible = true;
+                    StateHasChanged();
+                }
+            }
+            catch { /* localStorage not available — skip onboarding */ }
+        }
+    }
+
+    private async Task Dismiss()
+    {
+        await MarkSeen();
+        _visible = false;
+        StateHasChanged();
+    }
+
+    private async Task Finish()
+    {
+        await MarkSeen();
+        _visible = false;
+        StateHasChanged();
+    }
+
+    private async Task MarkSeen()
+    {
+        try { await JS.InvokeVoidAsync("localStorage.setItem", "onboarding_seen", "true"); }
+        catch { /* graceful */ }
+    }
+}

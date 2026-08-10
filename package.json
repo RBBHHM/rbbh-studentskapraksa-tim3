@@ -1,0 +1,19 @@
+{
+  "name": "studentskapraksa-research",
+  "version": "1.0.0",
+  "description": "Research agent CLI za praćenje AI-asistiranog razvoja",
+  "private": true,
+  "scripts": {
+    "research:today": "node research-cli/commands/view-today.js",
+    "research:week": "node research-cli/commands/submit.js",
+    "research:insights": "node research-cli/commands/insights.js",
+    "research:doctor": "node research-cli/commands/doctor.js",
+    "research:log": "node research-cli/commands/log-ai.js",
+    "research:watch": "node research-cli/commands/watch.js",
+    "research:start": "node research-cli/commands/watch.js",
+    "research:upload": "node research-cli/commands/sharepoint-upload.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
