@@ -1,4 +1,8 @@
-# Deployment na Hetzner VPS (tim3)
+# Historijski deployment na Hetzner VPS (više nije aktivan)
+
+> Ovaj dokument ostaje samo kao historijski zapis prethodnog studentskog okruženja.
+> Aktuelni produkcijski model je .NET API na OCP-u i React frontend na IIS-u.
+> Koristite [OCP-IIS vodič](../deployment/OCP-IIS.md); stari SSH/Compose workflow je uklonjen.
 
 ## Arhitektura
 

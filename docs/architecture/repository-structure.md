@@ -7,8 +7,9 @@ studentskapraksaTema3/
 │
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml          — build, test, docker check na svakom push/PR
-│       └── cd.yml          — deploy na Hetzner VPS (skeleton)
+│       ├── build-and-push-artifact.yaml — backend image u Artifactory
+│       ├── deploy-to-ocp.yaml           — backend deploy na OpenShift
+│       └── codeql.yml                   — C# sigurnosna analiza
 │
 ├── docker/
 │   ├── docker-compose.yml          — produkcija: api, web, db

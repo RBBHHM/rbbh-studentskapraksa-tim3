@@ -151,7 +151,7 @@ dotnet ef database update \
 | [Frontend smjernice](docs/frontend/frontend-guidelines.md) | Blazor konvencije |
 | [Lokalni razvoj](docs/devops/local-development.md) | Setup upute |
 | [Docker](docs/devops/docker.md) | Docker smjernice |
-| [Deployment](docs/devops/deployment.md) | Hetzner VPS deploy |
+| [Deployment](docs/deployment/OCP-IIS.md) | API na OCP-u i React frontend na IIS-u |
 
 ---
 
@@ -173,3 +173,9 @@ Detalji u originalnom README-u sačuvanom u [docs/INITIAL_SETUP.md](docs/INITIAL
 ## Licenca
 
 MIT
+# Produkcijski deployment
+
+Novi ciljni model je odvojeni deployment: .NET API ide kao container na OCP, a React
+frontend kao statički artifact na IIS. Workflowi, potrebne GitHub/OCP varijable,
+redoslijed isporuke i rollback opisani su u
+[`docs/deployment/OCP-IIS.md`](docs/deployment/OCP-IIS.md).

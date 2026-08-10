@@ -37,7 +37,11 @@ Svi Dockerfile-ovi koriste multi-stage build za optimalni image size:
 
 ## Produkcijsko postavljanje
 
-Za produkciju na Hetzner VPS:
+Sljedeće historijske upute odnosile su se na raniji Hetzner VPS. Docker Compose se
+sada koristi samo lokalno; aktuelni produkcijski postupak je opisan u
+[`../deployment/OCP-IIS.md`](../deployment/OCP-IIS.md).
+
+Za historijski Hetzner VPS deployment:
 1. Kopiraj `docker-compose.yml` na server
 2. Postavi `.env` sa pravim production vrijednostima
 3. `docker compose pull` (ili build lokalno i push na GHCR)

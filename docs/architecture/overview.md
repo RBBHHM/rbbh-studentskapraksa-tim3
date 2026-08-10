@@ -12,7 +12,7 @@
 | Reverse proxy | nginx | alpine |
 | Kontejnerizacija | Docker + Docker Compose | v2 |
 | CI/CD | GitHub Actions | — |
-| Hosting | Hetzner VPS | — |
+| Hosting | OCP (.NET API) + IIS (React frontend) | Odvojeni, nezavisno verzionirani deploymenti |
 
 ## Arhitekturni dijagram
 

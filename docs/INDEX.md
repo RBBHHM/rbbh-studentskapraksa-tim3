@@ -70,7 +70,7 @@ docs/
 - **Sprint 2 (Sedmica 3-4):** CRUD, Services, Database, Testi  
    [SPRINT_2_PLAN.md](./SPRINT_2_PLAN.md) — dolazi
 
-- **Sprint 3 (Sedmica 5-6):** GitHub Actions, Nginx, Hetzner deployment  
+- **Sprint 3 (Sedmica 5-6):** GitHub Actions, OCP API i IIS frontend deployment  
    [SPRINT_3_PLAN.md](./SPRINT_3_PLAN.md) — dolazi
 
 - **Sprint 4 (Sedmica 7-8):** Finalizacija, testovi, prezentacija  
@@ -117,7 +117,7 @@ Auth:        Keycloak (OIDC/OAuth2, JWT)
 Testing:     xUnit + TestContainers
 Docker:      Docker Compose (local dev)
 CI/CD:       GitHub Actions
-Cloud:       Hetzner VPS (production)
+Hosting:     OpenShift/OCP za API; Windows IIS za React frontend
 Research:    Node.js CLI (za praćenje AI rada)
 AI:          GitHub Copilot, Claude, ChatGPT (sa AI agents)
 PM:          Trello (sprint planning)
@@ -394,4 +394,3 @@ Jeste li spremi da krenete?
 | [ROLES.md](./ROLES.md) | Detaljne uloge | 25 min |
 
 **Ukupno:** ~2 sata čitanja + 2-3 sata prakti setup-a = Spreman za razvoj! 
-
