@@ -1,6 +1,6 @@
-using Praksa.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
-namespace Praksa.Application.Codebooks.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
 /// <summary>
 /// Agregator za provjeru upotrebe vrijednosti šifarnika.

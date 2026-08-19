@@ -94,7 +94,8 @@ export function createApiClient(): ApiClient {
 
     const isFormData = options.body instanceof FormData;
     const headers: Record<string, string> = { accept: "application/json", ...options.headers };
-    headers["authorization"] = `Bearer ${await getAccessToken()}`;
+    const accessToken = await getAccessToken();
+    if (accessToken) headers["authorization"] = `Bearer ${accessToken}`;
     const activeRole = getActiveRole();
     if (activeRole) headers["X-Active-Role"] = activeRole;
     if (options.body !== undefined && !isFormData) headers["content-type"] = "application/json";

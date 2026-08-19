@@ -1,11 +1,11 @@
-﻿﻿﻿using ClosedXML.Excel;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Reports;
-using Praksa.Application.Reports.Dtos;
+﻿﻿using ClosedXML.Excel;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Reports.Dtos;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Reports;
+namespace RBBH.CollateralAppraisal.Infrastructure.Reports;
 
 [ExcludeFromCodeCoverage]
 public sealed class OrdersTimeReportService : IOrdersTimeReportService

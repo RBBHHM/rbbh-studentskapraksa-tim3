@@ -1,0 +1,1 @@
+import{I as e,P as t}from"./keycloak-DgBo4ARK.js";var n=(0,e(t()).createContext)(),r=class{constructor(){this.usedNamespaces={}}addUsedNamespaces(e){e.forEach(e=>{this.usedNamespaces[e]||(this.usedNamespaces[e]=!0)})}getUsedNamespaces(){return Object.keys(this.usedNamespaces)}};export{r as n,n as t};

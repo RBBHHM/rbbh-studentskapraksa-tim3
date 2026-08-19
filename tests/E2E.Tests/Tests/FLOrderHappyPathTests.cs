@@ -1,9 +1,9 @@
 using Microsoft.Playwright;
-using Praksa.E2E.Tests.Infrastructure;
+using RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Praksa.E2E.Tests.Tests;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Tests;
 
 /// <summary>
 /// E2E Happy Path — Kompletan tok FL narudžbe (Fizičko lice).
@@ -112,10 +112,10 @@ public sealed class FLOrderHappyPathTests : IClassFixture<PlaywrightFixture>, IA
 
         await log.StepAsync("SETUP: Seed vještaka za FL algoritam verifikaciju");
 
-        var vjtEmail = _config.GetUser("Vjestak").Username; // vjestak.test@praksa.ba
+        var vjtEmail = _config.GetUser("Vjestak").Username; // vjestak.test@rbbh.ba
 
         // Vještak A: Individual, Sarajevo, APP_STAN — linkovan s Keycloak userom
-        //   ContactEmail = vjestak.test@praksa.ba → auto-resolve pri AcceptByAppraiser
+        //   ContactEmail = vjestak.test@rbbh.ba → auto-resolve pri AcceptByAppraiser
         var winnerAppraiserId = await _caClient.CreateLinkedAppraiserAsync(
             keycloakEmail: vjtEmail,
             city: "Sarajevo",

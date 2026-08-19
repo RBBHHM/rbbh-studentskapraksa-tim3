@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Seed;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Seed;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Seed;
 
 public sealed class CodebookSeederTests : IDisposable
 {

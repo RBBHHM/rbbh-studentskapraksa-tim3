@@ -1,4 +1,4 @@
-﻿namespace Praksa.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 /// <summary>
 /// Konfiguracija za Keycloak JWT autentifikaciju.
@@ -8,6 +8,8 @@
 public class KeycloakOptions
 {
     public const string SectionName = "Keycloak";
+
+    public bool Enabled { get; init; }
 
     // Vrijednosti se postavljaju u appsettings.Development.json (dev) ili environment varijablama (prod).
     // NIKADA ne hardkodovati secrets!

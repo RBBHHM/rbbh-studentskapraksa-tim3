@@ -1,15 +1,15 @@
-﻿﻿﻿using System.Net.Http.Headers;
+﻿﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Users;
+namespace RBBH.CollateralAppraisal.Infrastructure.Users;
 
 /// <summary>
 /// Implementacija IUserRoleProvider koja dohvata korisnike i njihove role putem Keycloak Admin REST API.

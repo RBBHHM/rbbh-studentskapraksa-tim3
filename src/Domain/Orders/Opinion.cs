@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Mišljenje (CO ili Pravna služba) za narudžbu procjene — US 94.

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 [ExcludeFromCodeCoverage]
 public sealed record InvoiceSnapshot(

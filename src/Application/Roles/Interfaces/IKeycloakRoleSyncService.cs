@@ -1,7 +1,7 @@
-namespace Praksa.Application.Roles.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Roles.Interfaces;
 
 /// <summary>
-/// Sinhronizacija definicija rola i korisničkih role mappinga između PostgreSQL i Keycloak.
+/// Sinhronizacija definicija rola i korisničkih role mappinga između SQL Server i Keycloak.
 ///
 /// Sve metode su idempotentne gdje je moguće (create not fails if exists, delete not fails if missing).
 /// </summary>

@@ -1,6 +1,6 @@
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.Orders.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
 /// <summary>
 /// Workflow akcije na narudžbama — podnošenje i otkazivanje.

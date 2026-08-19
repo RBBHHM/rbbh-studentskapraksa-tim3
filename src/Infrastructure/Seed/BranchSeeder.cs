@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Common.Branches;
-using Praksa.Domain.Branches;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Branches;
+using RBBH.CollateralAppraisal.Domain.Branches;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 /// <summary>
 /// Seeder koji derivira podatke isključivo iz <see cref="BranchCatalog"/> —

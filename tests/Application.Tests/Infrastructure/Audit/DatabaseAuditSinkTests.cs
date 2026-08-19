@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Domain.Audit;
-using Praksa.Infrastructure.Audit;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Audit;
 
 public sealed class DatabaseAuditSinkTests : IDisposable
 {

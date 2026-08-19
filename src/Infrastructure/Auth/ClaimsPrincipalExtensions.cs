@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Praksa.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 /// <summary>
 /// Extension metode za ClaimsPrincipal — standardizovano čitanje claim-ova.
@@ -21,8 +21,8 @@ namespace Praksa.Infrastructure.Auth;
 ///    c) Alternativno: konfigurirati Keycloak da mapira role kao flat claim-ove.
 ///
 /// 3. resource_access format (za client-specifične role):
-///    { "resource_access": { "praksa-api": { "roles": ["Administrator"] } } }
-///    Ako su uloge per-client, Ernad dodaje parsiranje za "praksa-api" resource.
+///    { "resource_access": { "collateral-appraisal-api": { "roles": ["Administrator"] } } }
+///    Ako su uloge per-client, Ernad dodaje parsiranje za "collateral-appraisal-api" resource.
 ///
 /// Preporučena Keycloak konfiguracija: protocol mapper koji flatten-uje role u "role" claim.
 /// </summary>

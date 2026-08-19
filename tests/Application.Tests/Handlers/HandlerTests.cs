@@ -1,4 +1,4 @@
-﻿// Handler unit testovi â€” klase ekvivalencije
+// Handler unit testovi â€” klase ekvivalencije
 // Svaki thin handler ima jednu klasu: "ispravna komanda â†’ delegira na servis".
 // Validatori: valid-class (prolazi), invalid-class po pravilu (pada).
 using FluentValidation;
@@ -6,38 +6,38 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using Praksa.Application.AccessCheck.Commands;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.AppraiserAssignment.Commands;
-using Praksa.Application.AppraiserAssignment.Queries;
-using Praksa.Application.Audit;
-using Praksa.Application.CaDocumentReview.Commands;
-using Praksa.Application.Common.Behaviors;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Invoice.Commands;
-using Praksa.Application.Invoice.Queries;
-using Praksa.Application.Opinions;
-using Praksa.Application.Opinions.Commands;
-using Praksa.Application.Opinions.Dtos;
-using Praksa.Application.Opinions.Queries;
-using Praksa.Application.OrderApproval.Commands;
-using Praksa.Application.OrderApproval.Queries;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Commands;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Orders.Queries;
-using Praksa.Application.Orders.Requests;
-using Praksa.Application.OriginalAppraisal.Commands;
-using Praksa.Application.QuoteRequests.Commands;
-using Praksa.Application.QuoteRequests.Queries;
-using Praksa.Application.WorkflowTask.Commands;
-using Praksa.Application.WorkflowTask.Queries;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.AccessCheck.Commands;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.AppraiserAssignment.Commands;
+using RBBH.CollateralAppraisal.Application.AppraiserAssignment.Queries;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.CaDocumentReview.Commands;
+using RBBH.CollateralAppraisal.Application.Common.Behaviors;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Invoice.Commands;
+using RBBH.CollateralAppraisal.Application.Invoice.Queries;
+using RBBH.CollateralAppraisal.Application.Opinions;
+using RBBH.CollateralAppraisal.Application.Opinions.Commands;
+using RBBH.CollateralAppraisal.Application.Opinions.Dtos;
+using RBBH.CollateralAppraisal.Application.Opinions.Queries;
+using RBBH.CollateralAppraisal.Application.OrderApproval.Commands;
+using RBBH.CollateralAppraisal.Application.OrderApproval.Queries;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Commands;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Queries;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.OriginalAppraisal.Commands;
+using RBBH.CollateralAppraisal.Application.QuoteRequests.Commands;
+using RBBH.CollateralAppraisal.Application.QuoteRequests.Queries;
+using RBBH.CollateralAppraisal.Application.WorkflowTask.Commands;
+using RBBH.CollateralAppraisal.Application.WorkflowTask.Queries;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Handlers;
+namespace RBBH.CollateralAppraisal.Application.Tests.Handlers;
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // AccessCheck handlers

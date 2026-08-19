@@ -1,7 +1,7 @@
-using Praksa.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class DocumentsDtosTests
 {

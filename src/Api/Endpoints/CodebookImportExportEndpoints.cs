@@ -1,8 +1,8 @@
-using Praksa.Api.Modules;
-using Praksa.Application.Codebooks.Import;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public sealed class CodebookImportExportEndpoints : IEndpointModule
 {

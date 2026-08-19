@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.SalesConsent.Commands;
+namespace RBBH.CollateralAppraisal.Application.SalesConsent.Commands;
 
 public sealed record SignSalesConsentCommand(int OrderId) : ICommand<SignConsentResultDto>;
 

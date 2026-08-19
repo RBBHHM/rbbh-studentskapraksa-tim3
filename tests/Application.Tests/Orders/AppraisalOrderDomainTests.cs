@@ -1,8 +1,8 @@
 #pragma warning disable CS0618
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class AppraisalOrderDomainTests
 {

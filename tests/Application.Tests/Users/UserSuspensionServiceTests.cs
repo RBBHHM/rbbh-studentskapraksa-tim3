@@ -4,14 +4,14 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Infrastructure.Auth;
-using Praksa.Infrastructure.Users;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Infrastructure.Users;
 using Xunit;
 
-namespace Praksa.Application.Tests.Users;
+namespace RBBH.CollateralAppraisal.Application.Tests.Users;
 
 /// <summary>
 /// Tests for UserSuspensionService.
@@ -64,7 +64,7 @@ public sealed class UserSuspensionServiceTests
     private readonly KeycloakAdminOptions _options;
     private readonly UserSuspensionService _sut;
 
-    private const string TestRealm        = "praksa-realm";
+    private const string TestRealm        = "rbbh-realm";
     private const string TargetUserId     = "user-target-123";
     private const string CurrentUserId    = "user-admin-1";
     private const string FakeTokenJson    = """{"access_token":"fake-token-abc"}""";

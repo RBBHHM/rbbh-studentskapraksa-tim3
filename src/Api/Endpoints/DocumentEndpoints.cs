@@ -1,10 +1,10 @@
-using Praksa.Api.Middleware;
-using Praksa.Api.Modules;
-using Praksa.Application.Documents;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public sealed class DocumentEndpoints : IEndpointModule
 {

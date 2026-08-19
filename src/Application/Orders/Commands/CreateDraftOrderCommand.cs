@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
-namespace Praksa.Application.Orders.Commands;
+namespace RBBH.CollateralAppraisal.Application.Orders.Commands;
 
 public sealed record CreateDraftOrderCommand(string? WorkflowType = null) : ICommand<AppraisalOrderDto>;
 

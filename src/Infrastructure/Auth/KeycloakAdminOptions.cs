@@ -1,4 +1,4 @@
-﻿namespace Praksa.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 /// <summary>
 /// Konfiguracija za Keycloak Admin REST API.

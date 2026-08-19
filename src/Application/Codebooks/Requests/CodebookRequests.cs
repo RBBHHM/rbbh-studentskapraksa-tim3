@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Requests;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Requests;
 
 public sealed record CreateCodebookRequest(
     string  Code,

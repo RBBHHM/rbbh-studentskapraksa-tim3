@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Praksa.Api.Tests.Helpers;
+using RBBH.CollateralAppraisal.Api.Tests.Helpers;
 using Xunit;
 
-namespace Praksa.Api.Tests.Regression;
+namespace RBBH.CollateralAppraisal.Api.Tests.Regression;
 
 /// <summary>
 /// HTTP-nivo regresijski testovi: svaki test dokumentira konkretan bug koji je bio u produkciji.
@@ -37,14 +37,11 @@ public sealed class HttpRegressionTests : IClassFixture<ApiFactory>
 
     public HttpRegressionTests(ApiFactory factory) => _factory = factory;
 
-    // ── Bug #1: Npgsql DateTime Kind=Unspecified → 500 ────────────────────────────
-    // Prijavljeno: filter "Kreirano od/do" bacao 500 Internal Server Error na PostgreSQL-u
-    // Uzrok: DateTime.Parse daje Kind=Unspecified; Npgsql od v8 zahtijeva Kind=Utc za timestamptz
-    // Fix: SpecifyKind(value, DateTimeKind.Utc) u GetListAsync prije slanja upita
-    // Vidi: project_orders_date_filter_npgsql_kind.md
+    // Regresija: raspon datuma ne smije izazvati serversku grešku.
+    // Pokriva regresiju filtriranja datuma bez vezivanja za konkretan provider.
 
     [Fact]
-    public async Task Bug_NpgsqlDateFilter_DateRangeFilter_DoesNotReturn500()
+    public async Task DateFilter_DateRangeFilter_DoesNotReturn500()
     {
         var client = _factory.CreateAuthenticatedClient();
 
@@ -58,7 +55,7 @@ public sealed class HttpRegressionTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
-    public async Task Bug_NpgsqlDateFilter_OnlyCreatedFrom_DoesNotReturn500()
+    public async Task DateFilter_OnlyCreatedFrom_DoesNotReturn500()
     {
         var client = _factory.CreateAuthenticatedClient();
 
@@ -69,7 +66,7 @@ public sealed class HttpRegressionTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
-    public async Task Bug_NpgsqlDateFilter_OnlyCreatedTo_DoesNotReturn500()
+    public async Task DateFilter_OnlyCreatedTo_DoesNotReturn500()
     {
         var client = _factory.CreateAuthenticatedClient();
 

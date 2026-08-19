@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// Upravlja Keycloak OIDC login flowom i čuvanjem auth state-a po ulozi.
@@ -39,7 +39,7 @@ public static class AuthHelper
         await page.GotoAsync("/login");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        // Korak 2: Unesi email u BlazorApp login formu
+        // Korak 2: Unesi email u Web login formu
         var emailInput = page.Locator("input").First;
         await emailInput.FillAsync(user.Username);
 

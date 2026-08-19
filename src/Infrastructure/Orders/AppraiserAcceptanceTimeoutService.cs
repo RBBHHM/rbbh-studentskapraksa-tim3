@@ -1,19 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Pozadinski servis koji svakih 30 minuta provjerava narudžbe u statusu

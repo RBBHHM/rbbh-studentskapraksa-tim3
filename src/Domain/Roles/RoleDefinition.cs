@@ -1,9 +1,9 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Roles;
+namespace RBBH.CollateralAppraisal.Domain.Roles;
 
 /// <summary>
-/// Definicija role u aplikaciji. Čuva se u PostgreSQL i sinhronizuje u Keycloak.
+/// Definicija role u aplikaciji. Čuva se u SQL Server i sinhronizuje u Keycloak.
 ///
 /// VAŽNO: Ime role mora biti jedinstveno unutar Keycloak realm-a.
 /// IsSystem = true → rola ne može biti obrisana (Administrator, Unosnik, Verifikator).

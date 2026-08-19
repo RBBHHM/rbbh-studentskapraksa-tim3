@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 public sealed record CreateOrderParams
 {

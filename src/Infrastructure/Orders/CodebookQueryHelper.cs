@@ -1,6 +1,6 @@
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 internal static class CodebookQueryHelper
 {

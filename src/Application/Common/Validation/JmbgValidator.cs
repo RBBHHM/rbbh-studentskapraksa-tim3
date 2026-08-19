@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>
 /// Validacija JMBG-a (Jedinstveni matični broj građana).

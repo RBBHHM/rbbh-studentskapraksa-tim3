@@ -1,24 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents;
-using Praksa.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Notifications;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Application.Common;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Post-selekcijski lifecycle vještaka + facade za IAppraiserAssignmentService.

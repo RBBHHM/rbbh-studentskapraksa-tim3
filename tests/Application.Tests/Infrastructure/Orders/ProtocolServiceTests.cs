@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Orders;
 
 public sealed class ProtocolServiceTests : IDisposable
 {

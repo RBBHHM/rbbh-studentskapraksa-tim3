@@ -1,7 +1,7 @@
-using Praksa.Application.Security.DTOs;
+using RBBH.CollateralAppraisal.Application.Security.DTOs;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class SecurityDtosTests
 {

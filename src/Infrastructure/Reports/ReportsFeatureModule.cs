@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Modules;
-using Praksa.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Reports;
 
-namespace Praksa.Infrastructure.Reports;
+namespace RBBH.CollateralAppraisal.Infrastructure.Reports;
 
 /// <summary>
 /// Registruje servise izvještaja (auto-discovery preko IFeatureModule — ne dira DependencyInjection.cs).

@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Security;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za pregled korisnika, njihovih rola i suspenziju.

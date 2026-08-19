@@ -1,7 +1,7 @@
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Appraisers;
+namespace RBBH.CollateralAppraisal.Application.Appraisers;
 
 /// <summary>Master-data CRUD za vještake (Faza C) — koristi CA admin stranica.</summary>
 public interface IAppraiserService

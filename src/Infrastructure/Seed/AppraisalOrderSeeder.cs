@@ -2,16 +2,16 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Documents;
-using Praksa.Domain.Notifications;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Notifications;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 /// <summary>
 /// Idempotentno popunjava narudžbe procjene testnim podacima:

@@ -1,6 +1,6 @@
-using Praksa.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 public sealed class OrderTitleGenerator : IOrderTitleGenerator
 {

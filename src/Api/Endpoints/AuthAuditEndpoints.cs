@@ -1,12 +1,12 @@
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpoint za auditiranje autentifikacijskih događaja (login, logout, login failed).
-/// Poziva se iz BlazorApp OIDC event handlera gdje direktni IAuditService nije dostupan.
+/// Poziva se iz Web OIDC event handlera gdje direktni IAuditService nije dostupan.
 ///
 /// USER_LOGIN_FAILED je AllowAnonymous jer korisnik još nije autentificiran.
 /// Ostali eventi zahtijevaju autentifikaciju.

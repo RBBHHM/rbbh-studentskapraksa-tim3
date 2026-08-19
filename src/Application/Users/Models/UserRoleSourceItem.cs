@@ -1,4 +1,4 @@
-namespace Praksa.Application.Users.Models;
+namespace RBBH.CollateralAppraisal.Application.Users.Models;
 
 /// <summary>
 /// Sirovi podatak koji dolazi iz IUserRoleProvider izvora (lokalna baza, Keycloak, vanjska baza).

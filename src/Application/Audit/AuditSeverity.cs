@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Ozbiljnost audit eventa — za filtriranje, alerting i prioritizaciju.

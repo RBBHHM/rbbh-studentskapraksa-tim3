@@ -1,10 +1,10 @@
 using FluentValidation;
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.AccessCheck.Commands;
+namespace RBBH.CollateralAppraisal.Application.AccessCheck.Commands;
 
 public sealed record RejectAccessCheckCommand(int OrderId, string Comment) : ICommand<CaDocumentReviewResultDto>;
 

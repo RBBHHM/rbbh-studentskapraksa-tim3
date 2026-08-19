@@ -1,11 +1,11 @@
 using NSubstitute;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Infrastructure.Reports;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Infrastructure.Reports;
 using Xunit;
 
-namespace Praksa.Application.Tests.Reports;
+namespace RBBH.CollateralAppraisal.Application.Tests.Reports;
 
 public sealed class OrdersTimeReportTests
 {

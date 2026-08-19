@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common;
+namespace RBBH.CollateralAppraisal.Application.Common;
 
 /// <summary>
 /// Centralne konstante za HTTP headere koje koriste i Infrastructure i Api sloj.

@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Branches;
+using RBBH.CollateralAppraisal.Application.Common.Branches;
 
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>
 /// Validacija kombinacije grad/poslovnica — delegira na <see cref="BranchCatalog"/>

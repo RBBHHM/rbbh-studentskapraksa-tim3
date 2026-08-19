@@ -1,7 +1,7 @@
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 /// <summary>
 /// Kombinirani interfejs za odabir i lifecycle vještaka.

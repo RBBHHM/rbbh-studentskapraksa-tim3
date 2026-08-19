@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
 /// <summary>
 /// Invalidira cache za šifarnik nakon svake promjene.

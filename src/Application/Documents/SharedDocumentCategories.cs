@@ -1,4 +1,4 @@
-namespace Praksa.Application.Documents;
+namespace RBBH.CollateralAppraisal.Application.Documents;
 
 public static class SharedDocumentCategories
 {

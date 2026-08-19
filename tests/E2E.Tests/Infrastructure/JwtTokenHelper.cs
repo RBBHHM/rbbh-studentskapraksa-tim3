@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// Dohvata JWT access token iz Keycloaka koristeći ROPC (Resource Owner Password Credentials) grant.

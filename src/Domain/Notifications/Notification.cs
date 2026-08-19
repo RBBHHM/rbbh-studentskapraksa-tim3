@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Notifications;
+namespace RBBH.CollateralAppraisal.Domain.Notifications;
 
 /// <summary>
 /// In-app notifikacija za korisnika. Email notifikacije su odvojene (IEmailProvider).

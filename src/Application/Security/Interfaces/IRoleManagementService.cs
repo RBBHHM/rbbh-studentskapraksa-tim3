@@ -1,6 +1,6 @@
-using Praksa.Application.Security.DTOs;
+using RBBH.CollateralAppraisal.Application.Security.DTOs;
 
-namespace Praksa.Application.Security.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Security.Interfaces;
 
 /// <summary>
 /// Upravljanje rolama korisnika — dodjela, uklanjanje i prenos administratorske role.

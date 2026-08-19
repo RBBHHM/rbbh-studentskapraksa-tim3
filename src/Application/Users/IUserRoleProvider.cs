@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Users.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Users.Models;
 
-namespace Praksa.Application.Users;
+namespace RBBH.CollateralAppraisal.Application.Users;
 
 /// <summary>
 /// Adapter za izvor korisnika i njihovih rola.

@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Zajednički helperi za sve AppraiserAssignment sub-servise (I-2 refactoring).

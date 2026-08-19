@@ -3,19 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Security;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class OrderSubmitServiceTests : IDisposable
 {
@@ -63,7 +63,7 @@ public sealed class OrderSubmitServiceTests : IDisposable
             1, null,
             userId ?? "user-am-1", AppRoles.AM, "Amar",
             "Dostava", "AM Primalac",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica,
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica,
             requestReceivedAt: new DateTime(2026, 1, 10, 10, 0, 0, DateTimeKind.Utc));
 
         _db.AppraisalOrders.Add(order);
@@ -152,7 +152,7 @@ public sealed class OrderSubmitServiceTests : IDisposable
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar",
             "Dostava", "AM Primalac",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica,
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica,
             requestReceivedAt: new DateTime(2026, 1, 10, 10, 0, 0, DateTimeKind.Utc));
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
@@ -171,7 +171,7 @@ public sealed class OrderSubmitServiceTests : IDisposable
             "Kontakt", "061123456", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar",
-            "Dostava", "AM", workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica,
+            "Dostava", "AM", workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica,
             requestReceivedAt: null); // nedostaje
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
@@ -192,7 +192,7 @@ public sealed class OrderSubmitServiceTests : IDisposable
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             null, null, // oba null — greška
             "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica,
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica,
             requestReceivedAt: new DateTime(2026, 1, 10, 10, 0, 0, DateTimeKind.Utc));
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
@@ -210,9 +210,9 @@ public sealed class OrderSubmitServiceTests : IDisposable
         var order = await SeedDraftOrderAsync();
 
         // Seed codebook values for DocumentTypes
-        _db.CodebookValues.Add(Praksa.Domain.Codebooks.CodebookValue.Create(
-            Praksa.Application.Common.Constants.CodebookKeys.DocumentTypes,
-            Praksa.Application.Common.Constants.DocumentTypeCodes.ZkExtract,
+        _db.CodebookValues.Add(RBBH.CollateralAppraisal.Domain.Codebooks.CodebookValue.Create(
+            RBBH.CollateralAppraisal.Application.Common.Constants.CodebookKeys.DocumentTypes,
+            RBBH.CollateralAppraisal.Application.Common.Constants.DocumentTypeCodes.ZkExtract,
             "ZK Izvadak", null, 1, "system"));
         await _db.SaveChangesAsync();
 

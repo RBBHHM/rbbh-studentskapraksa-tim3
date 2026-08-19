@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// Fallback audit sink koji upisuje audit zapise u JSON fajlove na disku.

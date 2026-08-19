@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Exceptions;
+namespace RBBH.CollateralAppraisal.Application.Common.Exceptions;
 
 /// <summary>
 /// Baca se kada autentificirani korisnik nema dozvolu za traženu akciju.

@@ -1,14 +1,14 @@
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 
-namespace Praksa.Application.Orders.Commands;
+namespace RBBH.CollateralAppraisal.Application.Orders.Commands;
 
 public sealed record CreateOrderCommand(CreateOrderRequest Request) : ICommand<AppraisalOrderDto>;
 
@@ -35,7 +35,7 @@ public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderC
                 {
                     OrderRequestValidator.ValidateCreate(r);
                 }
-                catch (Praksa.Application.Common.Exceptions.ValidationException ex)
+                catch (RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException ex)
                 {
                     if (ex.FieldErrors is not null)
                         foreach (var e in ex.FieldErrors)

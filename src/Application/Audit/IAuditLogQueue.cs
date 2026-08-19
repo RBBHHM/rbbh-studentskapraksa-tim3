@@ -1,6 +1,6 @@
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// In-process queue za asinhrono pisanje audit zapisa — odvaja "skupi" dio (DB/file

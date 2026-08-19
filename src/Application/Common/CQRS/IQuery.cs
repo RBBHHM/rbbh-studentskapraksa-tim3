@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Praksa.Application.Common.CQRS;
+namespace RBBH.CollateralAppraisal.Application.Common.CQRS;
 
 /// <summary>
 /// Marker za operacije čitanja (read-only).

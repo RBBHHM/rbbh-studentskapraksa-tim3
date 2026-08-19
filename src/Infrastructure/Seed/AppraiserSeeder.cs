@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Domain.Appraisers;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 /// <summary>
 /// Idempotentno puni tabelu vještaka testnim podacima za demo.

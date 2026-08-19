@@ -1,4 +1,5 @@
-using Praksa.Api.Extensions;
+using RBBH.CollateralAppraisal.Api.Extensions;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+var authentication = app.Services.GetRequiredService<AuthenticationStartupStatus>();
+if (!authentication.KeycloakEnabled)
+    app.Logger.LogWarning("{AuthenticationStatus}", authentication.Message);
 
 await app.ApplyMigrationsAsync();
 

@@ -1,6 +1,6 @@
-using Praksa.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 public class CorrelationIdMiddleware
 {

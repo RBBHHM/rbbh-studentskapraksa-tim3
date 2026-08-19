@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks;
+namespace RBBH.CollateralAppraisal.Application.Codebooks;
 
 /// <summary>
 /// Mašinski čitljivi kodovi grešaka za šifarnike.

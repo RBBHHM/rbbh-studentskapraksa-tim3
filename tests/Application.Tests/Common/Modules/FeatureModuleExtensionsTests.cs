@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common.Modules;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common.Modules;
 
 public interface ITestMarkerService;
 

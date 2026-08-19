@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Praksa.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// Serijalizuje vrijednost u JSON, zatim redaktuje osjetljiva polja i maskira PII podatke.

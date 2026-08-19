@@ -2,8 +2,9 @@ import { getAccessToken } from "../auth/keycloak";
 import { apiBaseUrl } from "./http-client";
 
 export async function downloadAuthenticatedFile(path: string, fallbackName: string) {
+  const accessToken = await getAccessToken();
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: { authorization: `Bearer ${await getAccessToken()}` },
+    headers: accessToken ? { authorization: `Bearer ${accessToken}` } : undefined,
   });
   if (!response.ok) throw new Error(`Preuzimanje nije uspjelo (${response.status}).`);
   const disposition = response.headers.get("content-disposition") ?? "";

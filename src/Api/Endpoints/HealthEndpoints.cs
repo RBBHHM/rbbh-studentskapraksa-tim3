@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class HealthEndpoints
 {

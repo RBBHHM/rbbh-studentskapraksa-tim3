@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Api/RBBH.CollateralAppraisal.Api.csproj" />
+    <Project Path="src/Application/RBBH.CollateralAppraisal.Application.csproj" />
+    <Project Path="src/Domain/RBBH.CollateralAppraisal.Domain.csproj" />
+    <Project Path="src/Infrastructure/RBBH.CollateralAppraisal.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Api.Tests/Api.Tests.csproj" />
+    <Project Path="tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="tests/E2E.Tests/E2E.Tests.csproj" />
+    <Project Path="tests/Infrastructure.Tests/Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

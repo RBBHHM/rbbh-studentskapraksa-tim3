@@ -1,15 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY src/Api/Api.csproj Api/
-COPY src/Application/Application.csproj Application/
-COPY src/Domain/Domain.csproj Domain/
-COPY src/Infrastructure/Infrastructure.csproj Infrastructure/
-RUN dotnet restore Api/Api.csproj
+COPY src/Api/RBBH.CollateralAppraisal.Api.csproj Api/
+COPY src/Application/RBBH.CollateralAppraisal.Application.csproj Application/
+COPY src/Domain/RBBH.CollateralAppraisal.Domain.csproj Domain/
+COPY src/Infrastructure/RBBH.CollateralAppraisal.Infrastructure.csproj Infrastructure/
+RUN dotnet restore Api/RBBH.CollateralAppraisal.Api.csproj
 COPY src/Api/ Api/
 COPY src/Application/ Application/
 COPY src/Domain/ Domain/
 COPY src/Infrastructure/ Infrastructure/
-RUN dotnet publish Api/Api.csproj -c Release -o /app --no-restore
+RUN dotnet publish Api/RBBH.CollateralAppraisal.Api.csproj -c Release -o /app --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
@@ -32,4 +32,4 @@ RUN chgrp -R 0 /app && chmod -R g=u /app
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
-ENTRYPOINT ["dotnet", "Praksa.Api.dll"]
+ENTRYPOINT ["dotnet", "RBBH.CollateralAppraisal.Api.dll"]

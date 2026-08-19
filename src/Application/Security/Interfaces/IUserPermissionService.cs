@@ -1,4 +1,4 @@
-namespace Praksa.Application.Security.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Security.Interfaces;
 
 /// <summary>
 /// Izračunava permission-e trenutnog korisnika na osnovu njegovih rola.

@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Audit;
-using Praksa.Domain.Branches;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Documents;
-using Praksa.Domain.Notifications;
-using Praksa.Domain.Orders;
-using Praksa.Domain.Roles;
-using Praksa.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Branches;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Notifications;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Roles;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
 
-namespace Praksa.Infrastructure.Persistence;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext
 {

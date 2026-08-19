@@ -5,23 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Orders;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Orders.Requests;
-using Praksa.Application.Security;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Microsoft.Extensions.Logging;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Security;
+namespace RBBH.CollateralAppraisal.Application.Tests.Security;
 
 /// <summary>
 /// OWASP Top-10 security test suite for the AppraisalOrder service layer.
@@ -140,7 +140,7 @@ public sealed class OwaspSecurityTests : IDisposable
         _user.UserId.Returns("sales-user-other");
         _user.Roles.Returns([AppRoles.SM]);
 
-        var result = await new Praksa.Infrastructure.Orders.OrderQueryService(_db, _user, NSubstitute.Substitute.For<Praksa.Application.Users.IUserRoleProvider>()).GetListAsync(new OrderListRequest());
+        var result = await new RBBH.CollateralAppraisal.Infrastructure.Orders.OrderQueryService(_db, _user, NSubstitute.Substitute.For<RBBH.CollateralAppraisal.Application.Users.IUserRoleProvider>()).GetListAsync(new OrderListRequest());
 
         Assert.Equal(0, result.TotalCount);
     }
@@ -299,7 +299,7 @@ public sealed class OwaspSecurityTests : IDisposable
 
         // A SQL injection-like string in the Search parameter should be safely handled
         // (EF Core parameterizes queries, so this should return 0 results, not crash)
-        var result = await new Praksa.Infrastructure.Orders.OrderQueryService(_db, _user, NSubstitute.Substitute.For<Praksa.Application.Users.IUserRoleProvider>()).GetListAsync(
+        var result = await new RBBH.CollateralAppraisal.Infrastructure.Orders.OrderQueryService(_db, _user, NSubstitute.Substitute.For<RBBH.CollateralAppraisal.Application.Users.IUserRoleProvider>()).GetListAsync(
             new OrderListRequest(Search: "'; DROP TABLE AppraisalOrders; --"));
 
         Assert.NotNull(result);

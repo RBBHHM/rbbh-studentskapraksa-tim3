@@ -1,6 +1,6 @@
-using Praksa.Application.Branches;
+using RBBH.CollateralAppraisal.Application.Branches;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class BranchEndpoints
 {

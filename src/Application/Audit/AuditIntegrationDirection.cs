@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Smjer integracije — opisuje da li je akcija pokrenuta prema vanjskom sistemu,

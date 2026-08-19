@@ -1,7 +1,7 @@
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 using Xunit;
 
-namespace Praksa.Application.Tests.Domain;
+namespace RBBH.CollateralAppraisal.Application.Tests.Domain;
 
 public sealed class AuditLogTests
 {

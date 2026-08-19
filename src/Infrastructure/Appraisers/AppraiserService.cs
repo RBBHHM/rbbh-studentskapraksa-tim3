@@ -1,15 +1,15 @@
-﻿﻿using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Models;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Appraisers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Appraisers;
 
 /// <summary>Master-data CRUD za vještake (Faza C) — koristi CA admin stranica "/sifarnici/vjestaci".</summary>
 [ExcludeFromCodeCoverage]

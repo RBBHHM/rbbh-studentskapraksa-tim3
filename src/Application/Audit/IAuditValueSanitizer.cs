@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Sanitizira osjetljive vrijednosti iz audit podataka prije serijalizacije i upisa.

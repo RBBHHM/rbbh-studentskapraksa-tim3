@@ -1,4 +1,4 @@
-namespace Praksa.Application.Notifications.Models;
+namespace RBBH.CollateralAppraisal.Application.Notifications.Models;
 
 /// <summary>
 /// Event model za notifikacije vezane za role management promjene.

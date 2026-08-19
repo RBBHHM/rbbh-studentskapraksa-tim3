@@ -1,17 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Orders;
 
 public sealed class OrderQueryServiceTests : IDisposable
 {

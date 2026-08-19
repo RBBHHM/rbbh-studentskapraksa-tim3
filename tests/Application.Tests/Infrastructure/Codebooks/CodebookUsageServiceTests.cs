@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Models;
-using Praksa.Infrastructure.Codebooks;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Codebooks;
 
 public sealed class CodebookUsageServiceTests
 {

@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Models;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
 /// <summary>
 /// Puni DTO za admin pregled jedne vrijednosti šifarnika.

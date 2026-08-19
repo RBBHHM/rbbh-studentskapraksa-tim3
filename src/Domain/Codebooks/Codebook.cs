@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Codebooks;
+namespace RBBH.CollateralAppraisal.Domain.Codebooks;
 
 /// <summary>
 /// Definicija šifarnika — container koji grupiše skup referentnih vrijednosti.

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Documents;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public sealed class DocumentTemplateConfiguration : IEntityTypeConfiguration<DocumentTemplate>
 {

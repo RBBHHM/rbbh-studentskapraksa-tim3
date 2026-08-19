@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common;
 
 public sealed class CodebookKeysTests
 {

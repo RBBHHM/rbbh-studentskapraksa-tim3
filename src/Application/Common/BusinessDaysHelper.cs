@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common;
+namespace RBBH.CollateralAppraisal.Application.Common;
 
 public static class BusinessDaysHelper
 {

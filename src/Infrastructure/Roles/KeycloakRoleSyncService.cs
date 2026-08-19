@@ -1,14 +1,14 @@
-﻿﻿﻿using System.Net.Http.Headers;
+﻿﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Roles;
+namespace RBBH.CollateralAppraisal.Infrastructure.Roles;
 
 /// <summary>
 /// Implementacija <see cref="IKeycloakRoleSyncService"/> koja komunicira s Keycloak Admin REST API.

@@ -1,9 +1,9 @@
 using FluentValidation;
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
 
-namespace Praksa.Application.OrderApproval.Commands;
+namespace RBBH.CollateralAppraisal.Application.OrderApproval.Commands;
 
 public sealed record ReturnForReworkCommand(
     int OrderId,

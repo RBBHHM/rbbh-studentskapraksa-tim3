@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Models;
+namespace RBBH.CollateralAppraisal.Application.Common.Models;
 
 /// <summary>
 /// Greška vezana za jedno polje u validacijskom odgovoru.

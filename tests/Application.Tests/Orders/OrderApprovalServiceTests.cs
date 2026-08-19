@@ -5,21 +5,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Orders;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Application.Notifications;
-using Praksa.Application.Users;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Documents;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class OrderApprovalServiceTests : IDisposable
 {

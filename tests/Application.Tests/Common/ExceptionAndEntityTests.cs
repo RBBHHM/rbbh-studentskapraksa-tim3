@@ -1,9 +1,9 @@
-using Praksa.Application.Common.Exceptions;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common;
 
 public sealed class ExceptionTests
 {

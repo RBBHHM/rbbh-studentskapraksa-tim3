@@ -1,11 +1,11 @@
 using MediatR;
-using Praksa.Api.Modules;
-using Praksa.Application.Orders;
-using Praksa.Application.OriginalAppraisal.Commands;
-using Praksa.Application.SalesConsent.Commands;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.OriginalAppraisal.Commands;
+using RBBH.CollateralAppraisal.Application.SalesConsent.Commands;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public sealed class OriginalAppraisalEndpoints : IEndpointModule
 {

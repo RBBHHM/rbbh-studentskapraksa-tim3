@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 /// <summary>
 /// Health check koji provjerava da li su sve EF Core migracije primijenjene.
@@ -30,6 +30,9 @@ public sealed class MigrationHealthCheck : IHealthCheck
     {
         try
         {
+            if (!_db.Database.IsRelational())
+                return HealthCheckResult.Healthy("Lokalna in-memory baza ne zahtijeva migracije.");
+
             var pending = await _db.Database.GetPendingMigrationsAsync(cancellationToken);
             var pendingList = pending.ToList();
 

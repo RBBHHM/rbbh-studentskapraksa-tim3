@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Tip workflow-a narudžbe procjene — bira se eksplicitno na ulaznom ekranu

@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// FL workflow: automatski algoritamski odabir vještaka.

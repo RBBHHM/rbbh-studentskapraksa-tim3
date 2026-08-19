@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// Serijska kolekcija — svi E2E testovi dijele jedan PlaywrightFixture.

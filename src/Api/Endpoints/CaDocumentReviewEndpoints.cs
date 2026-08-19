@@ -1,10 +1,10 @@
 using MediatR;
-using Praksa.Api.Modules;
-using Praksa.Application.CaDocumentReview.Commands;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.CaDocumentReview.Commands;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za CA pregled dokumentacije (US-91/92) — "Dopuna podataka" ↔

@@ -2,7 +2,7 @@ using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 using Xunit;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// Bazna klasa za E2E testove koji koriste browser UI.

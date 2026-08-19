@@ -1,12 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Api.Middleware;
-using Praksa.Api.Modules;
-using Praksa.Application.Invoice.Commands;
-using Praksa.Application.Invoice.Queries;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Invoice.Commands;
+using RBBH.CollateralAppraisal.Application.Invoice.Queries;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public sealed class InvoiceEndpoints : IEndpointModule
 {

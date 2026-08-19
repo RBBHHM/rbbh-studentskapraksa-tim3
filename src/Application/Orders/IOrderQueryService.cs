@@ -1,8 +1,8 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 public interface IOrderQueryService
 {

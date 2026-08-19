@@ -1,9 +1,9 @@
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Security;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Zajednički mapper AppraisalOrder domenskog entiteta na AppraisalOrderDto.

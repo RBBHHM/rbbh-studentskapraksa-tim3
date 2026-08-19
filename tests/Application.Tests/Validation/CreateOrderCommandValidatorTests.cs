@@ -1,11 +1,11 @@
 using FluentAssertions;
 using FluentValidation;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Orders.Commands;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Orders.Commands;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 using Xunit;
 
-namespace Praksa.Application.Tests.Validation;
+namespace RBBH.CollateralAppraisal.Application.Tests.Validation;
 
 public sealed class CreateOrderCommandValidatorTests
 {

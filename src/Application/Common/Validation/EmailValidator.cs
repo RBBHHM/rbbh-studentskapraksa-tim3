@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>Validacija formata email adrese (opcionalno polje).</summary>
 public static partial class EmailValidator

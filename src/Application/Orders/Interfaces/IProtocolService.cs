@@ -1,8 +1,8 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Orders.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
 public interface IProtocolService
 {

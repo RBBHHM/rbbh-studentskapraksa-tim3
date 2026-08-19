@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
-namespace Praksa.Application.WorkflowTask.Commands;
+namespace RBBH.CollateralAppraisal.Application.WorkflowTask.Commands;
 
 public sealed record AcceptTaskCommand(int TaskId) : ICommand<WorkflowTaskDto>;
 

@@ -1,10 +1,10 @@
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Praksa.Infrastructure.Storage;
+using RBBH.CollateralAppraisal.Infrastructure.Storage;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests.Storage;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests.Storage;
 
 public sealed class LocalFileStorageProviderTests : IDisposable
 {
@@ -13,7 +13,7 @@ public sealed class LocalFileStorageProviderTests : IDisposable
 
     public LocalFileStorageProviderTests()
     {
-        _root = Directory.CreateTempSubdirectory("praksa-storage-tests-").FullName;
+        _root = Directory.CreateTempSubdirectory("collateral-storage-tests-").FullName;
         _provider = new LocalFileStorageProvider(
             Options.Create(new FileStorageOptions { RootPath = _root }),
             new FakeHostEnvironment(_root));
@@ -112,7 +112,7 @@ public sealed class LocalFileStorageProviderTests : IDisposable
 
     private sealed class FakeHostEnvironment(string contentRootPath) : IHostEnvironment
     {
-        public string ApplicationName { get; set; } = "Praksa.Infrastructure.Tests";
+        public string ApplicationName { get; set; } = "RBBH.CollateralAppraisal.Infrastructure.Tests";
         public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
         public string ContentRootPath { get; set; } = contentRootPath;
         public string EnvironmentName { get; set; } = "Test";

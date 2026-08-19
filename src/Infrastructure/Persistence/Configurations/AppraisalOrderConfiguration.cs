@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public sealed class AppraisalOrderConfiguration : IEntityTypeConfiguration<AppraisalOrder>
 {
@@ -12,7 +12,7 @@ public sealed class AppraisalOrderConfiguration : IEntityTypeConfiguration<Appra
         builder.ToTable("appraisal_orders");
         builder.HasKey(x => x.Id);
 
-        // xmin concurrency token — EF Core ne kreira kolonu, PostgreSQL je upravlja
+        // RowVersion se trenutno ne perzistira; konkurentnost se kontroliše kroz servisni sloj.
         builder.Ignore(x => x.RowVersion);
 
         builder.Property(x => x.Id).HasColumnName("id");

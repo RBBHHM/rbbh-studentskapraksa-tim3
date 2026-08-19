@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.OrderApproval.Queries;
+namespace RBBH.CollateralAppraisal.Application.OrderApproval.Queries;
 
 public sealed record GetFinalAppraisalQuery(int OrderId) : IQuery<FinalAppraisalDto>;
 

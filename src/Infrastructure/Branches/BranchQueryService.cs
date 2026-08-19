@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Branches;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Branches;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Branches;
+namespace RBBH.CollateralAppraisal.Infrastructure.Branches;
 
 public sealed class BranchQueryService : IBranchQueryService
 {

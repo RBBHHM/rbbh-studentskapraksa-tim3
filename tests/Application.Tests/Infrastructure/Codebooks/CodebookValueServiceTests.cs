@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Codebooks;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Codebooks.Requests;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Codebooks;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Codebooks;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Codebooks;
 
 public sealed class CodebookValueServiceTests : IDisposable
 {

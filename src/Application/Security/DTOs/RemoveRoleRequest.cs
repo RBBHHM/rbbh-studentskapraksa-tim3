@@ -1,4 +1,4 @@
-namespace Praksa.Application.Security.DTOs;
+namespace RBBH.CollateralAppraisal.Application.Security.DTOs;
 
 /// <summary>
 /// Request za uklanjanje role korisniku.

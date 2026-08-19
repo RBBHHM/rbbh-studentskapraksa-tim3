@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// Pozadinski worker koji prazni in-memory AuditLogQueue i upisuje zapise kroz

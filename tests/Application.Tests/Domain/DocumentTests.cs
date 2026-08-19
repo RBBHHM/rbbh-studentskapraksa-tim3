@@ -1,7 +1,7 @@
-using Praksa.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Documents;
 using Xunit;
 
-namespace Praksa.Application.Tests.Domain;
+namespace RBBH.CollateralAppraisal.Application.Tests.Domain;
 
 public sealed class DocumentTests
 {

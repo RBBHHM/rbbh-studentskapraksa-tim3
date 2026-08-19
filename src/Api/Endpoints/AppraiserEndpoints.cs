@@ -1,17 +1,17 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Api.Modules;
-using Praksa.Application.AppraiserAssignment.Commands;
-using Praksa.Application.AppraiserAssignment.Queries;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Orders;
-using Praksa.Application.QuoteRequests.Commands;
-using Praksa.Application.QuoteRequests.Queries;
-using Praksa.Application.Security;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.AppraiserAssignment.Commands;
+using RBBH.CollateralAppraisal.Application.AppraiserAssignment.Queries;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.QuoteRequests.Commands;
+using RBBH.CollateralAppraisal.Application.QuoteRequests.Queries;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za master-data vještaka (Faza C) i odabir vještaka za narudžbu.

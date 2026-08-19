@@ -2,7 +2,7 @@
 .git
 .github
 .research
-research-cli
+
 node_modules
 Makefile
 README.md
@@ -27,4 +27,4 @@ src/Api.Tests/
 # Ove datoteke sadrže lokalne kredencijale (localhost DB, local Keycloak) koji
 # bi u Docker kontejneru pregazili ispravne env varijable (Host=db umjesto localhost).
 **/appsettings.Development.Local.json
-src/BlazorApp/appsettings.Development.json
+src/Web/appsettings.Development.json

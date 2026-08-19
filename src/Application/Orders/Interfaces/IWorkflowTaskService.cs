@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.Orders.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
 public interface IWorkflowTaskService
 {

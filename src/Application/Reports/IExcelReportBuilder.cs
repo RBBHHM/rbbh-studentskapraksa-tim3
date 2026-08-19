@@ -1,4 +1,4 @@
-namespace Praksa.Application.Reports;
+namespace RBBH.CollateralAppraisal.Application.Reports;
 
 /// <summary>
 /// Zajednički generator Excel (xlsx) izvještaja. Uvodi ga T1 (reporting foundation);

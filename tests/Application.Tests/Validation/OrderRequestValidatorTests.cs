@@ -1,10 +1,10 @@
 using FluentAssertions;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 using Xunit;
 
-namespace Praksa.Application.Tests.Validation;
+namespace RBBH.CollateralAppraisal.Application.Tests.Validation;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — OrderRequestValidator.ValidateCreate
@@ -61,7 +61,7 @@ public sealed class OrderRequestValidatorTests
 
     private static void ShouldThrow(CreateOrderRequest r, string field, string? code = null)
     {
-        var ex = Assert.Throws<Praksa.Application.Common.Exceptions.ValidationException>(
+        var ex = Assert.Throws<RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException>(
             () => OrderRequestValidator.ValidateCreate(r));
         ex.FieldErrors.Should().Contain(e => e.Field == field,
             $"Expected field '{field}' to have a validation error");
@@ -76,7 +76,7 @@ public sealed class OrderRequestValidatorTests
         {
             OrderRequestValidator.ValidateCreate(r);
         }
-        catch (Praksa.Application.Common.Exceptions.ValidationException ex)
+        catch (RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException ex)
         {
             var details = string.Join("; ",
                 ex.FieldErrors.Select(e => $"{e.Field}[{e.Code}]"));
@@ -429,7 +429,7 @@ public sealed class OrderRequestValidatorUpdateTests
         {
             OrderRequestValidator.ValidateUpdate(r, effectiveClientType, effectiveCity, effectiveBranch);
         }
-        catch (Praksa.Application.Common.Exceptions.ValidationException ex)
+        catch (RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException ex)
         {
             var details = string.Join("; ", ex.FieldErrors.Select(e => $"{e.Field}[{e.Code}]"));
             Assert.Fail($"Expected no update validation errors but got: {details}");
@@ -442,7 +442,7 @@ public sealed class OrderRequestValidatorUpdateTests
         string? effectiveCity = null,
         string? effectiveBranch = null)
     {
-        var ex = Assert.Throws<Praksa.Application.Common.Exceptions.ValidationException>(
+        var ex = Assert.Throws<RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException>(
             () => OrderRequestValidator.ValidateUpdate(r, effectiveClientType, effectiveCity, effectiveBranch));
         ex.FieldErrors.Should().Contain(e => e.Field == field,
             $"Expected field '{field}' to have an error");

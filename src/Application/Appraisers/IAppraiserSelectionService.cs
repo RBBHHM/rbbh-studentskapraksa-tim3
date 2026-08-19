@@ -1,7 +1,7 @@
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Appraisers;
+namespace RBBH.CollateralAppraisal.Application.Appraisers;
 
 /// <summary>
 /// FL automatski odabir vještaka (Faza C) — grad narudžbe (s fallbackom na sve gradove),

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Modules;
-using Praksa.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Notifications;
 
-namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// Registruje servise notifikacionog modula (US 92/93/94).

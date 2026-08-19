@@ -1,6 +1,6 @@
-using Praksa.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
-namespace Praksa.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks;
 
 /// <summary>
 /// Null implementacija cache invalidatora — koristi se dok cache nije implementiran.

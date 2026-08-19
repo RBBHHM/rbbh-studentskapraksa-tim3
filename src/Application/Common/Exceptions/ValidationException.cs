@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Common.Exceptions;
+namespace RBBH.CollateralAppraisal.Application.Common.Exceptions;
 
 /// <summary>
 /// Validacijska greška — baca se kada unos ne ispunjava pravila.

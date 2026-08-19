@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Extensions;
+namespace RBBH.CollateralAppraisal.Api.Extensions;
 
 /// <summary>
 /// Registruje sve permission-based policy-je za autorizaciju endpointa.

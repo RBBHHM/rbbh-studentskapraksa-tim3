@@ -1,7 +1,7 @@
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 
-namespace Praksa.Application.Orders.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
 /// <summary>
 /// Kreiranje novih narudžbi — puna narudžba i draft.

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Application.Tests.Helpers;
+namespace RBBH.CollateralAppraisal.Application.Tests.Helpers;
 
 public static class TestDbFactory
 {

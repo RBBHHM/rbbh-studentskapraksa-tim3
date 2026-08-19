@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Notifications.Models;
-using Praksa.Infrastructure.Notifications;
+using RBBH.CollateralAppraisal.Application.Notifications.Models;
+using RBBH.CollateralAppraisal.Infrastructure.Notifications;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Notifications;
 
 public sealed class NullRoleManagementNotificationServiceTests
 {

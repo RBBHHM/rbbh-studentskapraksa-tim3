@@ -1,8 +1,8 @@
-﻿﻿using Microsoft.Extensions.Logging;
-using Praksa.Application.Notifications;
+﻿using Microsoft.Extensions.Logging;
+using RBBH.CollateralAppraisal.Application.Notifications;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// Dev/test email provider — loguje poruku umjesto stvarnog slanja.

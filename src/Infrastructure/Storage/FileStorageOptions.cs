@@ -1,4 +1,4 @@
-﻿namespace Praksa.Infrastructure.Storage;
+namespace RBBH.CollateralAppraisal.Infrastructure.Storage;
 
 /// <summary>
 /// Konfiguracija lokalnog skladišta fajlova.

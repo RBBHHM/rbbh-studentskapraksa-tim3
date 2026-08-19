@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Praksa.Api.Tests.Helpers;
+using RBBH.CollateralAppraisal.Api.Tests.Helpers;
 using Xunit;
 
-namespace Praksa.Api.Tests.Notifications;
+namespace RBBH.CollateralAppraisal.Api.Tests.Notifications;
 
 [Collection("ApiTests")]
 public sealed class NotificationsEndpointsTests : IClassFixture<ApiFactory>

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Modules;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Orders;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// DI registracija za "Preuzet original + reminder vještaku" (DPNPN-108).

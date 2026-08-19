@@ -1,10 +1,10 @@
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Domain.Orders;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Centralizirani authorization guard za narudžbe — eliminacija dupliciranog auth koda.

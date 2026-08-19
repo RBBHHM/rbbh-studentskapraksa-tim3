@@ -1,12 +1,12 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents;
-using Praksa.Domain.Documents;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 /// <summary>
 /// Idempotentno popunjava SharedDocuments referentnim dokumentima za demo/produkciju:

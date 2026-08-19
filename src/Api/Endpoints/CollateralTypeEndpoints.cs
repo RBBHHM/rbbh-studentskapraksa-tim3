@@ -1,8 +1,8 @@
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Common.Constants;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Shortcut endpointi za dropdown menije narudžbe.

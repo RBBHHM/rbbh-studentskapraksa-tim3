@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Documents;
+namespace RBBH.CollateralAppraisal.Domain.Documents;
 
 /// <summary>
 /// Dijeljeni (app-level) dokument — nije vezan za narudžbu.

@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Seed;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Seed;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Seed;
 
 public sealed class RolePermissionSeederTests : IDisposable
 {
@@ -80,9 +80,9 @@ public sealed class RolePermissionSeederTests : IDisposable
     {
         // Pre-seed only the permission + role definitions (no mappings yet) — simulates a
         // partially-completed prior run.
-        var permission = Praksa.Domain.Roles.PermissionDefinition.Create(
+        var permission = RBBH.CollateralAppraisal.Domain.Roles.PermissionDefinition.Create(
             AppPermissions.UsersView, "Pregled korisnika", "desc", "Users");
-        var role = Praksa.Domain.Roles.RoleDefinition.CreateSystem(AppRoles.Administrator, "Administrator");
+        var role = RBBH.CollateralAppraisal.Domain.Roles.RoleDefinition.CreateSystem(AppRoles.Administrator, "Administrator");
         _db.PermissionDefinitions.Add(permission);
         _db.RoleDefinitions.Add(role);
         await _db.SaveChangesAsync();

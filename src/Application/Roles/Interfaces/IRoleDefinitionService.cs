@@ -1,8 +1,8 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Roles.Models;
-using Praksa.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
 
-namespace Praksa.Application.Roles.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Roles.Interfaces;
 
 public interface IRoleDefinitionService
 {

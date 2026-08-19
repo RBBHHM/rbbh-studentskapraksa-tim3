@@ -1,8 +1,8 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
 
-namespace Praksa.Application.Invoice.Commands;
+namespace RBBH.CollateralAppraisal.Application.Invoice.Commands;
 
 public sealed record UploadInvoiceCommand(int OrderId, int DocumentId) : ICommand<InvoiceWorkflowResultDto>;
 

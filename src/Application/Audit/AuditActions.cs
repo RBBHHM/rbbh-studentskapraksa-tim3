@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Poslovne akcije koje se bilježe u audit log.

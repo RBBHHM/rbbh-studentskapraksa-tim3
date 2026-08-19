@@ -1,4 +1,4 @@
-namespace Praksa.Application.Security;
+namespace RBBH.CollateralAppraisal.Application.Security;
 
 /// <summary>
 /// Određuje prioritet kada korisnik ima više rola.

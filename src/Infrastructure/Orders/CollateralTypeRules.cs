@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Pravilo za grananje CA "Završi pregled" (US-93): ako je kolateral isključivo stan

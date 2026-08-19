@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/design-system/theme/theme-toggle";
 import { LanguageSwitcher } from "@/localization";
 import { useBusinessText } from "@/localization/use-business-text";
 import { registryResources } from "@/lib/registry/resources";
-import { keycloak } from "@/lib/auth/keycloak";
+import { isAuthenticationConfigured, keycloak } from "@/lib/auth/keycloak";
 import { profileList, useProfile } from "@/lib/auth/use-profile";
 import { apiClient } from "@/lib/api/http-client";
 import { clearActiveRole, getActiveRole, setActiveRole } from "@/lib/auth/active-role";
@@ -77,7 +77,7 @@ export function RegistryShell() {
             </span>
             <ThemeToggle />
             <LanguageSwitcher className="hidden sm:flex" />
-            <Button
+            {isAuthenticationConfigured ? <Button
               variant="ghost"
               size="icon"
               title={t("shell.logout", { defaultValue: "Odjava" })}
@@ -87,7 +87,7 @@ export function RegistryShell() {
               }}
             >
               <LogOut className="size-4" />
-            </Button>
+            </Button> : null}
             <Button
               variant="ghost"
               size="icon"

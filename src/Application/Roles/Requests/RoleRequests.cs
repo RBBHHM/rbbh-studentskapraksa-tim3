@@ -1,4 +1,4 @@
-namespace Praksa.Application.Roles.Requests;
+namespace RBBH.CollateralAppraisal.Application.Roles.Requests;
 
 public sealed record CreateRoleRequest(
     string  Name,

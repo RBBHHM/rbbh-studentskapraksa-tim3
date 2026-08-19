@@ -1,8 +1,8 @@
 using System.Net;
-using Praksa.Api.Tests.Helpers;
+using RBBH.CollateralAppraisal.Api.Tests.Helpers;
 using Xunit;
 
-namespace Praksa.Api.Tests.Misc;
+namespace RBBH.CollateralAppraisal.Api.Tests.Misc;
 
 /// <summary>
 /// Testovi za jednostavne GET endpointe koji vraćaju statičke podatke.

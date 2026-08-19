@@ -1,6 +1,0 @@
-{
-  "_comment": "Kopiraj u appsettings.Development.Local.json i popuni. Local.json je gitignored.",
-  "OpenIDConnectSettings": {
-    "ClientSecret": "tvoj_praksa_web_secret"
-  }
-}

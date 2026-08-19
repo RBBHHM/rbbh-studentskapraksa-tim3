@@ -1,4 +1,4 @@
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// Transactional outbox zapis za audit log.

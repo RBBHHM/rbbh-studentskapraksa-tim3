@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
 
-namespace Praksa.Application.Common.Behaviors;
+namespace RBBH.CollateralAppraisal.Application.Common.Behaviors;
 
 /// <summary>
 /// Pipeline behavior za automatski audit log.

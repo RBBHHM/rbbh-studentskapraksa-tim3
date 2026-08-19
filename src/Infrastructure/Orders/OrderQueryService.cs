@@ -1,20 +1,20 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Constants;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Requests;
-using Praksa.Application.Security;
-using Praksa.Application.Users;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Persistence.Configurations;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 public sealed class OrderQueryService : IOrderQueryService
 {

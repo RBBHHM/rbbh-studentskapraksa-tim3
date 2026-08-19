@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Infrastructure.Storage;
+namespace RBBH.CollateralAppraisal.Infrastructure.Storage;
 
 /// <summary>
 /// Skladišti fajlove na lokalnom disku ispod <see cref="FileStorageOptions.RootPath"/>.

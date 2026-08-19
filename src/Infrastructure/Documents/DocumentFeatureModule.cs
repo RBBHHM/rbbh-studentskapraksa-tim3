@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Modules;
-using Praksa.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Documents;
 
-namespace Praksa.Infrastructure.Documents;
+namespace RBBH.CollateralAppraisal.Infrastructure.Documents;
 
 [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 public sealed class DocumentFeatureModule : IFeatureModule

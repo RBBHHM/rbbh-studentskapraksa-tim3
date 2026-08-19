@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Api.Modules;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public sealed class DocumentTemplateEndpoints : IEndpointModule
 {

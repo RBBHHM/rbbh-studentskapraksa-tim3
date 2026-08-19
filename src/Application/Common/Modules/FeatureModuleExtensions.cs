@@ -2,7 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Praksa.Application.Common.Modules;
+namespace RBBH.CollateralAppraisal.Application.Common.Modules;
 
 /// <summary>
 /// Auto-discovery za <see cref="IFeatureModule"/> implementacije.

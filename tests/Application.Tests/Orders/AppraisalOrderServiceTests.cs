@@ -5,24 +5,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Application.Orders.Requests;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Microsoft.Extensions.Logging;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class AppraisalOrderServiceTests : IDisposable
 {
@@ -710,7 +710,7 @@ public sealed class AppraisalOrderServiceTests : IDisposable
         // ASP.NET model binding parsira query-string datume ("?createdFrom=2026-06-14")
         // u DateTime sa Kind=Unspecified. AppraisalOrderService mora ovo normalizovati
         // na Utc prije poreenja sa "created_at" (timestamptz kolona)  u suprotnom
-        // Npgsql baca "Cannot write DateTime with Kind=Unspecified to PostgreSQL type
+        // SQL Server provider baca "Cannot write DateTime with Kind=Unspecified to SQL Server type
         // 'timestamp with time zone'" na pravoj bazi (InMemory provider ovo ne provjerava).
         await _sut.CreateAsync(ValidRequest());
 

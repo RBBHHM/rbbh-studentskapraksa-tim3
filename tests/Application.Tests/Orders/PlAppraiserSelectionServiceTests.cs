@@ -2,20 +2,20 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — PlAppraiserSelectionService
@@ -88,8 +88,8 @@ public sealed class PlAppraiserSelectionServiceTests : IDisposable
     {
         // WorkflowType mora biti eksplicitno postavljen da CanHandle() radi ispravno
         var workflowType = clientType == "PL"
-            ? Praksa.Domain.Orders.WorkflowType.PravnaLica
-            : Praksa.Domain.Orders.WorkflowType.FizickaLica;
+            ? RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.PravnaLica
+            : RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica;
 
         var order = AppraisalOrder.Create(
             orderNumber:     "PN-2026-000001",

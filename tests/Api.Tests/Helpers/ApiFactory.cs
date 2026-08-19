@@ -7,22 +7,22 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
-using Praksa.Application.Common.Constants;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Audit;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Api.Tests.Helpers;
+namespace RBBH.CollateralAppraisal.Api.Tests.Helpers;
 
 /// <summary>
 /// WebApplicationFactory koji pokreće cijeli ASP.NET Core stack s in-memory bazom,
-/// lažnim JWT handlerom i bez pozadinskih servisa koji zahtijevaju pravi PostgreSQL.
+/// lažnim JWT handlerom i bez pozadinskih servisa koji zahtijevaju pravi SQL Server.
 ///
 /// Svaki test-run dobija svoju izoliranu in-memory bazu (Guid u imenu).
 /// </summary>
@@ -34,8 +34,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // ── Zamjena PostgreSQL baze s in-memory ───────────────────────────────
-            // DependencyInjection.AddInfrastructure preskače Npgsql u "Testing" okruženju,
+            // ── Zamjena SQL Server baze s in-memory ───────────────────────────────
+            // DependencyInjection.AddInfrastructure preskače SQL Server provider u "Testing" okruženju,
             // tako da ovdje samo registrujemo InMemory bez konflikta providera.
             // RemoveAllDescriptors je sigurnosna mreža za slučaj da dođe do duple registracije.
             RemoveAllDescriptors<DbContextOptions<ApplicationDbContext>>(services);
@@ -46,18 +46,18 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
                      w.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
 
             // ── Zamjena OrderNumberGenerator (raw SQL, ne radi s InMemory) ─────────
-            // OrderNumberGenerator koristi PostgreSQL UPSERT koji nije podržan u InMemory.
+            // OrderNumberGenerator koristi SQL Server UPSERT koji nije podržan u InMemory.
             // Stub generira jedinstven broj bez DB-a.
             RemoveAllDescriptors<IOrderNumberGenerator>(services);
             services.AddScoped<IOrderNumberGenerator, InMemoryOrderNumberGenerator>();
 
-            // ── Zamjena PostgresJobLock (raw SQL pg_try_advisory_lock) ─────────────
+            // ── Zamjena SQL ServerJobLock (raw SQL pg_try_advisory_lock) ─────────────
             // Pozadinski servisi i AuditLogQueueWorker koriste IDistributedJobLock;
             // za in-memory testove koristimo no-op implementaciju.
             RemoveAllDescriptors<IDistributedJobLock>(services);
             services.AddScoped<IDistributedJobLock, NoOpJobLock>();
 
-            // ── Uklanjanje hosted servisa koji koriste PostgreSQL-specifičan SQL ────
+            // ── Uklanjanje hosted servisa koji koriste SQL Server-specifičan SQL ────
             RemoveHostedService<AppraiserTimeoutService>(services);
             RemoveHostedService<AppraiserAcceptanceTimeoutService>(services);
             RemoveHostedService<AuditLogQueueWorker>(services);
@@ -186,7 +186,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         if (desc is not null) services.Remove(desc);
     }
 
-    /// <summary>In-memory order number generator — koristi Guid umjesto PostgreSQL UPSERT.</summary>
+    /// <summary>In-memory order number generator — koristi Guid umjesto SQL Server UPSERT.</summary>
     private sealed class InMemoryOrderNumberGenerator : IOrderNumberGenerator
     {
         // Instance field — ApiFactory kreira novu instancu po test sesiji.

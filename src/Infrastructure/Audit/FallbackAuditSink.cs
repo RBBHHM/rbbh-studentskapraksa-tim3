@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// Audit sink koji pokušava primarni sink, a u slučaju greške automatski prelazi na sekundarni.

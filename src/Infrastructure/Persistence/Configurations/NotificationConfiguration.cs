@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Notifications;
+using RBBH.CollateralAppraisal.Domain.Notifications;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public sealed class NotificationConfiguration : IEntityTypeConfiguration<Notification>
 {

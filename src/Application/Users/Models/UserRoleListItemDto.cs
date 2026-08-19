@@ -1,4 +1,4 @@
-namespace Praksa.Application.Users.Models;
+namespace RBBH.CollateralAppraisal.Application.Users.Models;
 
 /// <summary>
 /// Lagani DTO za paginiranu listu korisnika i njihovih rola.

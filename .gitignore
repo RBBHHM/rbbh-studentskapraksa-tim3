@@ -46,15 +46,6 @@ docker/.env.app
 /storage/
 src/Api/storage/
 
-# Research agent – lokalni podaci (ne commitovati)
-.research/logs/*.jsonl
-.research/tasks/active-task.json
-.research/tasks/completed/*.json
-.research/infra/config.json
-
-# Mentor izvještaji (lokalni, ne commitovati) — SAMO root folder, ne src/**/Reports
-/reports/
-
 # Others
 ~$*
 *~
@@ -78,4 +69,4 @@ coverage-results/
 coverage-report/
 coverage-report-html/
 appsettings.Development.Local.json
-/.vs/studentskapraksa.slnx
+/.vs/RBBH.CollateralAppraisal.slnx

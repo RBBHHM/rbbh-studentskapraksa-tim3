@@ -1,6 +1,6 @@
-using Praksa.Application.Notifications.Models;
+using RBBH.CollateralAppraisal.Application.Notifications.Models;
 
-namespace Praksa.Application.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Notifications;
 
 /// <summary>
 /// Servis za slanje notifikacija vezanih za promjene rola.

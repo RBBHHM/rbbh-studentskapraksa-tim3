@@ -1,14 +1,26 @@
 import Keycloak from "keycloak-js";
 
+const keycloakUrl = import.meta.env["VITE_KEYCLOAK_URL"] as string | undefined;
+const keycloakRealm = import.meta.env["VITE_KEYCLOAK_REALM"] as string | undefined;
+const keycloakClientId = import.meta.env["VITE_KEYCLOAK_CLIENT_ID"] as string | undefined;
+
+export const isAuthenticationConfigured = Boolean(
+  keycloakUrl && keycloakRealm && keycloakClientId,
+);
+
 const keycloak = new Keycloak({
-  url: import.meta.env["VITE_KEYCLOAK_URL"] ?? "http://localhost:8183",
-  realm: import.meta.env["VITE_KEYCLOAK_REALM"] ?? "praksa",
-  clientId: import.meta.env["VITE_KEYCLOAK_CLIENT_ID"] ?? "praksa-web",
+  url: keycloakUrl || "http://localhost",
+  realm: keycloakRealm || "not-configured",
+  clientId: keycloakClientId || "not-configured",
 });
 
 let initialization: Promise<boolean> | undefined;
 
 export function initializeAuthentication(): Promise<boolean> {
+  if (!isAuthenticationConfigured) {
+    console.warn("Keycloak nije konfigurisan; frontend radi u lokalnom razvojnom režimu.");
+    return Promise.resolve(true);
+  }
   initialization ??= keycloak.init({
     onLoad: "login-required",
     pkceMethod: "S256",
@@ -17,7 +29,8 @@ export function initializeAuthentication(): Promise<boolean> {
   return initialization;
 }
 
-export async function getAccessToken(): Promise<string> {
+export async function getAccessToken(): Promise<string | undefined> {
+  if (!isAuthenticationConfigured) return undefined;
   await initializeAuthentication();
   await keycloak.updateToken(30);
 

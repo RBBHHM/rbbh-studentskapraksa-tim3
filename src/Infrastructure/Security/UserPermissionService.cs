@@ -1,8 +1,8 @@
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Security.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security.Interfaces;
 
-namespace Praksa.Infrastructure.Security;
+namespace RBBH.CollateralAppraisal.Infrastructure.Security;
 
 /// <summary>
 /// Implementacija <see cref="IUserPermissionService"/>.

@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Domain.Documents;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Documents;
+namespace RBBH.CollateralAppraisal.Infrastructure.Documents;
 
 public sealed class SharedDocumentService : ISharedDocumentService
 {

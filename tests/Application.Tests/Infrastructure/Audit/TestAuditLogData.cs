@@ -1,6 +1,6 @@
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Application.Tests.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Audit;
 
 internal static class TestAuditLogData
 {

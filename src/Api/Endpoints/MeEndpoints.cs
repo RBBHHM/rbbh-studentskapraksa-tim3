@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Users.Models;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Users.Models;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za profil i role context trenutno prijavljenog korisnika.

@@ -1,4 +1,4 @@
-namespace Praksa.Application.Users.Models;
+namespace RBBH.CollateralAppraisal.Application.Users.Models;
 
 /// <summary>
 /// Odgovor /api/me endpointaa — sve što frontend treba za inicijalizaciju sesije.

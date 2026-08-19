@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Roles.Models;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Roles;
+namespace RBBH.CollateralAppraisal.Infrastructure.Roles;
 
 public sealed class PermissionCatalogService : IPermissionCatalogService
 {

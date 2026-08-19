@@ -1,4 +1,4 @@
-namespace Praksa.Application.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Notifications;
 
 /// <summary>
 /// Adapter za slanje emailova. Application sloj definiše interfejs — Infrastructure

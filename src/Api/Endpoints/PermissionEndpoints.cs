@@ -1,7 +1,7 @@
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class PermissionEndpoints
 {

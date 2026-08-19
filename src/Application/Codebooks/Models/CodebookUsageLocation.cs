@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Models;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
 /// <summary>
 /// Jedna lokacija gdje se vrijednost šifarnika koristi.

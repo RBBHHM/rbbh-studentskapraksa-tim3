@@ -1,17 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Codebooks;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Codebooks.Requests;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Codebooks;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks;
 
 /// <summary>
 /// Upravljanje šifarnicima (Codebook container) — kreiranje, ažuriranje, deaktivacija, soft delete.

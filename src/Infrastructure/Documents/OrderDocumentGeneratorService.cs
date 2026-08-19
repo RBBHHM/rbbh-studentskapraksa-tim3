@@ -1,19 +1,19 @@
-﻿﻿﻿using DocumentFormat.OpenXml;
+﻿﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using DomainDocument = Praksa.Domain.Documents.Document;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using DomainDocument = RBBH.CollateralAppraisal.Domain.Documents.Document;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Documents;
+namespace RBBH.CollateralAppraisal.Infrastructure.Documents;
 
 [ExcludeFromCodeCoverage]
 public sealed class OrderDocumentGeneratorService : IOrderDocumentGenerator

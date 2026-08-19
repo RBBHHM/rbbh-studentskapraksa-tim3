@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 /// <summary>
 /// SLA rokovi za workflow taskove — konfigurabilno po okruženju.

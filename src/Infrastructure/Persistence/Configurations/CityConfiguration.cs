@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Branches;
+using RBBH.CollateralAppraisal.Domain.Branches;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public class CityConfiguration : IEntityTypeConfiguration<City>
 {

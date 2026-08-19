@@ -1,7 +1,7 @@
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
 
-namespace Praksa.Application.Codebooks.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
 /// <summary>
 /// Servis za upravljanje vrijednostima šifarnika.

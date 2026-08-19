@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Orders.Requests;
-using Praksa.Application.Orders.Commands;
-using Praksa.Application.Orders.Queries;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Orders.Commands;
+using RBBH.CollateralAppraisal.Application.Orders.Queries;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class OrderEndpoints
 {

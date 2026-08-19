@@ -1,8 +1,8 @@
-using Praksa.Application.Roles.Models;
-using Praksa.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class RolesDtosTests
 {

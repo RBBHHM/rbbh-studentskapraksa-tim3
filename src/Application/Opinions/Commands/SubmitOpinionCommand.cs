@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Opinions;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Opinions;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Opinions.Commands;
+namespace RBBH.CollateralAppraisal.Application.Opinions.Commands;
 
 public sealed record SubmitOpinionCommand(
     int OrderId,

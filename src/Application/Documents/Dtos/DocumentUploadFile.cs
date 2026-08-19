@@ -1,4 +1,4 @@
-namespace Praksa.Application.Documents.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Documents.Dtos;
 
 public sealed record DocumentUploadFile(
     Stream Content,

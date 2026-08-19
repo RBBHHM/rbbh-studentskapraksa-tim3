@@ -2,14 +2,14 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Domain.Audit;
-using Praksa.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Audit;
 
 public sealed class AuditServiceTests
 {

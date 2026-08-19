@@ -1,6 +1,6 @@
-using Praksa.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
 
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 /// <summary>
 /// PL workflow: lista kandidata i ručni odabir vještaka.

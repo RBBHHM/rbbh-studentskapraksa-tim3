@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Jedina tačka ulaza za bilježenje audit događaja u poslovnoj logici.

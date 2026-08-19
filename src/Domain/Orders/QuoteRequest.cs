@@ -1,6 +1,6 @@
-﻿using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Zahtjev za ponudu poslan vještaku za PL narudžbu procjene.

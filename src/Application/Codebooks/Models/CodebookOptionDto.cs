@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Models;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
 /// <summary>
 /// Lagani DTO za dropdown menije. Vraća se iz GET /values/active endpointa.

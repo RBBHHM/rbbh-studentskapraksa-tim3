@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 public class CurrentUserService : ICurrentUserService
 {

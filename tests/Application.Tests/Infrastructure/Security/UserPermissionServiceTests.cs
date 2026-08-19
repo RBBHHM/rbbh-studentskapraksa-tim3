@@ -1,10 +1,10 @@
 using NSubstitute;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Infrastructure.Security;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Infrastructure.Security;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Security;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Security;
 
 public sealed class UserPermissionServiceTests
 {

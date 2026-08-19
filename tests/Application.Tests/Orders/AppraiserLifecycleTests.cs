@@ -3,24 +3,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Application.Users;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — AppraiserAssignmentService lifecycle metode
@@ -119,7 +119,7 @@ public sealed class AppraiserLifecycleTests : IDisposable
             propertyAddress: "Obala 1", collateralTypeId: null, combinedCollateralTypeId: null,
             createdByUserId: "u1", createdByRole: AppRoles.AM, createdByName: "Amar",
             deliveryContactName: "Dostava", amRecipientName: "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
 
         var appraiser = Appraiser.Create("Test Vjestak", "Sarajevo",
             AppraiserLegalForm.Individual, "vjestak@test.ba", "061000000", null);

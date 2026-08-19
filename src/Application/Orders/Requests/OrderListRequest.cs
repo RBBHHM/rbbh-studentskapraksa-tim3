@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders.Requests;
+namespace RBBH.CollateralAppraisal.Application.Orders.Requests;
 
 public sealed record OrderListRequest(
     string?   Search      = null,

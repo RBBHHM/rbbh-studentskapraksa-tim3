@@ -1,8 +1,8 @@
-using Praksa.Application.Audit;
-using Praksa.Application.Roles.Requests;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class AuditEndpoints
 {

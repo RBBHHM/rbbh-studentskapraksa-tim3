@@ -1,4 +1,4 @@
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Tip operacije — opisuje PRIRODU izmjene, ne poslovni kontekst.

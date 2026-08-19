@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using Praksa.E2E.Tests.Infrastructure;
+using RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
-namespace Praksa.E2E.Tests.Pages;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Pages;
 
 public sealed class LoginPage(IPage page)
 {

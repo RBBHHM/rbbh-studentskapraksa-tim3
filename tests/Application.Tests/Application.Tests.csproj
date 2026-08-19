@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Praksa.Application.Tests</RootNamespace>
+    <RootNamespace>RBBH.CollateralAppraisal.Application.Tests</RootNamespace>
     <!-- CS0618: AppraisalOrder.ChangeStatus() je [Obsolete] u produkciji ali namjerno
          se koristi u testovima za direktno postavljanje statusa pri seeding-u. -->
     <NoWarn>$(NoWarn);CS0618</NoWarn>
@@ -28,9 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Application\Application.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\RBBH.CollateralAppraisal.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Notifications;
-using Praksa.Domain.Notifications;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Domain.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// Implementacija <see cref="INotificationService"/> — sprema in-app notifikacije u
@@ -94,7 +94,7 @@ public sealed class NotificationService : INotificationService
         pageSize = Math.Clamp(pageSize, 1, 100);
 
         var baseQuery = _db.Notifications.AsNoTracking()
-            .Where(n => n.RecipientUserId == userId && n.Channel == Praksa.Domain.Notifications.NotificationChannel.InApp);
+            .Where(n => n.RecipientUserId == userId && n.Channel == RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.InApp);
 
         var query = unreadOnly ? baseQuery.Where(n => !n.IsRead) : baseQuery;
 
@@ -115,7 +115,7 @@ public sealed class NotificationService : INotificationService
     public Task<int> GetUnreadCountAsync(string userId, CancellationToken ct = default) =>
         _db.Notifications.AsNoTracking()
             .CountAsync(n => n.RecipientUserId == userId
-                          && n.Channel == Praksa.Domain.Notifications.NotificationChannel.InApp
+                          && n.Channel == RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.InApp
                           && !n.IsRead, ct);
 
     public async Task<bool> MarkReadAsync(int notificationId, string userId, CancellationToken ct = default)

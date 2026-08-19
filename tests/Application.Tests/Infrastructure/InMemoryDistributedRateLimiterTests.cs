@@ -1,8 +1,8 @@
 using FluentAssertions;
-using Praksa.Infrastructure.Common;
+using RBBH.CollateralAppraisal.Infrastructure.Common;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — InMemoryDistributedRateLimiter

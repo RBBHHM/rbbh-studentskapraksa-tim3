@@ -3,9 +3,9 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Tests.Helpers;
+namespace RBBH.CollateralAppraisal.Api.Tests.Helpers;
 
 /// <summary>
 /// Lažni JWT handler koji ne validira nikakav potpis — prihvata bearer tokene oblika

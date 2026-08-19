@@ -1,8 +1,8 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
 
-namespace Praksa.Application.QuoteRequests.Commands;
+namespace RBBH.CollateralAppraisal.Application.QuoteRequests.Commands;
 
 public sealed record SendThankYouCommand(int OrderId) : ICommand<SendThankYouResult>;
 

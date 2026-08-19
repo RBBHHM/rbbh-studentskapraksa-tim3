@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Roles;
+namespace RBBH.CollateralAppraisal.Domain.Roles;
 
 /// <summary>
 /// Definicija permissiona iz Permission Catalog-a.

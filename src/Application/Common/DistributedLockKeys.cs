@@ -1,7 +1,7 @@
-namespace Praksa.Application.Common;
+namespace RBBH.CollateralAppraisal.Application.Common;
 
 /// <summary>
-/// Fiksni integer ključevi za PostgreSQL advisory lockove.
+/// Fiksni integer ključevi za SQL Server advisory lockove.
 /// Stabilni konstantni ID-evi garantuju da isti lock prepoznaju svi čvorovi klastera.
 /// </summary>
 public static class DistributedLockKeys

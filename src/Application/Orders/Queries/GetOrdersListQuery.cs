@@ -1,10 +1,10 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 
-namespace Praksa.Application.Orders.Queries;
+namespace RBBH.CollateralAppraisal.Application.Orders.Queries;
 
 public sealed record GetOrdersListQuery(OrderListRequest Request) : IQuery<PagedResult<AppraisalOrderListItemDto>>;
 

@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Baca se kada domain metoda pokuša prelaz koji OrderStateMachine ne dozvoljava.

@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 /// <summary>
-/// Health check koji provjerava konekciju na PostgreSQL putem EF Core.
+/// Health check koji provjerava konekciju na konfiguriranu bazu putem EF Core.
 /// Ne zahtijeva dodatni NuGet paket — koristi postojeći DbContext.
 /// </summary>
 public sealed class DatabaseHealthCheck : IHealthCheck
@@ -21,12 +21,12 @@ public sealed class DatabaseHealthCheck : IHealthCheck
         {
             var canConnect = await _db.Database.CanConnectAsync(cancellationToken);
             return canConnect
-                ? HealthCheckResult.Healthy("PostgreSQL konekcija uspješna.")
-                : HealthCheckResult.Unhealthy("PostgreSQL nije dostupan.");
+                ? HealthCheckResult.Healthy("Konekcija prema bazi je uspješna.")
+                : HealthCheckResult.Unhealthy("Baza nije dostupna.");
         }
         catch (Exception ex)
         {
-            return HealthCheckResult.Unhealthy("PostgreSQL greška: " + ex.Message);
+            return HealthCheckResult.Unhealthy("Greška pri provjeri baze: " + ex.Message);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// SMTP konfiguracija za slanje email notifikacija.

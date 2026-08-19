@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
-using Praksa.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Reports;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Reports;
+namespace RBBH.CollateralAppraisal.Infrastructure.Reports;
 
 /// <summary>
 /// xlsx generator zasnovan na ClosedXML (već referenciran u projektu).

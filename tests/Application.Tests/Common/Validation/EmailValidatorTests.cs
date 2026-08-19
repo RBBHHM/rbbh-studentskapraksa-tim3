@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common.Validation;
 
 public sealed class EmailValidatorTests
 {

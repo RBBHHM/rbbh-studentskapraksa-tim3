@@ -1,4 +1,4 @@
-namespace Praksa.Application.Reports.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Reports.Dtos;
 
 /// <summary>
 /// Jedan red izvještaja — sva polja iz Protokola narudžbi + 7 vremenskih kolona (u danima).

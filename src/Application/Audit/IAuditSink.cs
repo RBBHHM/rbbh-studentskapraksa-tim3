@@ -1,6 +1,6 @@
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Application.Audit;
+namespace RBBH.CollateralAppraisal.Application.Audit;
 
 /// <summary>
 /// Odredište za audit zapis (baza, datoteka, message queue, SIEM...).

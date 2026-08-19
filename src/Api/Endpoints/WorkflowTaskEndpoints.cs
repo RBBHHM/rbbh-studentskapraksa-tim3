@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Security;
-using Praksa.Application.WorkflowTask.Commands;
-using Praksa.Application.WorkflowTask.Queries;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.WorkflowTask.Commands;
+using RBBH.CollateralAppraisal.Application.WorkflowTask.Queries;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 public static class WorkflowTaskEndpoints
 {

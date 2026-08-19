@@ -1,10 +1,10 @@
 using FluentAssertions;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Constants;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common;
 
 // ══════════════════════════════════════════════════════════════════
 // BusinessDaysHelper Tests

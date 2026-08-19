@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Persistence.Configurations;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 public sealed class ProtocolService : IProtocolService
 {
@@ -36,15 +36,15 @@ public sealed class ProtocolService : IProtocolService
         var now  = DateTime.UtcNow;
         var year = now.Year;
 
-        // Atomarni UPSERT — PostgreSQL garantira jedinstvenost bez race conditiona.
-        // INSERT ... ON CONFLICT DO UPDATE ... RETURNING je jednaka transakcija, nikada se ne može desiti duplikat.
+        // SQL Server atomarni brojač uz HOLDLOCK sprečava duplikate.
         var sequences = await _db.Database
             .SqlQuery<int>($"""
-                INSERT INTO protocol_year_counters (year, last_sequence)
-                VALUES ({year}, 1)
-                ON CONFLICT (year)
-                DO UPDATE SET last_sequence = protocol_year_counters.last_sequence + 1
-                RETURNING last_sequence
+                MERGE protocol_year_counters WITH (HOLDLOCK) AS target
+                USING (SELECT {year} AS [year]) AS source
+                ON target.[year] = source.[year]
+                WHEN MATCHED THEN UPDATE SET last_sequence = target.last_sequence + 1
+                WHEN NOT MATCHED THEN INSERT ([year], last_sequence) VALUES (source.[year], 1)
+                OUTPUT inserted.last_sequence;
                 """)
             .ToListAsync(ct);
 

@@ -2,10 +2,10 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 /// <summary>
 /// Idempotentno popunjava šifarnike (Codebook + CodebookValue) iz ugrađenog JSON-a.
@@ -19,7 +19,7 @@ namespace Praksa.Infrastructure.Seed;
 /// </summary>
 public static class CodebookSeeder
 {
-    private const string ResourceName = "Praksa.Infrastructure.Seed.codebooks.json";
+    private const string ResourceName = "RBBH.CollateralAppraisal.Infrastructure.Seed.codebooks.json";
     private const string SeedUserId   = "system-seed";
 
     private sealed record SeedCodebook(

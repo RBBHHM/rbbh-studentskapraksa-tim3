@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Common.Constants;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Codebooks.UsageCheckers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.UsageCheckers;
 
 public sealed class CollateralTypeUsageChecker : ICodebookUsageChecker
 {

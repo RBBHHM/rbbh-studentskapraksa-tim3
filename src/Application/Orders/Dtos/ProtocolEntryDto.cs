@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
 public sealed record ProtocolEntryDto(
     int      Id,

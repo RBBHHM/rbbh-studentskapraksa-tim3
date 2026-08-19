@@ -1,9 +1,9 @@
-﻿using System.Text;
+using System.Text;
 using ClosedXML.Excel;
-using Praksa.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Codebooks.Import;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import;
 
 [ExcludeFromCodeCoverage]
 public static class FileExporter

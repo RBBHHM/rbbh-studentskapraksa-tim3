@@ -1,10 +1,10 @@
 using FluentValidation;
 using MediatR;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
 
-namespace Praksa.Application.AppraiserAssignment.Commands;
+namespace RBBH.CollateralAppraisal.Application.AppraiserAssignment.Commands;
 
 public sealed record ManualSelectAppraiserCommand(int OrderId, int AppraiserId)
     : ICommand<AppraiserAssignmentResultDto>;

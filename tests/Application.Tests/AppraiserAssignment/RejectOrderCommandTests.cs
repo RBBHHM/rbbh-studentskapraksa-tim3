@@ -1,12 +1,12 @@
 using FluentAssertions;
 using FluentValidation;
 using NSubstitute;
-using Praksa.Application.AppraiserAssignment.Commands;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Orders;
+using RBBH.CollateralAppraisal.Application.AppraiserAssignment.Commands;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.AppraiserAssignment;
+namespace RBBH.CollateralAppraisal.Application.Tests.AppraiserAssignment;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — RejectOrderCommandValidator

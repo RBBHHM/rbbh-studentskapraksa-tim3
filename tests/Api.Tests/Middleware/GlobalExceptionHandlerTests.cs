@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Api.Middleware;
-using Praksa.Application.Audit;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Common.Validation;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using System.Text.Json;
 using Xunit;
 
-namespace Praksa.Api.Tests.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Tests.Middleware;
 
 // ═══════════════════════════════════════════════════════════════
 // TEST MATRIX — GlobalExceptionHandler

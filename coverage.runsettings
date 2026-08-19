@@ -5,11 +5,11 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <!-- Isključi EF Core migracije (scaffold/generated kod) -->
-          <!-- Isključi BlazorApp UI sloj (pokriven bUnit i E2E) -->
+          <!-- Isključi Web UI sloj (pokriven bUnit i E2E) -->
           <!-- Isključi Keycloak HTTP klijente (integration testovi) -->
           <Exclude>
-            [Praksa.Infrastructure]Praksa.Infrastructure.Migrations.*,
-            [BlazorApp]*
+            [RBBH.CollateralAppraisal.Infrastructure]RBBH.CollateralAppraisal.Infrastructure.Migrations.*,
+            [Web]*
           </Exclude>
           <ExcludeByAttribute>ExcludeFromCodeCoverage,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
           <SkipAutoProps>true</SkipAutoProps>

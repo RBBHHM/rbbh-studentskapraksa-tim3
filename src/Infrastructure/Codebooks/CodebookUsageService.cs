@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
-namespace Praksa.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks;
 
 /// <summary>
 /// Agregator koji pronalazi sve registrovane <see cref="ICodebookUsageChecker"/> implementacije

@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Audit;
+namespace RBBH.CollateralAppraisal.Domain.Audit;
 
 /// <summary>
 /// Generički application audit zapis.

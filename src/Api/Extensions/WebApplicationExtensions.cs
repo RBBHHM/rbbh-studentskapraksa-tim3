@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Praksa.Api.Endpoints;
-using Praksa.Api.Middleware;
-using Praksa.Api.Modules;
-using Praksa.Application.Common.Constants;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Seed;
+using RBBH.CollateralAppraisal.Api.Endpoints;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Common.Constants;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Seed;
 
-namespace Praksa.Api.Extensions;
+namespace RBBH.CollateralAppraisal.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
@@ -20,22 +20,23 @@ public static class WebApplicationExtensions
         using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        // Non-relational providers (e.g. in-memory used in tests) don't support MigrateAsync.
-        if (!db.Database.IsRelational())
+        var isRelational = db.Database.IsRelational();
+        if (!isRelational)
         {
             await db.Database.EnsureCreatedAsync();
-            // Seed minimalne referentne podatke za E2E testove (collateralTypeId=1 u testnim payloadima).
             await SeedTestDataAsync(db);
-            return;
         }
-
-        await db.Database.MigrateAsync();
+        else if (db.Database.GetMigrations().Any())
+            await db.Database.MigrateAsync();
+        else
+            await db.Database.EnsureCreatedAsync();
 
         // Idempotentna korekcija formata broja narudžbe: ORD- → PN-
         // Potrebno samo jedanput — ažurira zapise nastale prije promjene formata.
-        await db.Database.ExecuteSqlRawAsync(
-            "UPDATE appraisal_orders SET order_number = REPLACE(order_number, 'ORD-', 'PN-') " +
-            "WHERE order_number LIKE 'ORD-%'");
+        if (isRelational)
+            await db.Database.ExecuteSqlRawAsync(
+                "UPDATE appraisal_orders SET order_number = REPLACE(order_number, 'ORD-', 'PN-') " +
+                "WHERE order_number LIKE 'ORD-%'");
 
         var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
 
@@ -69,7 +70,7 @@ public static class WebApplicationExtensions
         {
             roleLogger?.LogError(ex,
                 "RolePermissionSeeder nije uspio. Tabele vjerovatno još ne postoje (migracije nisu primijenjene). " +
-                "Resetujte bazu: docker compose down -v && docker compose up --build");
+                "Provjerite SQL Server šemu i ponovo pokrenite aplikaciju.");
             // Nastavljamo — API ostaje aktivan, seed će biti pokrenut pri sljedećem startupu
         }
 

@@ -1,10 +1,10 @@
-﻿﻿using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Codebooks.Import;
-using Praksa.Domain.Codebooks;
-using Praksa.Infrastructure.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Codebooks.Import.Mappers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import.Mappers;
 
 /// <summary>
 /// Generićki mapper za bilo koji CodebookValue šifarnik (gradovi, poslovnice, tipovi kolaterala, itd.).

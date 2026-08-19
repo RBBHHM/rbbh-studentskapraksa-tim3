@@ -1,4 +1,4 @@
-namespace Praksa.Application.Users;
+namespace RBBH.CollateralAppraisal.Application.Users;
 
 public interface IUserSuspensionService
 {

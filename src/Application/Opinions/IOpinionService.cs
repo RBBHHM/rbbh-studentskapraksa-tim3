@@ -1,7 +1,7 @@
-using Praksa.Application.Opinions.Dtos;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Opinions.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Opinions;
+namespace RBBH.CollateralAppraisal.Application.Opinions;
 
 /// <summary>
 /// Servis za upravljanje mišljenjima CO i Pravne službe (US 94).

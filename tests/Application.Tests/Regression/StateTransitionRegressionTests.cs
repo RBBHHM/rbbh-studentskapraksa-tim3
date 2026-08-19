@@ -1,8 +1,8 @@
 #pragma warning disable CS0618
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Regression;
+namespace RBBH.CollateralAppraisal.Application.Tests.Regression;
 
 /// <summary>
 /// Regresijski testovi za state machine guarde na AppraisalOrder domenskim metodama.

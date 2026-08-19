@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Centralna definicija dozvoljenih prelaza statusa narudžbe procjene.

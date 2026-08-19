@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>
 /// Centralizirani stabilni error kodovi za validacijske greške.

@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Orders;
+namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Centralna definicija lanca odgovornosti narudžbe procjene po <see cref="WorkflowType"/>.

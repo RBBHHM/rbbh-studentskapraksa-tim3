@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common.Models;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common.Models;
 
 public sealed class PagedResultTests
 {

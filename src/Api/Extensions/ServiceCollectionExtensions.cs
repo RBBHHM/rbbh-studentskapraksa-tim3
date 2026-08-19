@@ -1,12 +1,12 @@
-using Praksa.Api.Middleware;
-using Praksa.Application;
-using Praksa.Application.Common.Modules;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Infrastructure;
-using Praksa.Infrastructure.Notifications;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Application;
+using RBBH.CollateralAppraisal.Application.Common.Modules;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Infrastructure;
+using RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
-namespace Praksa.Api.Extensions;
+namespace RBBH.CollateralAppraisal.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -33,8 +33,8 @@ public static class ServiceCollectionExtensions
         // Vidi docs/backend/feature-module-pattern.md.
         services.AddFeatureModules(
             configuration,
-            typeof(Praksa.Application.DependencyInjection).Assembly,
-            typeof(Praksa.Infrastructure.DependencyInjection).Assembly,
+            typeof(RBBH.CollateralAppraisal.Application.DependencyInjection).Assembly,
+            typeof(RBBH.CollateralAppraisal.Infrastructure.DependencyInjection).Assembly,
             typeof(Program).Assembly);
 
         // Globalni handler za izuzetke — mapira poslovne exception-e na ProblemDetails
@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
         // ── Health checks ─────────────────────────────────────────────────────
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>(
-                "postgres",
+                "database",
                 tags: ["database"],
                 failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy)
             .AddCheck<MigrationHealthCheck>(

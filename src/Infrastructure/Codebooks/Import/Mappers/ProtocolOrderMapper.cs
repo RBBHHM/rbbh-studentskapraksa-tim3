@@ -1,10 +1,10 @@
-﻿﻿﻿using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Codebooks.Import;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+﻿﻿using Microsoft.EntityFrameworkCore;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Codebooks.Import.Mappers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import.Mappers;
 
 /// <summary>
 /// Masovni import/update narudžbi iz Excel tabele (spec prilog 1 — 36 kolona, ~5700 redova).

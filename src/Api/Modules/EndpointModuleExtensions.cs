@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Praksa.Api.Modules;
+namespace RBBH.CollateralAppraisal.Api.Modules;
 
 /// <summary>
 /// Auto-discovery za <see cref="IEndpointModule"/> implementacije.

@@ -1,8 +1,8 @@
-using Praksa.Api.Modules;
-using Praksa.Application.Reports;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za S3-15: Reminder vještaku za dostavu procjene.

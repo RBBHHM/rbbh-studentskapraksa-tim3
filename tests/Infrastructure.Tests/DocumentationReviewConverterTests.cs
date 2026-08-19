@@ -1,8 +1,8 @@
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence.Configurations;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests;
 
 public sealed class DocumentationReviewStatusConverterTests
 {

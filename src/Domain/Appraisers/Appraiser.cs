@@ -1,7 +1,7 @@
-using Praksa.Domain.Common;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Domain.Appraisers;
+namespace RBBH.CollateralAppraisal.Domain.Appraisers;
 
 /// <summary>
 /// Vještak (procjenitelj nekretnina) — master-data entitet koji administrira CA.
@@ -97,7 +97,7 @@ public sealed class Appraiser : BaseEntity
     public bool CanHandle(WorkflowType? workflowType)
     {
         if (ClientScope == AppraiserClientScope.Sve) return true;
-        return workflowType == Praksa.Domain.Orders.WorkflowType.PravnaLica
+        return workflowType == RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.PravnaLica
             ? ClientScope == AppraiserClientScope.PravnaLica
             : ClientScope == AppraiserClientScope.FizickaLica;
     }

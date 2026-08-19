@@ -1,8 +1,8 @@
 using System.Net;
-using Praksa.Api.Tests.Helpers;
+using RBBH.CollateralAppraisal.Api.Tests.Helpers;
 using Xunit;
 
-namespace Praksa.Api.Tests.Reports;
+namespace RBBH.CollateralAppraisal.Api.Tests.Reports;
 
 [Collection("ApiTests")]
 public sealed class ReportEndpointsTests : IClassFixture<ApiFactory>

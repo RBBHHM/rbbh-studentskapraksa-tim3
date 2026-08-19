@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Praksa.Infrastructure.Tests</RootNamespace>
+    <RootNamespace>RBBH.CollateralAppraisal.Infrastructure.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\RBBH.CollateralAppraisal.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

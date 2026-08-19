@@ -2,19 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Application.Security;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Documents;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Documents;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Documents;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Documents;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Documents;
 
 public sealed class DocumentServiceTests : IDisposable
 {

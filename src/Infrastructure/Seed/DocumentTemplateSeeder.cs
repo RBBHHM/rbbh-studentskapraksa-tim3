@@ -1,12 +1,12 @@
-﻿﻿﻿using Microsoft.EntityFrameworkCore;
+﻿﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Domain.Documents;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Seed;
+namespace RBBH.CollateralAppraisal.Infrastructure.Seed;
 
 [ExcludeFromCodeCoverage]
 public static class DocumentTemplateSeeder

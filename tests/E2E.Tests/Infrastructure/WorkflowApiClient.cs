@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// HTTP klijent za direktne API pozive tokom E2E workflow testova.
@@ -108,7 +108,7 @@ public sealed class WorkflowApiClient : IDisposable
     }
 
     /// <summary>
-    /// Kreira vještaka koji je linkovan s Keycloak test userom (vjestak.test@praksa.ba).
+    /// Kreira vještaka koji je linkovan s Keycloak test userom (vjestak.test@rbbh.ba).
     /// Link se uspostavlja po ContactEmail — isti email kao Keycloak user.
     /// Bez ovog linka, AcceptByAppraiser ne može naći Keycloak usera.
     ///

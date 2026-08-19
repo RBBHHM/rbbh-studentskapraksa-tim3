@@ -1,6 +1,6 @@
-using Praksa.Domain.Common;
+using RBBH.CollateralAppraisal.Domain.Common;
 
-namespace Praksa.Domain.Branches;
+namespace RBBH.CollateralAppraisal.Domain.Branches;
 
 public sealed class Branch : BaseEntity
 {

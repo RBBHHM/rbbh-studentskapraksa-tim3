@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Api.Modules;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Opinions.Commands;
-using Praksa.Application.Opinions.Queries;
-using Praksa.Application.Security;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Opinions.Commands;
+using RBBH.CollateralAppraisal.Application.Opinions.Queries;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using MediatR;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za mišljenja CO i Pravne službe (US 94).

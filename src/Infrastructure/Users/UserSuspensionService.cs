@@ -4,13 +4,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 
-namespace Praksa.Infrastructure.Users;
+namespace RBBH.CollateralAppraisal.Infrastructure.Users;
 
 /// <summary>
 /// Suspenzija i reaktivacija korisnika putem Keycloak Admin API.

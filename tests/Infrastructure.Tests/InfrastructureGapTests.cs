@@ -1,21 +1,21 @@
 // Infrastructure gap testovi — klase ekvivalencije za 0% servise
 // Pokriva: BranchQueryService, CollateralTypeUsageChecker, DocumentTypeUsageChecker, UserRoleQueryService
 using NSubstitute;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Security;
-using Praksa.Application.Security.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Domain.Branches;
-using Praksa.Domain.Documents;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Branches;
-using Praksa.Infrastructure.Codebooks.UsageCheckers;
-using Praksa.Infrastructure.Tests.Helpers;
-using Praksa.Infrastructure.Users;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Domain.Branches;
+using RBBH.CollateralAppraisal.Domain.Documents;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Branches;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks.UsageCheckers;
+using RBBH.CollateralAppraisal.Infrastructure.Tests.Helpers;
+using RBBH.CollateralAppraisal.Infrastructure.Users;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // BranchQueryService
@@ -135,7 +135,7 @@ public sealed class CollateralTypeUsageCheckerTests
     {
         await using var db = TestDbFactory.Create();
         var checker = new CollateralTypeUsageChecker(db);
-        Assert.Equal(Praksa.Application.Common.Constants.CodebookKeys.CollateralTypes, checker.CodebookKey);
+        Assert.Equal(RBBH.CollateralAppraisal.Application.Common.Constants.CodebookKeys.CollateralTypes, checker.CodebookKey);
         var result = await checker.CheckAsync(42);
         Assert.Null(result);
     }
@@ -190,7 +190,7 @@ public sealed class DocumentTypeUsageCheckerTests
     {
         await using var db = TestDbFactory.Create();
         var checker = new DocumentTypeUsageChecker(db);
-        Assert.Equal(Praksa.Application.Common.Constants.CodebookKeys.DocumentTypes, checker.CodebookKey);
+        Assert.Equal(RBBH.CollateralAppraisal.Application.Common.Constants.CodebookKeys.DocumentTypes, checker.CodebookKey);
         var result = await checker.CheckAsync(99);
         Assert.Null(result);
     }

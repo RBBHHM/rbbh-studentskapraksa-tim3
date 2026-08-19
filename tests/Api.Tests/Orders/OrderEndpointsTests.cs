@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Praksa.Api.Tests.Helpers;
+using RBBH.CollateralAppraisal.Api.Tests.Helpers;
 using Xunit;
 
-namespace Praksa.Api.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Api.Tests.Orders;
 
 /// <summary>
 /// E2E HTTP testovi za /api/orders endpoints.
@@ -67,7 +67,7 @@ public sealed class OrderEndpointsTests : IClassFixture<ApiFactory>
     [Fact]
     public async Task GetOrders_WithDateFilter_Returns200()
     {
-        // Regresija: DateTime filter bacao 500 zbog Npgsql Kind=Unspecified.
+        // Regresija: DateTime filter bacao 500 zbog SQL Server provider Kind=Unspecified.
         // Na in-memory bazi test prolazi, ali dokumentira scenario koji je bio broken.
         var client = _factory.CreateAuthenticatedClient();
 

@@ -1,6 +1,6 @@
-using Praksa.Application.Reports.Dtos;
+using RBBH.CollateralAppraisal.Application.Reports.Dtos;
 
-namespace Praksa.Application.Reports;
+namespace RBBH.CollateralAppraisal.Application.Reports;
 
 /// <summary>
 /// Servis za praćenje i slanje podsjetnika vještacima koji nisu dostavili

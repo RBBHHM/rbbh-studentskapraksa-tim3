@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 
-namespace Praksa.E2E.Tests.Pages;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Pages;
 
 public sealed class CodebookPage(IPage page)
 {

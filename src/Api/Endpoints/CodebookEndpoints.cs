@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Requests;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za upravljanje vrijednostima šifarnika.

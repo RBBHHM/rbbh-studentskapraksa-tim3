@@ -1,7 +1,7 @@
-using Praksa.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
 using Xunit;
 
-namespace Praksa.Application.Tests.Domain;
+namespace RBBH.CollateralAppraisal.Application.Tests.Domain;
 
 public sealed class CodebookValueTests
 {

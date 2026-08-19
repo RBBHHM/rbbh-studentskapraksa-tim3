@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Import;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Import;
 
 /// <summary>
 /// Generički import/export servis za sve šifarnike.

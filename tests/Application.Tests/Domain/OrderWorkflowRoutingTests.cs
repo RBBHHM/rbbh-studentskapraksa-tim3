@@ -1,7 +1,7 @@
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Domain;
+namespace RBBH.CollateralAppraisal.Application.Tests.Domain;
 
 public sealed class OrderWorkflowRoutingTests
 {

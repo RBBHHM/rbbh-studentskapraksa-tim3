@@ -1,8 +1,8 @@
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Codebooks.Requests;
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Codebooks.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
 /// <summary>
 /// Upravljanje šifarnicima (Codebook) kao cjelinom.

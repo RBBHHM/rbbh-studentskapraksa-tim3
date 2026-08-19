@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Branches;
+namespace RBBH.CollateralAppraisal.Application.Common.Branches;
 
 public sealed record BranchItem(
     string Code,

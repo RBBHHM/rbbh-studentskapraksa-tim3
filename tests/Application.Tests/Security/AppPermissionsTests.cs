@@ -1,7 +1,7 @@
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security;
 using Xunit;
 
-namespace Praksa.Application.Tests.Security;
+namespace RBBH.CollateralAppraisal.Application.Tests.Security;
 
 public sealed class AppPermissionsTests
 {

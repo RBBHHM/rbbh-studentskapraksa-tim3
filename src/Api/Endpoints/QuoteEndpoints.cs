@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Api.Modules;
-using Praksa.Application.Orders;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Api.Modules;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za vještaka — odgovor na zahtjev za ponudu (PL, AC 5).

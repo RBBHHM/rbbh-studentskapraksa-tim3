@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.CQRS;
+namespace RBBH.CollateralAppraisal.Application.Common.CQRS;
 
 /// <summary>
 /// Opt-in interface za komande koje trebaju automatski audit log putem AuditBehavior-a.

@@ -1,10 +1,10 @@
-using Praksa.Application.Common.Models;
-using Praksa.Application.Security;
-using Praksa.Application.Security.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
 
-namespace Praksa.Infrastructure.Users;
+namespace RBBH.CollateralAppraisal.Infrastructure.Users;
 
 /// <summary>
 /// Implementacija IUserRoleQueryService.

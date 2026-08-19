@@ -3,17 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Roles.Requests;
-using Praksa.Domain.Roles;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Roles;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Domain.Roles;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Roles;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Roles;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Roles;
 
 public sealed class RoleDefinitionServiceTests : IDisposable
 {

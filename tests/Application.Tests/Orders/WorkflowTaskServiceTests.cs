@@ -2,18 +2,18 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Security;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class WorkflowTaskServiceTests : IDisposable
 {
@@ -57,7 +57,7 @@ public sealed class WorkflowTaskServiceTests : IDisposable
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar",
             "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
         order.ChangeStatus(status, DateTime.UtcNow);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();

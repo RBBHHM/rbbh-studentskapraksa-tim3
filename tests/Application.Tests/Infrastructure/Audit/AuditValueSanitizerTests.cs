@@ -1,7 +1,7 @@
-using Praksa.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Audit;
 
 public sealed class AuditValueSanitizerTests
 {

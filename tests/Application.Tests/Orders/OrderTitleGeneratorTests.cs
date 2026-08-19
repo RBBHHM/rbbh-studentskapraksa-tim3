@@ -1,8 +1,8 @@
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class OrderTitleGeneratorTests
 {

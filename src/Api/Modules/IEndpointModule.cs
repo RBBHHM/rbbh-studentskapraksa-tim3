@@ -1,4 +1,4 @@
-namespace Praksa.Api.Modules;
+namespace RBBH.CollateralAppraisal.Api.Modules;
 
 /// <summary>
 /// Endpoint modul koji mapira vlastite minimal API rute.

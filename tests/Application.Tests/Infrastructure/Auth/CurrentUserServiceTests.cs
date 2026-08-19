@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using Praksa.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Auth;
 
 public sealed class CurrentUserServiceTests
 {

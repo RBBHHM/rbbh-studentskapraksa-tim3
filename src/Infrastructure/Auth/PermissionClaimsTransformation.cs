@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Caching.Memory;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Infrastructure.Auth;
 
 /// <summary>
 /// Claims transformation koja se izvršava na svakom autentificiranom zahtjevu.

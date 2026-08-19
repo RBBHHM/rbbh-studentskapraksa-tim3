@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using CK = Praksa.Application.Common.Constants.CodebookKeys;
+using CK = RBBH.CollateralAppraisal.Application.Common.Constants.CodebookKeys;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -8,39 +8,39 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Praksa.Application.Appraisers;
-using Praksa.Application.Audit;
-using Praksa.Application.Orders;
-using Praksa.Application.Branches;
-using Praksa.Application.Codebooks.Interfaces;
-using Praksa.Application.Codebooks.Import;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Reports;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Common;
-using Praksa.Application.Common.Interfaces;
-using AppClock = Praksa.Application.Common.Interfaces.IClock;
-using InfraClock = Praksa.Infrastructure.Common.SystemClock;
-using InfraRateLimiter = Praksa.Infrastructure.Common.InMemoryDistributedRateLimiter;
-using Praksa.Application.Notifications;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Security.Interfaces;
-using Praksa.Application.Users;
-using Praksa.Infrastructure.Appraisers;
-using Praksa.Infrastructure.Codebooks.Import;
-using Praksa.Infrastructure.Codebooks.Import.Mappers;
-using Praksa.Infrastructure.Audit;
-using Praksa.Infrastructure.Branches;
-using Praksa.Infrastructure.Auth;
-using Praksa.Infrastructure.Codebooks;
-using Praksa.Infrastructure.Notifications;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Roles;
-using Praksa.Infrastructure.Security;
-using Praksa.Infrastructure.Storage;
-using Praksa.Infrastructure.Users;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Branches;
+using RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Common;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using AppClock = RBBH.CollateralAppraisal.Application.Common.Interfaces.IClock;
+using InfraClock = RBBH.CollateralAppraisal.Infrastructure.Common.SystemClock;
+using InfraRateLimiter = RBBH.CollateralAppraisal.Infrastructure.Common.InMemoryDistributedRateLimiter;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security.Interfaces;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Infrastructure.Appraisers;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import.Mappers;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Branches;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Roles;
+using RBBH.CollateralAppraisal.Infrastructure.Security;
+using RBBH.CollateralAppraisal.Infrastructure.Storage;
+using RBBH.CollateralAppraisal.Infrastructure.Users;
 
-namespace Praksa.Infrastructure;
+namespace RBBH.CollateralAppraisal.Infrastructure;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
@@ -50,26 +50,40 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         // ── Baza podataka ─────────────────────────────────────────────────────
-        // U Testing okruženju (WebApplicationFactory) preskačemo Npgsql —
+        // U Testing okruženju (WebApplicationFactory) preskačemo SQL Server provider —
         // factory registruje vlastiti in-memory DbContext bez konflikta providera.
         var env = services
             .FirstOrDefault(d => d.ServiceType == typeof(IWebHostEnvironment))
             ?.ImplementationInstance as IWebHostEnvironment;
+        var configuredKeycloak = configuration.GetValue<bool>("Keycloak:Enabled") &&
+            !string.IsNullOrWhiteSpace(configuration["Keycloak:Authority"]) &&
+            !string.IsNullOrWhiteSpace(configuration["Keycloak:Audience"]);
 
         if (env?.IsEnvironment("Testing") != true)
         {
+            var connectionString = SqlServerConnectionFactory.Resolve(configuration);
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(
-                    configuration.GetConnectionString("Default"),
-                    npgsqlOptions => npgsqlOptions.MigrationsAssembly(
-                        typeof(ApplicationDbContext).Assembly.FullName))
-                .ConfigureWarnings(w => w.Ignore(
-                    Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+            {
+                if (env?.IsDevelopment() == true && string.IsNullOrWhiteSpace(connectionString))
+                {
+                    options.UseInMemoryDatabase("collateral-appraisal-local");
+                    return;
+                }
+
+                options.UseSqlServer(
+                        connectionString,
+                        sqlOptions => sqlOptions
+                            .EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)
+                            .MigrationsAssembly(
+                            typeof(ApplicationDbContext).Assembly.FullName))
+                    .ConfigureWarnings(w => w.Ignore(
+                        Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+            });
         }
 
         services.AddHttpContextAccessor();
         services.AddMemoryCache();
-        services.AddSingleton<IClock, Praksa.Infrastructure.Common.SystemClock>();
+        services.AddSingleton<IClock, RBBH.CollateralAppraisal.Infrastructure.Common.SystemClock>();
         services.AddSingleton<IDistributedRateLimiter, InfraRateLimiter>();
 
         // ── Autentifikacija / Claims ───────────────────────────────────────────
@@ -87,7 +101,7 @@ public static class DependencyInjection
         // ── Role management (Keycloak assign/remove/transfer) ─────────────────
         services.AddScoped<IRoleManagementService, RoleManagementService>();
 
-        // ── Role Definitions (PostgreSQL + Keycloak sync) ─────────────────────
+        // ── Role Definitions (SQL Server + Keycloak sync) ─────────────────────
         services.AddScoped<IRoleDefinitionService, RoleDefinitionService>();
         services.AddScoped<IPermissionCatalogService, PermissionCatalogService>();
         services.AddScoped<IKeycloakRoleSyncService, KeycloakRoleSyncService>();
@@ -119,7 +133,10 @@ public static class DependencyInjection
         services.AddScoped<IQuoteRequestService, QuoteRequestService>();
         services.AddScoped<IInvoiceWorkflowService, InvoiceWorkflowService>();
         services.AddScoped<IReportService, Reports.ReportService>();
-        services.AddScoped<IDistributedJobLock, PostgresJobLock>();
+        if (env?.IsDevelopment() == true && string.IsNullOrWhiteSpace(SqlServerConnectionFactory.Resolve(configuration)))
+            services.AddSingleton<IDistributedJobLock, InMemoryJobLock>();
+        else
+            services.AddScoped<IDistributedJobLock, SqlServerJobLock>();
         services.AddHostedService<AppraiserTimeoutService>();
         // Provjera 24h roka prihvatanja — blokira vještaka i dodjeljuje sljedećeg.
         services.AddHostedService<AppraiserAcceptanceTimeoutService>();
@@ -161,7 +178,10 @@ public static class DependencyInjection
         services.AddScoped<IAuditQueryService, AuditQueryService>();
 
         // ── Korisnici i role (Keycloak read) ──────────────────────────────────
-        services.AddScoped<IUserRoleProvider, KeycloakUserRoleProvider>();
+        if (configuredKeycloak)
+            services.AddScoped<IUserRoleProvider, KeycloakUserRoleProvider>();
+        else
+            services.AddSingleton<IUserRoleProvider, LocalUserRoleProvider>();
         services.AddScoped<IUserRoleQueryService, UserRoleQueryService>();
 
         // ── Keycloak Admin HTTP client ────────────────────────────────────────
@@ -179,8 +199,12 @@ public static class DependencyInjection
         var keycloak = configuration.GetSection(KeycloakOptions.SectionName).Get<KeycloakOptions>()
             ?? new KeycloakOptions();
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        var keycloakEnabled = configuredKeycloak;
+
+        if (keycloakEnabled)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
             {
                 options.Authority             = keycloak.Authority;
                 options.Audience              = keycloak.Audience;
@@ -208,6 +232,22 @@ public static class DependencyInjection
                     }
                 };
             });
+        }
+        else
+        {
+            services.AddAuthentication(LocalDevelopmentAuthenticationHandler.SchemeName)
+                .AddScheme<LocalDevelopmentAuthenticationOptions, LocalDevelopmentAuthenticationHandler>(
+                    LocalDevelopmentAuthenticationHandler.SchemeName,
+                    options => options.Enabled = env?.IsDevelopment() == true);
+        }
+
+        services.AddSingleton(new AuthenticationStartupStatus(
+            keycloakEnabled,
+            keycloakEnabled
+                ? "Keycloak autentifikacija je uključena."
+                : env?.IsDevelopment() == true
+                    ? "Keycloak nije konfigurisan; koristi se lokalni razvojni administrator."
+                    : "Keycloak nije konfigurisan; zaštićeni endpointi vraćaju 401."));
 
         return services;
     }

@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Reports;
-using Praksa.Application.Reports.Dtos;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Reports.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Reports;
+namespace RBBH.CollateralAppraisal.Infrastructure.Reports;
 
 /// <summary>
 /// Implementacija S3-15: Reminder vještaku za dostavu procjene.

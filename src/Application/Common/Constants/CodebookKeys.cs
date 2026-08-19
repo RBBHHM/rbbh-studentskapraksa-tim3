@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Constants;
+namespace RBBH.CollateralAppraisal.Application.Common.Constants;
 
 /// <summary>
 /// Centralne konstante za codebook ključeve — eliminacija magic stringova.

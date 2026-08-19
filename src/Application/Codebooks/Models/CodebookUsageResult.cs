@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Models;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
 /// <summary>
 /// Rezultat provjere da li je vrijednost šifarnika u upotrebi.

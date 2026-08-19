@@ -1,0 +1,1 @@
+import{I as e,P as t}from"./keycloak-DgBo4ARK.js";var n=e(t(),1),r=n.createContext(null);function i(e){return n.useContext(r)}export{r as n,i as t};

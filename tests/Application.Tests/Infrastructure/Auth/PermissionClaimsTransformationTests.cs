@@ -1,12 +1,12 @@
 using System.Security.Claims;
 using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Auth;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Auth;
 
 public sealed class PermissionClaimsTransformationTests : IDisposable
 {

@@ -3,20 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Security;
-using Praksa.Application.Tests.Helpers;
-using Praksa.Application.Users;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Tests.Helpers;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class OrderApprovalRatingTests : IDisposable
 {
@@ -57,19 +57,19 @@ public sealed class OrderApprovalRatingTests : IDisposable
 
     public void Dispose() => _db.Dispose();
 
-    private async Task<(AppraisalOrder order, Praksa.Domain.Documents.Document doc)> SeedOrderWithFinalDocAsync()
+    private async Task<(AppraisalOrder order, RBBH.CollateralAppraisal.Domain.Documents.Document doc)> SeedOrderWithFinalDocAsync()
     {
         var order = AppraisalOrder.Create(
             "PN-APPR-001", "Odobrenje test", "Klijent", "FL", "0101985100129",
             "Kontakt", "061000000", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
         order.ChangeStatus(AppraisalOrderStatus.AppraisalReceived, DateTime.UtcNow);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
 
-        var doc = Praksa.Domain.Documents.Document.Create(
+        var doc = RBBH.CollateralAppraisal.Domain.Documents.Document.Create(
             order.Id, null, "procjena.pdf", "procjena.pdf", "application/pdf",
             1024, "/storage/procjena.pdf", "user-vjestak-1", DateTime.UtcNow);
         _db.Documents.Add(doc);
@@ -144,11 +144,11 @@ public sealed class OrderApprovalRatingTests : IDisposable
             "Kontakt", "061000000", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
 
-        var doc = Praksa.Domain.Documents.Document.Create(
+        var doc = RBBH.CollateralAppraisal.Domain.Documents.Document.Create(
             order.Id, null, "procjena.pdf", "procjena.pdf", "application/pdf",
             1024, "/storage/procjena.pdf", "user-vjestak-1", DateTime.UtcNow);
         _db.Documents.Add(doc);
@@ -182,7 +182,7 @@ public sealed class OrderApprovalRatingTests : IDisposable
             "Kontakt", "061000000", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
         order.ChangeStatus(AppraisalOrderStatus.Draft, DateTime.UtcNow);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();

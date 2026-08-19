@@ -1,6 +1,6 @@
 using Xunit.Abstractions;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// Loguje poslovne korake testa sa vremenskim žigom i rednim brojem.

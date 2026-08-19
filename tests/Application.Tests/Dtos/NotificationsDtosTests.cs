@@ -1,8 +1,8 @@
-using Praksa.Application.Notifications;
-using Praksa.Application.Notifications.Models;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Notifications.Models;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class NotificationsDtosTests
 {

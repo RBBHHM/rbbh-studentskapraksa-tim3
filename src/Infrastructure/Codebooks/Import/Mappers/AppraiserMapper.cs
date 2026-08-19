@@ -1,11 +1,11 @@
-﻿﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Codebooks.Import;
-using Praksa.Domain.Appraisers;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Codebooks.Import.Mappers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import.Mappers;
 
 /// <summary>
 /// Import vještaka iz Excel-a sa multi-sheet formatom:
@@ -176,7 +176,7 @@ public sealed class AppraiserMapper : ICodebookMapper
         while (root.InnerException is not null)
             root = root.InnerException;
 
-        // Skratimo dugu Postgres poruku na ključni dio (sve do prve "." ili newline)
+        // Skratimo dugu SQL Server poruku na ključni dio (sve do prve "." ili newline)
         var msg = root.Message;
         var nl  = msg.IndexOfAny(['\n', '\r']);
         if (nl > 0) msg = msg[..nl].Trim();

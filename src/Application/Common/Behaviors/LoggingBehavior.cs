@@ -2,7 +2,7 @@ using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Praksa.Application.Common.Behaviors;
+namespace RBBH.CollateralAppraisal.Application.Common.Behaviors;
 
 /// <summary>
 /// Pipeline behavior koji loguje svaki MediatR request s imenom i trajanjem.

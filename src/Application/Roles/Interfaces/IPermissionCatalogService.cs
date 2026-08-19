@@ -1,6 +1,6 @@
-using Praksa.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
 
-namespace Praksa.Application.Roles.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Roles.Interfaces;
 
 public interface IPermissionCatalogService
 {

@@ -1,11 +1,11 @@
-﻿﻿﻿using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Appraisers;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+﻿﻿using Microsoft.EntityFrameworkCore;
+using RBBH.CollateralAppraisal.Application.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Appraisers;
+namespace RBBH.CollateralAppraisal.Infrastructure.Appraisers;
 
 /// <summary>
 /// FL automatski odabir vještaka (Faza C).

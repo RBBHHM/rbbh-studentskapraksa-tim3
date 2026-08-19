@@ -1,0 +1,1 @@
+import{r as e,u as t}from"./http-client-B8s_RWrJ.js";function n(){return t({queryKey:[`me`],queryFn:async()=>{let t=await e.getLegacy(`/api/me`);return t?.data??t},staleTime:6e4})}function r(e,t){let n=e?.[t]??e?.[t[0].toUpperCase()+t.slice(1)];return Array.isArray(n)?n.map(String):[]}export{n,r as t};

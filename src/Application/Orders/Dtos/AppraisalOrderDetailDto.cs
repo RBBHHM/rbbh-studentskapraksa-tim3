@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
 /// <summary>
 /// Detalji narudžbe procjene za GET /api/orders/{id} (US 93/94 — kućice na stranici narudžbe).

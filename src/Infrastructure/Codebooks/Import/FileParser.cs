@@ -1,8 +1,8 @@
-﻿﻿using ClosedXML.Excel;
-using Praksa.Application.Codebooks.Import;
+﻿using ClosedXML.Excel;
+using RBBH.CollateralAppraisal.Application.Codebooks.Import;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Codebooks.Import;
+namespace RBBH.CollateralAppraisal.Infrastructure.Codebooks.Import;
 
 /// <summary>
 /// Parsira CSV/XLSX/XLS fajlove u generićke ParsedRow objekte.

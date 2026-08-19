@@ -1,6 +1,6 @@
-using Praksa.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
 
-namespace Praksa.Application.Documents;
+namespace RBBH.CollateralAppraisal.Application.Documents;
 
 public interface ISharedDocumentService
 {

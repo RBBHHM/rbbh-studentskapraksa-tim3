@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Application.Codebooks.Import;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Import;
 
 /// <summary>
 /// Per-codebook mapper: definiše kolone, validira redove, kreira/ažurira entitete.

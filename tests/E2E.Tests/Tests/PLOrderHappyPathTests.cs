@@ -1,9 +1,9 @@
 using Microsoft.Playwright;
-using Praksa.E2E.Tests.Infrastructure;
+using RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Praksa.E2E.Tests.Tests;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Tests;
 
 /// <summary>
 /// E2E Happy Path — Kompletan tok PL narudžbe.
@@ -272,7 +272,7 @@ public sealed class PLOrderHappyPathTests : IClassFixture<PlaywrightFixture>, IA
             await _coClient.SubmitOpinionAsync(orderId, "CO", ct);
             log.Assert("CO mišljenje", "importovano ✓");
 
-            // PravnaSluzba korisnik postoji u Keycloak (pravnasluzba.test@praksa.ba)
+            // PravnaSluzba korisnik postoji u Keycloak (pravnasluzba.test@rbbh.ba)
             var pravnaToken = await _jwt.GetTokenAsync(_config.GetUser("PravnaSluzba"));
             using var pravnaClient = new WorkflowApiClient(_config.ApiUrl, pravnaToken);
             await pravnaClient.SubmitOpinionAsync(orderId, "Pravna", ct);

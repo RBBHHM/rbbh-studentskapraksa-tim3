@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Application.Security;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Documents;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Documents;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests.Documents;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests.Documents;
 
 public class DocumentServiceTests
 {
@@ -397,13 +397,13 @@ public class DocumentServiceTests
         return (order, documentType);
     }
 
-    private static async Task<Praksa.Domain.Documents.Document> SeedDocumentAsync(
+    private static async Task<RBBH.CollateralAppraisal.Domain.Documents.Document> SeedDocumentAsync(
         ApplicationDbContext db,
         int orderId,
         int documentTypeId,
         string uploadedByUserId)
     {
-        var document = Praksa.Domain.Documents.Document.Create(
+        var document = RBBH.CollateralAppraisal.Domain.Documents.Document.Create(
             orderId,
             documentTypeId,
             "izvod.pdf",
@@ -445,7 +445,7 @@ public class DocumentServiceTests
         public string? UserId { get; set; } = "co-user";
         public string? Username => "co.test";
         public string? FullName => "Co Test";
-        public string? Email => "co.test@praksa.ba";
+        public string? Email => "co.test@rbbh.ba";
         public string? Role => "KolateralOficir";
         public IReadOnlyList<string> Roles { get; set; } = ["KolateralOficir"];
         public IReadOnlyList<string> Permissions => ["documents.delete"];

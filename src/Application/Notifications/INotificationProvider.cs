@@ -1,4 +1,4 @@
-namespace Praksa.Application.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Notifications;
 
 /// <summary>
 /// Adapter contract za slanje notifikacija.

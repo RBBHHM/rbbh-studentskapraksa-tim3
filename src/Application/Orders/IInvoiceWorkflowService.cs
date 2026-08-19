@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 /// <summary>
 /// Faktura workflow: Protokol uploaduje → CA šalje na plaćanje → Likvidatura potvrđuje plaćanje.

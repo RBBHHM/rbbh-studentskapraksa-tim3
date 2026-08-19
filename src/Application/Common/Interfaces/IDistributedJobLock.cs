@@ -1,8 +1,8 @@
-namespace Praksa.Application.Common.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
 /// <summary>
 /// Distribuirani lock za background job koordinaciju između više instanci servisa.
-/// PostgreSQL implementacija koristi pg_try_advisory_lock (session-level).
+/// SQL Server implementacija koristi pg_try_advisory_lock (session-level).
 /// Mora biti Scoped — lock je vezan za DB konekciju iz istog scope-a.
 /// </summary>
 public interface IDistributedJobLock

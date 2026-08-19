@@ -1,17 +1,17 @@
-﻿﻿﻿using Microsoft.EntityFrameworkCore;
+﻿﻿using Microsoft.EntityFrameworkCore;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Praksa.Application.Notifications;
-using Praksa.Application.Users;
-using Praksa.Application.Users.Models;
-using Praksa.Infrastructure.Persistence;
-using DomainNotification = Praksa.Domain.Notifications.Notification;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Users;
+using RBBH.CollateralAppraisal.Application.Users.Models;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using DomainNotification = RBBH.CollateralAppraisal.Domain.Notifications.Notification;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// Notifikacioni provider:

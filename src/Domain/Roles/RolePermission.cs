@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Roles;
+namespace RBBH.CollateralAppraisal.Domain.Roles;
 
 /// <summary>Join tabela između RoleDefinition i PermissionDefinition.</summary>
 public sealed class RolePermission

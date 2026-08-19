@@ -1,6 +1,6 @@
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Application.Users.Models;
+namespace RBBH.CollateralAppraisal.Application.Users.Models;
 
 /// <summary>
 /// Request za paginiranu listu korisnika i njihovih rola.

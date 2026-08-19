@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Application.Tests.Helpers;
+namespace RBBH.CollateralAppraisal.Application.Tests.Helpers;
 
 /// <summary>
 /// Deterministička implementacija IClock za testove.

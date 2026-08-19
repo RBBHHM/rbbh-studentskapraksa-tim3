@@ -3,9 +3,9 @@ using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Praksa.Application.Common.Behaviors;
+using RBBH.CollateralAppraisal.Application.Common.Behaviors;
 
-namespace Praksa.Application;
+namespace RBBH.CollateralAppraisal.Application;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection

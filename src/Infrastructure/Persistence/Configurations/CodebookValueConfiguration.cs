@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public sealed class CodebookValueConfiguration : IEntityTypeConfiguration<CodebookValue>
 {

@@ -1,9 +1,9 @@
-using Praksa.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
-namespace Praksa.Application.Tests.Helpers;
+namespace RBBH.CollateralAppraisal.Application.Tests.Helpers;
 
 /// <summary>
-/// Test stub za IOrderNumberGenerator — ne koristi PostgreSQL raw SQL,
+/// Test stub za IOrderNumberGenerator — ne koristi SQL Server raw SQL,
 /// generiše jedinstven broj bez relacijske baze.
 /// </summary>
 public sealed class FakeOrderNumberGenerator : IOrderNumberGenerator

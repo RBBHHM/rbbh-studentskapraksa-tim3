@@ -1,4 +1,4 @@
-namespace Praksa.Application.Orders.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
 public interface IOrderNumberGenerator
 {

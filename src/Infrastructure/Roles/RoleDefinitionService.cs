@@ -1,22 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Roles.Models;
-using Praksa.Application.Roles.Requests;
-using Praksa.Application.Security;
-using Praksa.Domain.Roles;
-using Praksa.Infrastructure.Auth;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Roles;
+using RBBH.CollateralAppraisal.Infrastructure.Auth;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Roles;
+namespace RBBH.CollateralAppraisal.Infrastructure.Roles;
 
 /// <summary>
-/// Upravljanje definicijama rola u PostgreSQL bazi + sinhronizacija s Keycloak-om.
+/// Upravljanje definicijama rola u SQL Server bazi + sinhronizacija s Keycloak-om.
 ///
 /// Poslovna pravila:
 /// - Sistemske role (IsSystem=true) ne mogu se mijenjati imenom ni brisati.

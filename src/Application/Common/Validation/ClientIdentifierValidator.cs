@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Models;
 
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>
 /// Validacija identifikacionog broja klijenta. Prema specifikaciji, JMBG (13 cifara)

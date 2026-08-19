@@ -1,17 +1,17 @@
-﻿﻿﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Reports;
-using Praksa.Application.Reports.Dtos;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Application.Reports.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Praksa.Infrastructure.Reports;
+namespace RBBH.CollateralAppraisal.Infrastructure.Reports;
 
 /// <summary>
 /// Generiše izvještaje koncentracije vještaka (US 9) i pregleda narudžbi s vremenima (US 10),

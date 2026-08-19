@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Exceptions;
+namespace RBBH.CollateralAppraisal.Application.Common.Exceptions;
 
 public class NotFoundException : Exception
 {

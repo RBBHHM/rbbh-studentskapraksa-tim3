@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Orders.Requests;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Application.Security;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Security;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Kreiranje i ažuriranje narudžbi — fizički split iz AppraisalOrderService (I-1 refactoring).
@@ -246,8 +246,8 @@ public sealed class OrderCreateService : IOrderCreateService
             ]);
     }
 
-    private const string CombinedBase       = Praksa.Application.Common.Constants.CollateralTypeCodes.Apartment;
-    private const string CombinedBaseLegacy = Praksa.Application.Common.Constants.CollateralTypeCodes.ApartmentLegacy;
+    private const string CombinedBase       = RBBH.CollateralAppraisal.Application.Common.Constants.CollateralTypeCodes.Apartment;
+    private const string CombinedBaseLegacy = RBBH.CollateralAppraisal.Application.Common.Constants.CollateralTypeCodes.ApartmentLegacy;
 
     private static Dictionary<string, object?> SnapshotForAudit(AppraisalOrder o) => new()
     {

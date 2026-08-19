@@ -1,15 +1,15 @@
 #pragma warning disable CS0618
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Reports;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Codebooks;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Reports;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Reports;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Codebooks;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Reports;
 using Xunit;
 
-namespace Praksa.Application.Tests.Reports;
+namespace RBBH.CollateralAppraisal.Application.Tests.Reports;
 
 public sealed class ConcentrationReportTests : IDisposable
 {

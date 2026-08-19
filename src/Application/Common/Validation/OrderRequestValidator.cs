@@ -1,8 +1,8 @@
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Requests;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Requests;
 
-namespace Praksa.Application.Common.Validation;
+namespace RBBH.CollateralAppraisal.Application.Common.Validation;
 
 /// <summary>
 /// Statička klasa koja enkapsulira sva validacijska pravila za narudžbe.

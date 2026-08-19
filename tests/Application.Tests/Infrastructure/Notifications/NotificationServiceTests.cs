@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Notifications;
-using Praksa.Domain.Notifications;
-using Praksa.Infrastructure.Notifications;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Domain.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
-using NotificationChannel = Praksa.Domain.Notifications.NotificationChannel;
+using NotificationChannel = RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel;
 
-namespace Praksa.Application.Tests.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Notifications;
 
 public sealed class NotificationServiceTests : IDisposable
 {

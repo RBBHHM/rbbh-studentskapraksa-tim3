@@ -1,8 +1,8 @@
 using FluentAssertions;
-using Praksa.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
 using Xunit;
 
-namespace Praksa.Application.Tests.Validation;
+namespace RBBH.CollateralAppraisal.Application.Tests.Validation;
 
 public sealed class OrderClientNameValidatorTests
 {

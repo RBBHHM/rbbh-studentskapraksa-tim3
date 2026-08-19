@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Api.Middleware;
-using Praksa.Application.Security;
-using Praksa.Application.Security.DTOs;
-using Praksa.Application.Security.Interfaces;
+using RBBH.CollateralAppraisal.Api.Middleware;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Application.Security.DTOs;
+using RBBH.CollateralAppraisal.Application.Security.Interfaces;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Endpointi za upravljanje rolama korisnika.

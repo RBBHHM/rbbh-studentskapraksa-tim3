@@ -7,7 +7,7 @@ import { apiBaseUrl } from "@/lib/api/http-client";
 
 const checks = [
   { key: "api", label: "API", path: "/api/health" },
-  { key: "db", label: "PostgreSQL", path: "/api/health/db" },
+  { key: "db", label: "SQL Server", path: "/api/health/db" },
   { key: "storage", label: "Skladište dokumenata", path: "/api/health/storage" },
   { key: "auth", label: "Keycloak", path: "/api/health/auth" },
 ] as const;

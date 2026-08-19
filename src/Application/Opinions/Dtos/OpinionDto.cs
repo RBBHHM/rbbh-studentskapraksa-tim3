@@ -1,6 +1,6 @@
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Opinions.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Opinions.Dtos;
 
 public sealed record OpinionDto(
     OpinionType   OpinionType,

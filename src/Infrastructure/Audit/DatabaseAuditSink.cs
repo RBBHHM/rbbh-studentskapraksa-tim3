@@ -1,11 +1,11 @@
-using Praksa.Application.Audit;
-using Praksa.Domain.Audit;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
-/// Sink koji čuva audit zapise u PostgreSQL bazi podataka.
+/// Sink koji čuva audit zapise u SQL Server bazi podataka.
 /// Prima gotov AuditLog entitet — ne vrši nikakvu transformaciju.
 /// </summary>
 public sealed class DatabaseAuditSink : IAuditSink

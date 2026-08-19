@@ -1,20 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Common.Validation;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Persistence;
-using ApplicationAppRoles = Praksa.Application.Security.AppRoles;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Common.Validation;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using ApplicationAppRoles = RBBH.CollateralAppraisal.Application.Security.AppRoles;
 
-namespace Praksa.Infrastructure.Orders;
+namespace RBBH.CollateralAppraisal.Infrastructure.Orders;
 
 /// <summary>
 /// Submit i otkazivanje narudžbi — fizički split iz AppraisalOrderService (I-1 refactoring).
@@ -216,7 +216,7 @@ public sealed class OrderSubmitService : IOrderSubmitService
         // K4: Provjera obaveznih dokumenata
         var documentTypeCodes = await _db.CodebookValues
             .AsNoTracking()
-            .Where(v => v.CodebookKey == Praksa.Application.Common.Constants.CodebookKeys.DocumentTypes && v.IsActive)
+            .Where(v => v.CodebookKey == RBBH.CollateralAppraisal.Application.Common.Constants.CodebookKeys.DocumentTypes && v.IsActive)
             .Select(v => new { v.Id, v.Code })
             .ToListAsync(ct);
 
@@ -229,19 +229,19 @@ public sealed class OrderSubmitService : IOrderSubmitService
                 .Distinct()
                 .ToListAsync(ct);
 
-            var zkType = documentTypeCodes.FirstOrDefault(t => t.Code == Praksa.Application.Common.Constants.DocumentTypeCodes.ZkExtract);
+            var zkType = documentTypeCodes.FirstOrDefault(t => t.Code == RBBH.CollateralAppraisal.Application.Common.Constants.DocumentTypeCodes.ZkExtract);
             if (zkType is not null && !uploadedTypeIds.Contains(zkType.Id))
                 errors.Add(new ValidationFieldError("documents.zk", ValidationErrorCodes.RequiredField, "ZK izvadak je obavezan dokument."));
 
             if (order.IsFL())
             {
-                var uplatnicaType = documentTypeCodes.FirstOrDefault(t => t.Code == Praksa.Application.Common.Constants.DocumentTypeCodes.PaymentReceipt);
+                var uplatnicaType = documentTypeCodes.FirstOrDefault(t => t.Code == RBBH.CollateralAppraisal.Application.Common.Constants.DocumentTypeCodes.PaymentReceipt);
                 if (uplatnicaType is not null && !uploadedTypeIds.Contains(uplatnicaType.Id))
                     errors.Add(new ValidationFieldError("documents.uplatnica", ValidationErrorCodes.RequiredField, "Uplatnica je obavezan dokument za fizička lica."));
             }
             else if (order.IsPL())
             {
-                var saglasnostType = documentTypeCodes.FirstOrDefault(t => t.Code == Praksa.Application.Common.Constants.DocumentTypeCodes.Consent);
+                var saglasnostType = documentTypeCodes.FirstOrDefault(t => t.Code == RBBH.CollateralAppraisal.Application.Common.Constants.DocumentTypeCodes.Consent);
                 if (saglasnostType is not null && !uploadedTypeIds.Contains(saglasnostType.Id))
                     errors.Add(new ValidationFieldError("documents.saglasnost", ValidationErrorCodes.RequiredField, "Saglasnost je obavezan dokument za pravna lica."));
             }

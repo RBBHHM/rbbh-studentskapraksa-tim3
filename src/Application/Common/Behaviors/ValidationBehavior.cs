@@ -1,10 +1,10 @@
 using FluentValidation;
 using MediatR;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Models;
-using ValidationException = Praksa.Application.Common.Exceptions.ValidationException;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using ValidationException = RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException;
 
-namespace Praksa.Application.Common.Behaviors;
+namespace RBBH.CollateralAppraisal.Application.Common.Behaviors;
 
 /// <summary>
 /// Pipeline behavior koji pokreće sve FluentValidation validatore registrovane za dati request.

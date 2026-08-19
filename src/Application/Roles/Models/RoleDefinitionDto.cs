@@ -1,4 +1,4 @@
-namespace Praksa.Application.Roles.Models;
+namespace RBBH.CollateralAppraisal.Application.Roles.Models;
 
 public sealed record RoleDefinitionDto(
     int      Id,

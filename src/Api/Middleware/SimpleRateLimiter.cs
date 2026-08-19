@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 /// <summary>
 /// In-memory rate limiter za kritične endpointe (upload, approval).

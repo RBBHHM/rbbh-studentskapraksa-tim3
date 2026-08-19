@@ -1,6 +1,6 @@
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 /// <summary>
 /// Mapira DocumentationReviewStatus enum na/od bosanskih naziva koji se čuvaju u bazi.

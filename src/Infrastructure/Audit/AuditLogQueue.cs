@@ -1,9 +1,9 @@
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Audit;
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 /// <summary>
 /// In-memory bounded queue (System.Threading.Channels) — singleton, dijeli se kroz

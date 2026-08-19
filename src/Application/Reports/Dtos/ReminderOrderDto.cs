@@ -1,4 +1,4 @@
-namespace Praksa.Application.Reports.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Reports.Dtos;
 
 public sealed record ReminderOrderDto(
     int       OrderId,

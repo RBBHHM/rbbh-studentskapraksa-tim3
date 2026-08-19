@@ -1,9 +1,9 @@
 using Microsoft.Playwright;
-using Praksa.E2E.Tests.Infrastructure;
-using Praksa.E2E.Tests.Pages;
+using RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
+using RBBH.CollateralAppraisal.E2E.Tests.Pages;
 using Xunit;
 
-namespace Praksa.E2E.Tests.Tests;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Tests;
 
 /// <summary>E2E testovi za CA/CO taskove — My Tasks dashboard.</summary>
 [Collection("E2E")]

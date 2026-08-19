@@ -1,8 +1,8 @@
-using Praksa.Application.Codebooks.Models;
-using Praksa.Application.Codebooks.Requests;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Requests;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class CodebooksDtosTests
 {

@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using Praksa.Application.Notifications;
-using Praksa.Domain.Notifications;
-using Praksa.Infrastructure.Notifications;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Domain.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Notifications;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests.Notifications;
 
 public sealed class NotificationServiceTests
 {
@@ -32,7 +32,7 @@ public sealed class NotificationServiceTests
         await service.NotifyUserAsync("user-1", "Naslov", "Poruka");
 
         var saved = Assert.Single(db.Notifications);
-        Assert.Equal(Praksa.Domain.Notifications.NotificationChannel.InApp, saved.Channel);
+        Assert.Equal(RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.InApp, saved.Channel);
         Assert.Equal("user-1", saved.RecipientUserId);
         Assert.False(saved.IsRead);
         Assert.Empty(emailProvider.SentMessages);
@@ -51,7 +51,7 @@ public sealed class NotificationServiceTests
 
         Assert.Equal(2, await db.Notifications.CountAsync());
 
-        var emailNotification = await db.Notifications.SingleAsync(n => n.Channel == Praksa.Domain.Notifications.NotificationChannel.Email);
+        var emailNotification = await db.Notifications.SingleAsync(n => n.Channel == RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.Email);
         Assert.Equal(NotificationStatus.Sent, emailNotification.Status);
 
         var sentMessage = Assert.Single(emailProvider.SentMessages);
@@ -70,7 +70,7 @@ public sealed class NotificationServiceTests
             "user-1", "Naslov", "Poruka",
             sendEmail: true, emailAddress: "user1@example.com");
 
-        var emailNotification = await db.Notifications.SingleAsync(n => n.Channel == Praksa.Domain.Notifications.NotificationChannel.Email);
+        var emailNotification = await db.Notifications.SingleAsync(n => n.Channel == RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.Email);
         Assert.Equal(NotificationStatus.Failed, emailNotification.Status);
         Assert.NotNull(emailNotification.ErrorMessage);
     }
@@ -85,7 +85,7 @@ public sealed class NotificationServiceTests
         await service.NotifyUserAsync("user-1", "Naslov", "Poruka", sendEmail: true, emailAddress: null);
 
         var saved = Assert.Single(db.Notifications);
-        Assert.Equal(Praksa.Domain.Notifications.NotificationChannel.InApp, saved.Channel);
+        Assert.Equal(RBBH.CollateralAppraisal.Domain.Notifications.NotificationChannel.InApp, saved.Channel);
     }
 
     [Fact]

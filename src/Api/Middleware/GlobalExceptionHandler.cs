@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Audit;
-using Praksa.Application.Common;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 /// <summary>
 /// Centralni handler za izuzetke aplikacije.

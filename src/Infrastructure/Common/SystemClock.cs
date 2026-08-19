@@ -1,6 +1,6 @@
-using Praksa.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
-namespace Praksa.Infrastructure.Common;
+namespace RBBH.CollateralAppraisal.Infrastructure.Common;
 
 public sealed class SystemClock : IClock
 {

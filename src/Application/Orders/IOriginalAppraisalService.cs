@@ -1,6 +1,6 @@
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 public interface IOriginalAppraisalService
 {

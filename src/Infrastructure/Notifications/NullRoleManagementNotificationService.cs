@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using Praksa.Application.Notifications;
-using Praksa.Application.Notifications.Models;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Notifications.Models;
 
-namespace Praksa.Infrastructure.Notifications;
+namespace RBBH.CollateralAppraisal.Infrastructure.Notifications;
 
 /// <summary>
 /// MVP implementacija koja ne šalje stvarne notifikacije — samo loguje svaki event.

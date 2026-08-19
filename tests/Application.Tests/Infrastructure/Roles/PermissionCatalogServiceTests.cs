@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Domain.Roles;
-using Praksa.Infrastructure.Persistence;
-using Praksa.Infrastructure.Roles;
+using RBBH.CollateralAppraisal.Domain.Roles;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Infrastructure.Roles;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Roles;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Roles;
 
 public sealed class PermissionCatalogServiceTests : IDisposable
 {

@@ -1,7 +1,7 @@
-using Praksa.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
 using Xunit;
 
-namespace Praksa.Application.Tests.Common.Exceptions;
+namespace RBBH.CollateralAppraisal.Application.Tests.Common.Exceptions;
 
 public sealed class NotFoundExceptionTests
 {

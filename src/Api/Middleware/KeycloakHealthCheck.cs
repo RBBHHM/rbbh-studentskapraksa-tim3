@@ -1,14 +1,16 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 public sealed class KeycloakHealthCheck : IHealthCheck
 {
     private readonly string? _authority;
+    private readonly bool _enabled;
     private readonly IHttpClientFactory _httpClientFactory;
 
     public KeycloakHealthCheck(IConfiguration configuration, IHttpClientFactory httpClientFactory)
     {
+        _enabled           = configuration.GetValue<bool>("Keycloak:Enabled");
         _authority         = configuration["Keycloak:Authority"];
         _httpClientFactory = httpClientFactory;
     }
@@ -16,6 +18,9 @@ public sealed class KeycloakHealthCheck : IHealthCheck
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context, CancellationToken ct = default)
     {
+        if (!_enabled)
+            return HealthCheckResult.Healthy("Keycloak je namjerno isključen.");
+
         if (string.IsNullOrWhiteSpace(_authority))
             return HealthCheckResult.Degraded("Keycloak Authority nije konfigurisan.");
 

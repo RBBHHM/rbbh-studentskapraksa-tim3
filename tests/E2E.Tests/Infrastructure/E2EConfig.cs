@@ -1,14 +1,14 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 public sealed class E2EConfig
 {
     public string BaseUrl               { get; init; } = "http://localhost:5001";
     public string ApiUrl                { get; init; } = "http://localhost:5000";
     public string KeycloakUrl           { get; init; } = "http://localhost:8080";
-    public string KeycloakRealm         { get; init; } = "praksa";
-    public string KeycloakClientId      { get; init; } = "praksa-web";
+    public string KeycloakRealm         { get; init; } = "rbbh";
+    public string KeycloakClientId      { get; init; } = "collateral-appraisal-web";
     public bool   Headless              { get; init; } = true;
     public int    SlowMo                { get; init; } = 0;
     public int    Timeout               { get; init; } = 15000;

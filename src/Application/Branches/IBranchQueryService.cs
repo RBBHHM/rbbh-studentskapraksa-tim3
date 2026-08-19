@@ -1,4 +1,4 @@
-namespace Praksa.Application.Branches;
+namespace RBBH.CollateralAppraisal.Application.Branches;
 
 public interface IBranchQueryService
 {

@@ -1,4 +1,4 @@
-namespace Praksa.Domain.Common;
+namespace RBBH.CollateralAppraisal.Domain.Common;
 
 public abstract class BaseEntity
 {

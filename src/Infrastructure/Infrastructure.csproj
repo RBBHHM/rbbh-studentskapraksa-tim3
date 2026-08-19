@@ -4,8 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Praksa.Infrastructure</RootNamespace>
-    <AssemblyName>Praksa.Infrastructure</AssemblyName>
+    <RootNamespace>RBBH.CollateralAppraisal.Infrastructure</RootNamespace>
+    <AssemblyName>RBBH.CollateralAppraisal.Infrastructure</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,24 +14,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- EF Core za PostgreSQL -->
-    <!-- Napomena: Npgsql 9.x zahtijeva EF Core < 10.0.0. Koristimo 9.0.x dok Npgsql 10.x ne bude dostupan. -->
+    <!-- EF Core SQL Server — isti provider kao Data Products i SSMS okruženje. -->
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Stare SQL Server migracije su zadržane kao historijski trag, ali se ne kompajliraju. -->
+    <Compile Remove="Migrations\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Seed podaci za šifarnike — ugrađeni u assembly da budu dostupni i u Docker image-u. -->
     <EmbeddedResource Include="Seed\codebooks.json" />
     <Content Include="Templates\**\*" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

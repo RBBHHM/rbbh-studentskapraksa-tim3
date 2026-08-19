@@ -1,6 +1,6 @@
-using Praksa.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
 
-namespace Praksa.Application.Orders;
+namespace RBBH.CollateralAppraisal.Application.Orders;
 
 /// <summary>
 /// CO provjera pristupa prije narudžbe (US-93) — "Uredan pristup" / "Dopuna".

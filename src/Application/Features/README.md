@@ -26,4 +26,4 @@ Features/
 
 Svaki handler sadrži poslovnu logiku za jedan use case. Ne stavlja se logika u Controller/Endpoint.
 
-**Napomena:** Za CQRS pattern preporučuje se MediatR (dodati u Application.csproj).
+**Napomena:** Za CQRS pattern preporučuje se MediatR (dodati u RBBH.CollateralAppraisal.Application.csproj).

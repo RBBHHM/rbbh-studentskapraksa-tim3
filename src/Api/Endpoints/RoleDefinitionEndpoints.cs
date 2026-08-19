@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Praksa.Application.Roles.Interfaces;
-using Praksa.Application.Roles.Requests;
-using Praksa.Application.Security;
+using RBBH.CollateralAppraisal.Application.Roles.Interfaces;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Application.Security;
 
-namespace Praksa.Api.Endpoints;
+namespace RBBH.CollateralAppraisal.Api.Endpoints;
 
 /// <summary>
 /// Upravljanje definicijama rola (CRUD) + dodjela/uklanjanje permissiona.

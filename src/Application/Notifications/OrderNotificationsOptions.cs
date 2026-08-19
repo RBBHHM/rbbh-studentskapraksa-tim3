@@ -1,4 +1,4 @@
-namespace Praksa.Application.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Notifications;
 
 /// <summary>
 /// Konfiguracija notifikacija vezanih za narudžbe procjene.

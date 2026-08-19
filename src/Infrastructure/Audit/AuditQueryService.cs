@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Roles.Models;
-using Praksa.Application.Roles.Requests;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Models;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 
-namespace Praksa.Infrastructure.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Audit;
 
 public sealed class AuditQueryService : IAuditQueryService
 {

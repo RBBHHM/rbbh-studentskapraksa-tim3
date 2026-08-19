@@ -1,4 +1,4 @@
-namespace Praksa.Application.Codebooks.Requests;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Requests;
 
 /// <summary>
 /// Request tijelo za deaktivaciju vrijednosti šifarnika.

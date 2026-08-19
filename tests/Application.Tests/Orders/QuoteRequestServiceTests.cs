@@ -2,20 +2,20 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Praksa.Application.Audit;
-using Praksa.Application.Common.Exceptions;
-using Praksa.Application.Common.Interfaces;
-using Praksa.Application.Notifications;
-using Praksa.Application.Orders;
-using Praksa.Application.Orders.Interfaces;
-using Praksa.Application.Security;
-using Praksa.Domain.Appraisers;
-using Praksa.Domain.Orders;
-using Praksa.Infrastructure.Orders;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Audit;
+using RBBH.CollateralAppraisal.Application.Common.Exceptions;
+using RBBH.CollateralAppraisal.Application.Common.Interfaces;
+using RBBH.CollateralAppraisal.Application.Notifications;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Security;
+using RBBH.CollateralAppraisal.Domain.Appraisers;
+using RBBH.CollateralAppraisal.Domain.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Orders;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Application.Tests.Orders;
+namespace RBBH.CollateralAppraisal.Application.Tests.Orders;
 
 public sealed class QuoteRequestServiceTests : IDisposable
 {
@@ -60,7 +60,7 @@ public sealed class QuoteRequestServiceTests : IDisposable
             "Kontakt", "061000000", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.PravnaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.PravnaLica);
         order.ChangeStatus(status, DateTime.UtcNow);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
@@ -96,7 +96,7 @@ public sealed class QuoteRequestServiceTests : IDisposable
             "Kontakt", "061000000", null,
             "Sarajevo", "POS_SARAJEVO_CENTAR", "Adresa", "Obala 1",
             1, null, "user-am-1", AppRoles.AM, "Amar", "Dostava", "AM",
-            workflowType: Praksa.Domain.Orders.WorkflowType.FizickaLica);
+            workflowType: RBBH.CollateralAppraisal.Domain.Orders.WorkflowType.FizickaLica);
         order.ChangeStatus(AppraisalOrderStatus.DocumentationApproved, DateTime.UtcNow);
         _db.AppraisalOrders.Add(order);
         await _db.SaveChangesAsync();
@@ -126,7 +126,7 @@ public sealed class QuoteRequestServiceTests : IDisposable
         var order = await SeedPLOrderAsync(AppraisalOrderStatus.DocumentationApproved);
         var input = new SendQuoteRequestsInput([], DateTime.UtcNow.AddDays(3)); // prazna lista
 
-        await Assert.ThrowsAsync<Praksa.Application.Common.Exceptions.ValidationException>(
+        await Assert.ThrowsAsync<RBBH.CollateralAppraisal.Application.Common.Exceptions.ValidationException>(
             () => _sut.SendQuoteRequestsAsync(order.Id, input));
     }
 

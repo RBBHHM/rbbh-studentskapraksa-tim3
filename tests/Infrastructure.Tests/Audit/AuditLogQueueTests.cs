@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Praksa.Domain.Audit;
-using Praksa.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests.Audit;
 
 public class AuditLogQueueTests
 {

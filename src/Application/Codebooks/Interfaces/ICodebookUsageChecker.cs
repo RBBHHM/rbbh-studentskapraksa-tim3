@@ -1,6 +1,6 @@
-using Praksa.Application.Codebooks.Models;
+using RBBH.CollateralAppraisal.Application.Codebooks.Models;
 
-namespace Praksa.Application.Codebooks.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Codebooks.Interfaces;
 
 /// <summary>
 /// Checker za upotrebu jedne specifične vrijednosti šifarnika u konkretnom modulu/entitetu.

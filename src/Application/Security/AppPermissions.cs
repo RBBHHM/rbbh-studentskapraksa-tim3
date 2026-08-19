@@ -1,4 +1,4 @@
-namespace Praksa.Application.Security;
+namespace RBBH.CollateralAppraisal.Application.Security;
 
 /// <summary>
 /// Centralne konstante za permission-e aplikacije.
@@ -192,6 +192,7 @@ public static class AppPermissions
         OrdersRequestCorrection,
         OrdersCompleteReview,
         OrdersSubmitCorrection,
+        OrdersSignConsent,
         OrdersAccessCheck,
         OrdersSelectAppraiser,
         AppraisersManage,

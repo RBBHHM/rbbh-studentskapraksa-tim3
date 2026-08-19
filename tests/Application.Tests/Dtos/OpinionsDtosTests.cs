@@ -1,8 +1,8 @@
-using Praksa.Application.Opinions.Dtos;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Opinions.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
 using Xunit;
 
-namespace Praksa.Application.Tests.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Tests.Dtos;
 
 public sealed class OpinionsDtosTests
 {

@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Praksa.Infrastructure.Storage;
+using RBBH.CollateralAppraisal.Infrastructure.Storage;
 
-namespace Praksa.Api.Middleware;
+namespace RBBH.CollateralAppraisal.Api.Middleware;
 
 public sealed class FileStorageHealthCheck : IHealthCheck
 {

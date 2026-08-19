@@ -1,9 +1,9 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Opinions;
-using Praksa.Application.Opinions.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Opinions;
+using RBBH.CollateralAppraisal.Application.Opinions.Dtos;
 
-namespace Praksa.Application.Opinions.Queries;
+namespace RBBH.CollateralAppraisal.Application.Opinions.Queries;
 
 public sealed record GetOpinionsQuery(int OrderId) : IQuery<List<OpinionDto>>;
 

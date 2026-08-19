@@ -1,10 +1,10 @@
 using MediatR;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Common.Models;
-using Praksa.Application.Orders.Dtos;
-using Praksa.Application.Orders.Interfaces;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Common.Models;
+using RBBH.CollateralAppraisal.Application.Orders.Dtos;
+using RBBH.CollateralAppraisal.Application.Orders.Interfaces;
 
-namespace Praksa.Application.WorkflowTask.Queries;
+namespace RBBH.CollateralAppraisal.Application.WorkflowTask.Queries;
 
 public sealed record GetMyTasksQuery(int Page = 1, int PageSize = 20) : IQuery<PagedResult<WorkflowTaskDto>>;
 

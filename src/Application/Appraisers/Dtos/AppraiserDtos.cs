@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using Praksa.Application.Documents.Dtos;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Documents.Dtos;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.Appraisers.Dtos;
+namespace RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
 
 /// <summary>Vještak — master-data zapis (Faza C).</summary>
 [ExcludeFromCodeCoverage]

@@ -1,4 +1,4 @@
-namespace Praksa.Application.Common.Interfaces;
+namespace RBBH.CollateralAppraisal.Application.Common.Interfaces;
 
 /// <summary>
 /// Apstrakcija za distribuirani rate limiter.

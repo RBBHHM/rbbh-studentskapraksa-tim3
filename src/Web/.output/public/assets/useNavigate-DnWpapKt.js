@@ -1,1 +1,0 @@
-import{F as e,N as t}from"./keycloak-3f02GxH8.js";import{t as n}from"./useRouter-P2oSn8kN.js";var r=e(t(),1);function i(e){let t=n();return r.useCallback(n=>t.navigate({...n,from:n.from??e?.from}),[e?.from,t])}export{i as t};

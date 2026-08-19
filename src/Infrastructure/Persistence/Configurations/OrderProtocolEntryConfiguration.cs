@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public sealed class OrderProtocolEntryConfiguration : IEntityTypeConfiguration<OrderProtocolEntry>
 {

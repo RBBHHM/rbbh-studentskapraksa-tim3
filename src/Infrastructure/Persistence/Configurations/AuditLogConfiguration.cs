@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Praksa.Domain.Audit;
+using RBBH.CollateralAppraisal.Domain.Audit;
 
-namespace Praksa.Infrastructure.Persistence.Configurations;
+namespace RBBH.CollateralAppraisal.Infrastructure.Persistence.Configurations;
 
 public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
@@ -16,7 +16,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         // ── Timestamp ────────────────────────────────────────────────────────
         builder.Property(x => x.TimestampUtc)
                .IsRequired()
-               .HasColumnType("timestamp with time zone");
+               .HasColumnType("datetimeoffset");
 
         // ── Akter ────────────────────────────────────────────────────────────
         builder.Property(x => x.ActorUserId)   .IsRequired().HasMaxLength(128);
@@ -43,10 +43,10 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.Property(x => x.EntityKey)        .HasMaxLength(256);
         builder.Property(x => x.EntityDisplayName).HasMaxLength(512);
 
-        // ── Podaci o promjeni (jsonb) ─────────────────────────────────────────
-        builder.Property(x => x.OldValuesJson)    .HasColumnType("jsonb");
-        builder.Property(x => x.NewValuesJson)    .HasColumnType("jsonb");
-        builder.Property(x => x.ChangedFieldsJson).HasColumnType("jsonb");
+        // JSON se u SQL Serveru čuva kao nvarchar(max); aplikacijski ugovor ostaje isti.
+        builder.Property(x => x.OldValuesJson)    .HasColumnType("nvarchar(max)");
+        builder.Property(x => x.NewValuesJson)    .HasColumnType("nvarchar(max)");
+        builder.Property(x => x.ChangedFieldsJson).HasColumnType("nvarchar(max)");
 
         // ── Ishod ─────────────────────────────────────────────────────────────
         builder.Property(x => x.Status)  .IsRequired().HasMaxLength(64);

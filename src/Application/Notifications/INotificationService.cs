@@ -1,4 +1,4 @@
-namespace Praksa.Application.Notifications;
+namespace RBBH.CollateralAppraisal.Application.Notifications;
 
 /// <summary>
 /// Centralni servis za dispatch notifikacija — koriste ga svi feature moduli (T2-T8)

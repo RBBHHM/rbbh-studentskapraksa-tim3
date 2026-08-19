@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Xunit;
 
-namespace Praksa.E2E.Tests.Infrastructure;
+namespace RBBH.CollateralAppraisal.E2E.Tests.Infrastructure;
 
 /// <summary>
 /// xUnit class fixture koji dijeli jednu Playwright instancu kroz sve testove kolekcije.

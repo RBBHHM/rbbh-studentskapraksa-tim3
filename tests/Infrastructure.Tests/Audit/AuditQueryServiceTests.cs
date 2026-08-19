@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Praksa.Application.Roles.Requests;
-using Praksa.Domain.Audit;
-using Praksa.Infrastructure.Audit;
-using Praksa.Infrastructure.Persistence;
+using RBBH.CollateralAppraisal.Application.Roles.Requests;
+using RBBH.CollateralAppraisal.Domain.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Audit;
+using RBBH.CollateralAppraisal.Infrastructure.Persistence;
 using Xunit;
 
-namespace Praksa.Infrastructure.Tests.Audit;
+namespace RBBH.CollateralAppraisal.Infrastructure.Tests.Audit;
 
 public class AuditQueryServiceTests
 {

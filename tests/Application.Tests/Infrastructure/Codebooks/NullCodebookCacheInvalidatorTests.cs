@@ -1,7 +1,7 @@
-using Praksa.Infrastructure.Codebooks;
+using RBBH.CollateralAppraisal.Infrastructure.Codebooks;
 using Xunit;
 
-namespace Praksa.Application.Tests.Infrastructure.Codebooks;
+namespace RBBH.CollateralAppraisal.Application.Tests.Infrastructure.Codebooks;
 
 public sealed class NullCodebookCacheInvalidatorTests
 {

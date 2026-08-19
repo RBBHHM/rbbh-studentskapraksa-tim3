@@ -1,4 +1,4 @@
-﻿﻿﻿namespace Praksa.Domain.Orders;
+﻿﻿namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Grupe statusa narudžbe procjene koje se koriste u poslovnim pravilima (Faza C — odabir vještaka).

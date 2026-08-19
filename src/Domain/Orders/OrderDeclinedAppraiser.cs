@@ -1,4 +1,4 @@
-﻿﻿﻿namespace Praksa.Domain.Orders;
+﻿﻿namespace RBBH.CollateralAppraisal.Domain.Orders;
 
 /// <summary>
 /// Evidencija vještaka koji su odbili ili prekoraćili 24h rok za konkretnu narudžbu.

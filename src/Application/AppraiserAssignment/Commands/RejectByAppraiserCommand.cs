@@ -1,11 +1,11 @@
 using FluentValidation;
 using MediatR;
-using Praksa.Application.Appraisers.Dtos;
-using Praksa.Application.Common.CQRS;
-using Praksa.Application.Orders;
-using Praksa.Domain.Orders;
+using RBBH.CollateralAppraisal.Application.Appraisers.Dtos;
+using RBBH.CollateralAppraisal.Application.Common.CQRS;
+using RBBH.CollateralAppraisal.Application.Orders;
+using RBBH.CollateralAppraisal.Domain.Orders;
 
-namespace Praksa.Application.AppraiserAssignment.Commands;
+namespace RBBH.CollateralAppraisal.Application.AppraiserAssignment.Commands;
 
 public sealed record RejectByAppraiserCommand(
     int OrderId,
